@@ -1,0 +1,725 @@
+package com.lumiyaviewer.lumiya.slproto.objects;
+
+import android.opengl.Matrix;
+import android.support.v4.view.MotionEventCompat;
+import android.support.v4.view.ViewCompat;
+import com.google.common.base.Ascii;
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+import com.google.common.primitives.UnsignedBytes;
+import com.lumiyaviewer.lumiya.Debug;
+import com.lumiyaviewer.lumiya.render.DrawableObject;
+import com.lumiyaviewer.lumiya.render.MatrixStack;
+import com.lumiyaviewer.lumiya.render.avatar.DrawableAvatar;
+import com.lumiyaviewer.lumiya.render.spatial.DrawListObjectEntry;
+import com.lumiyaviewer.lumiya.render.spatial.DrawListPrimEntry;
+import com.lumiyaviewer.lumiya.render.spatial.SpatialIndex;
+import com.lumiyaviewer.lumiya.render.spatial.SpatialObjectIndex;
+import com.lumiyaviewer.lumiya.slproto.SLMessage;
+import com.lumiyaviewer.lumiya.slproto.messages.ImprovedTerseObjectUpdate;
+import com.lumiyaviewer.lumiya.slproto.messages.ObjectProperties;
+import com.lumiyaviewer.lumiya.slproto.messages.ObjectUpdate;
+import com.lumiyaviewer.lumiya.slproto.messages.ObjectUpdateCompressed;
+import com.lumiyaviewer.lumiya.slproto.prims.PrimDrawParams;
+import com.lumiyaviewer.lumiya.slproto.prims.PrimParamsPool;
+import com.lumiyaviewer.lumiya.slproto.prims.PrimVolumeParams;
+import com.lumiyaviewer.lumiya.slproto.textures.SLTextureEntry;
+import com.lumiyaviewer.lumiya.slproto.types.LLQuaternion;
+import com.lumiyaviewer.lumiya.slproto.types.LLVector3;
+import com.lumiyaviewer.lumiya.slproto.types.Vector3Array;
+import com.lumiyaviewer.lumiya.utils.Identifiable;
+import com.lumiyaviewer.lumiya.utils.IdentityMatrix;
+import com.lumiyaviewer.lumiya.utils.LinkedTreeNode;
+import com.lumiyaviewer.lumiya.utils.UUIDPool;
+import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+/* JADX INFO: loaded from: classes.dex */
+public abstract class SLObjectInfo implements Identifiable<UUID> {
+    private static final int AGENT_ATTACH_MASK = 240;
+    private static final int AGENT_ATTACH_OFFSET = 4;
+    public static final int FLAGS_ALLOW_INVENTORY_DROP = 65536;
+    public static final int FLAGS_ANIM_SOURCE = 2097152;
+    public static final int FLAGS_CAMERA_DECOUPLED = 1048576;
+    public static final int FLAGS_CAMERA_SOURCE = 4194304;
+    public static final int FLAGS_CAST_SHADOWS = 8388608;
+    public static final int FLAGS_CREATE_SELECTED = 2;
+    public static final int FLAGS_HANDLE_TOUCH = 128;
+    public static final int FLAGS_INCLUDE_IN_SEARCH = 32768;
+    public static final int FLAGS_INVENTORY_EMPTY = 2048;
+    public static final int FLAGS_JOINT_HINGE = 4096;
+    public static final int FLAGS_JOINT_LP2P = 16384;
+    public static final int FLAGS_JOINT_P2P = 8192;
+    public static final int FLAGS_OBJECT_ANY_OWNER = 16;
+    public static final int FLAGS_OBJECT_COPY = 8;
+    public static final int FLAGS_OBJECT_GROUP_OWNED = 262144;
+    public static final int FLAGS_OBJECT_MODIFY = 4;
+    public static final int FLAGS_OBJECT_MOVE = 256;
+    public static final int FLAGS_OBJECT_OWNER_MODIFY = 268435456;
+    public static final int FLAGS_OBJECT_TRANSFER = 131072;
+    public static final int FLAGS_OBJECT_YOU_OWNER = 32;
+    public static final int FLAGS_PHANTOM = 1024;
+    public static final int FLAGS_SCRIPTED = 64;
+    public static final int FLAGS_TAKES_MONEY = 512;
+    public static final int FLAGS_TEMPORARY = 1073741824;
+    public static final int FLAGS_TEMPORARY_ON_REZ = 536870912;
+    public static final int FLAGS_USE_PHYSICS = 1;
+    public static final int FLAGS_ZLIB_COMPRESSED = Integer.MIN_VALUE;
+    public static final int OBJ_COORD_POSITION = 0;
+    public static final int OBJ_COORD_SCALE = 1;
+    public static final int OBJ_COORD_VELOCITY = 2;
+    public static final int OBJ_COORD_WORLD_CENTER = 3;
+    public static final int PAY_DEFAULT = -2;
+    public static final int PAY_HIDE = -1;
+    public int UpdateFlags;
+
+    @Nullable
+    private volatile WeakReference<DrawListObjectEntry> drawListEntry;
+    public int localID;
+    public float objRadius;
+
+    @Nullable
+    private PayInfo payInfo;
+    private PrimDrawParams primDrawParams;
+    private LLQuaternion rotation;
+    public int salePrice;
+    protected UUID uuid;
+    public float[] worldMatrix;
+    public int parentID = 0;
+    public String name = "(loading)";
+    public String description = "";
+    public String touchName = "";
+    public UUID attachedToUUID = null;
+    public UUID ownerUUID = null;
+    public UUID creatorUUID = null;
+    public byte saleType = 0;
+    public int attachmentID = 0;
+    private final Vector3Array objectCoords = new Vector3Array(4);
+    private volatile HoverText hoverText = null;
+    public volatile boolean isDead = false;
+    public boolean isAttachment = false;
+    public boolean nameKnown = false;
+    public boolean nameRequested = false;
+    public long nameRequestedAt = 0;
+    public int hierLevel = 0;
+    public final LinkedTreeNode<SLObjectInfo> treeNode = new LinkedTreeNode<>(this);
+
+    private void ParseObjectData(ByteBuffer byteBuffer) {
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        switch (byteBuffer.limit()) {
+            case 16:
+                this.objectCoords.set(0, LLVector3.parseU8Vec(byteBuffer, 384.0f, 384.0f, -256.0f, 4096.0f));
+                this.objectCoords.set(2, LLVector3.parseU8Vec(byteBuffer, -256.0f, 256.0f, -256.0f, 256.0f));
+                byteBuffer.position(byteBuffer.position() + 3);
+                this.rotation = LLQuaternion.parseU8Vec3(byteBuffer, -1.0f, 1.0f);
+                break;
+            case 48:
+                byteBuffer.position(byteBuffer.position() + 16);
+            case 32:
+                this.objectCoords.set(0, LLVector3.parseU16Vec(byteBuffer, -128.0f, 384.0f, -256.0f, 4096.0f));
+                this.objectCoords.set(2, LLVector3.parseU16Vec(byteBuffer, -256.0f, 256.0f, -256.0f, 256.0f));
+                byteBuffer.position(byteBuffer.position() + 6);
+                this.rotation = LLQuaternion.parseU16Vec3(byteBuffer, -1.0f, 1.0f);
+                break;
+            case 76:
+                byteBuffer.position(byteBuffer.position() + 16);
+            case 60:
+                this.objectCoords.set(0, LLVector3.parseFloatVec(byteBuffer));
+                this.objectCoords.set(2, LLVector3.parseFloatVec(byteBuffer));
+                byteBuffer.position(byteBuffer.position() + 12);
+                this.rotation = LLQuaternion.parseFloatVec3(byteBuffer);
+                break;
+        }
+    }
+
+    private void applyHoverText(@Nullable HoverText hoverText) {
+        if (Objects.equal(this.hoverText, hoverText)) {
+            return;
+        }
+        this.hoverText = hoverText;
+        DrawableObject drawableObject = getDrawableObject();
+        if (drawableObject != null) {
+            drawableObject.setHoverText(hoverText);
+        }
+    }
+
+    private static int attachmentIDFromState(int i) {
+        return (((i & 255) & AGENT_ATTACH_MASK) >> 4) | (((i & 255) & (-241)) << 4);
+    }
+
+    private float[] calculateWorldMatrix(float[] fArr) {
+        LLQuaternion lLQuaternion = this.rotation;
+        if (lLQuaternion == null) {
+            return null;
+        }
+        float[] fArr2 = new float[16];
+        float[] fArr3 = new float[16];
+        this.objectCoords.MatrixTranslate(fArr3, 0, fArr, 0, 0);
+        Matrix.multiplyMM(fArr2, 0, fArr3, 0, lLQuaternion.getInverseMatrix(), 0);
+        return fArr2;
+    }
+
+    public static SLObjectInfo create(ObjectUpdateCompressed.ObjectData objectData) throws UnsupportedObjectTypeException {
+        SLObjectPrimInfo sLObjectPrimInfo = new SLObjectPrimInfo();
+        sLObjectPrimInfo.ApplyObjectUpdate(objectData);
+        return sLObjectPrimInfo;
+    }
+
+    public static SLObjectInfo create(UUID uuid, ObjectUpdate.ObjectData objectData, UUID uuid2) {
+        SLObjectInfo sLObjectAvatarInfo = objectData.PCode == 47 ? new SLObjectAvatarInfo(uuid, UUIDPool.getUUID(objectData.FullID), uuid2.equals(objectData.FullID)) : new SLObjectPrimInfo();
+        sLObjectAvatarInfo.ApplyObjectUpdate(objectData);
+        return sLObjectAvatarInfo;
+    }
+
+    @Nullable
+    private DrawableObject getDrawableObject() {
+        DrawListObjectEntry existingDrawListEntry = getExistingDrawListEntry();
+        if (existingDrawListEntry instanceof DrawListPrimEntry) {
+            return ((DrawListPrimEntry) existingDrawListEntry).getDrawableObject();
+        }
+        return null;
+    }
+
+    public static int getLocalID(ImprovedTerseObjectUpdate.ObjectData objectData) {
+        ByteBuffer byteBufferWrap = ByteBuffer.wrap(objectData.Data);
+        byteBufferWrap.order(ByteOrder.LITTLE_ENDIAN);
+        return byteBufferWrap.getInt();
+    }
+
+    public static int getLocalID(ObjectUpdateCompressed.ObjectData objectData) {
+        ByteBuffer byteBufferWrap = ByteBuffer.wrap(objectData.Data);
+        byteBufferWrap.position(16);
+        byteBufferWrap.order(ByteOrder.LITTLE_ENDIAN);
+        return byteBufferWrap.getInt();
+    }
+
+    private void parseNameValuePairs(String str) {
+        for (String strTrim : str.split("\n")) {
+            if (strTrim.startsWith("AttachItemID ")) {
+                int i = 0;
+                while (i < 4) {
+                    int iIndexOf = strTrim.indexOf(32);
+                    if (iIndexOf >= 0) {
+                        strTrim = strTrim.substring(iIndexOf + 1);
+                    }
+                    i++;
+                    strTrim = strTrim.trim();
+                }
+                try {
+                    this.attachedToUUID = UUIDPool.getUUID(UUID.fromString(strTrim));
+                } catch (Exception e) {
+                    this.attachedToUUID = null;
+                }
+            } else if (strTrim.startsWith("DisplayName ")) {
+                int i2 = 0;
+                while (i2 < 4) {
+                    int iIndexOf2 = strTrim.indexOf(32);
+                    if (iIndexOf2 >= 0) {
+                        strTrim = strTrim.substring(iIndexOf2 + 1);
+                    }
+                    i2++;
+                    strTrim = strTrim.trim();
+                }
+                this.name = strTrim;
+                this.nameKnown = true;
+            }
+        }
+    }
+
+    private void updateAttachments() {
+        DrawableAvatar drawableAvatar;
+        if (!isAvatar() || (drawableAvatar = SpatialIndex.getInstance().getDrawableAvatar(this)) == null) {
+            return;
+        }
+        drawableAvatar.updateAttachments();
+    }
+
+    private void updateSpatialIndex(SpatialObjectIndex spatialObjectIndex, boolean z) {
+        updateWorldMatrix(false);
+        if (z) {
+            synchronized (this) {
+                this.drawListEntry = null;
+            }
+        }
+        if (spatialObjectIndex != null && (!this.isDead)) {
+            spatialObjectIndex.updateObject(getDrawListEntry());
+        }
+        if (isAvatar()) {
+            Iterator<SLObjectInfo> it = this.treeNode.iterator();
+            while (it.hasNext()) {
+                it.next().updateWorldMatrix(true);
+            }
+        } else {
+            Iterator<SLObjectInfo> it2 = this.treeNode.iterator();
+            while (it2.hasNext()) {
+                it2.next().updateSpatialIndex(z);
+            }
+        }
+    }
+
+    public void ApplyObjectProperties(ObjectProperties.ObjectData objectData) {
+        this.name = SLMessage.stringFromVariableOEM(objectData.Name);
+        this.description = SLMessage.stringFromVariableUTF(objectData.Description);
+        this.touchName = SLMessage.stringFromVariableUTF(objectData.TouchName);
+        this.creatorUUID = objectData.CreatorID;
+        this.ownerUUID = objectData.OwnerID;
+        this.saleType = (byte) objectData.SaleType;
+        this.salePrice = objectData.SalePrice;
+        this.nameKnown = true;
+        this.nameRequested = false;
+    }
+
+    public void ApplyObjectUpdate(ObjectUpdate.ObjectData objectData) {
+        this.localID = objectData.ID;
+        this.uuid = UUIDPool.getUUID(objectData.FullID);
+        this.UpdateFlags = objectData.UpdateFlags;
+        this.parentID = objectData.ParentID;
+        this.attachmentID = attachmentIDFromState(objectData.State);
+        if (objectData.OwnerID.getLeastSignificantBits() != 0 || objectData.OwnerID.getMostSignificantBits() != 0) {
+            this.ownerUUID = UUIDPool.getUUID(objectData.OwnerID);
+        }
+        this.objectCoords.set(1, objectData.Scale);
+        String strStringFromVariableOEM = SLMessage.stringFromVariableOEM(objectData.Text);
+        applyHoverText(Strings.isNullOrEmpty(strStringFromVariableOEM) ? null : HoverText.create(strStringFromVariableOEM, objectData.TextColor.length >= 4 ? (objectData.TextColor[0] & UnsignedBytes.MAX_VALUE) | ((objectData.TextColor[1] << 8) & MotionEventCompat.ACTION_POINTER_INDEX_MASK) | ((objectData.TextColor[2] << 16) & 16711680) | ((objectData.TextColor[3] << Ascii.CAN) & ViewCompat.MEASURED_STATE_MASK) : 0));
+        PrimVolumeParams primVolumeParamsCreateFromObjectUpdate = PrimVolumeParams.createFromObjectUpdate(objectData);
+        if (primVolumeParamsCreateFromObjectUpdate != null && objectData.ExtraParams != null) {
+            primVolumeParamsCreateFromObjectUpdate.unpackExtraParams(ByteBuffer.wrap(objectData.ExtraParams).order(ByteOrder.LITTLE_ENDIAN));
+        }
+        ParseObjectData(ByteBuffer.wrap(objectData.ObjectData));
+        PrimDrawParams primDrawParams = PrimParamsPool.get(new PrimDrawParams(primVolumeParamsCreateFromObjectUpdate != null ? PrimParamsPool.get(primVolumeParamsCreateFromObjectUpdate) : null, SLTextureEntry.create(ByteBuffer.wrap(objectData.TextureEntry), objectData.TextureEntry.length)));
+        onTexturesUpdate(primDrawParams.getTextures());
+        if (!Objects.equal(this.primDrawParams, primDrawParams)) {
+            this.primDrawParams = primDrawParams;
+            DrawableObject drawableObject = getDrawableObject();
+            if (drawableObject != null) {
+                drawableObject.setPrimDrawParams(this.primDrawParams);
+            }
+        }
+        this.primDrawParams = PrimParamsPool.get(primDrawParams);
+        parseNameValuePairs(SLMessage.stringFromVariableUTF(objectData.NameValue));
+        updateSpatialIndex(false);
+    }
+
+    public void ApplyObjectUpdate(ObjectUpdateCompressed.ObjectData objectData) throws UnsupportedObjectTypeException {
+        SLTextureEntry sLTextureEntryCreate;
+        String str;
+        this.UpdateFlags = objectData.UpdateFlags;
+        ByteBuffer byteBufferWrap = ByteBuffer.wrap(objectData.Data);
+        byteBufferWrap.order(ByteOrder.BIG_ENDIAN);
+        this.uuid = UUIDPool.setUUID(this.uuid, byteBufferWrap.getLong(), byteBufferWrap.getLong());
+        byteBufferWrap.order(ByteOrder.LITTLE_ENDIAN);
+        this.localID = byteBufferWrap.getInt();
+        byte b = byteBufferWrap.get();
+        if (b != 9) {
+            throw new UnsupportedObjectTypeException(b);
+        }
+        this.attachmentID = attachmentIDFromState(byteBufferWrap.get());
+        byteBufferWrap.position(byteBufferWrap.position() + 4 + 1 + 1);
+        LLVector3 floatVec = LLVector3.parseFloatVec(byteBufferWrap);
+        LLVector3 floatVec2 = LLVector3.parseFloatVec(byteBufferWrap);
+        this.objectCoords.set(1, floatVec);
+        this.objectCoords.set(0, floatVec2);
+        this.rotation = LLQuaternion.parseFloatVec3(byteBufferWrap);
+        int i = byteBufferWrap.getInt();
+        byteBufferWrap.order(ByteOrder.BIG_ENDIAN);
+        long j = byteBufferWrap.getLong();
+        long j2 = byteBufferWrap.getLong();
+        if (this.ownerUUID == null || (j != 0 && j2 != 0)) {
+            this.ownerUUID = UUIDPool.setUUID(this.ownerUUID, j, j2);
+        }
+        byteBufferWrap.order(ByteOrder.LITTLE_ENDIAN);
+        if ((i & 128) != 0) {
+            byteBufferWrap.position(byteBufferWrap.position() + 12);
+        }
+        if ((i & 32) != 0) {
+            this.parentID = byteBufferWrap.getInt();
+        }
+        if ((i & 2) != 0) {
+            byteBufferWrap.position(byteBufferWrap.position() + 1);
+        } else if ((i & 1) != 0) {
+            byteBufferWrap.position(byteBufferWrap.get() + byteBufferWrap.position());
+        }
+        if ((i & 4) != 0) {
+            int iPosition = byteBufferWrap.position();
+            int i2 = 0;
+            while (iPosition + i2 < byteBufferWrap.capacity() && byteBufferWrap.get(iPosition + i2) != 0) {
+                i2++;
+            }
+            if (i2 != 0) {
+                byte[] bArr = new byte[i2];
+                byteBufferWrap.get(bArr, 0, i2);
+                try {
+                    str = new String(bArr, "ISO-8859-1");
+                } catch (UnsupportedEncodingException e) {
+                    str = null;
+                }
+            } else {
+                str = null;
+            }
+            byteBufferWrap.position(i2 + iPosition + 1);
+            applyHoverText(Strings.isNullOrEmpty(str) ? null : HoverText.create(str, byteBufferWrap.getInt()));
+        }
+        if ((i & 512) != 0) {
+            while (byteBufferWrap.get() != 0) {
+            }
+        }
+        if ((i & 8) != 0) {
+            byteBufferWrap.position(byteBufferWrap.position() + 86);
+        }
+        int iPosition2 = byteBufferWrap.position();
+        int i3 = byteBufferWrap.get() & UnsignedBytes.MAX_VALUE;
+        for (int i4 = 0; i4 < i3; i4++) {
+            byteBufferWrap.getShort();
+            byteBufferWrap.position(byteBufferWrap.getInt() + byteBufferWrap.position());
+        }
+        if ((i & 16) != 0) {
+            byteBufferWrap.position(byteBufferWrap.position() + 16);
+            byteBufferWrap.position(byteBufferWrap.position() + 4 + 1 + 4);
+        }
+        if ((i & 256) != 0) {
+            while (byteBufferWrap.get() != 0) {
+            }
+        }
+        PrimVolumeParams primVolumeParamsCreateFromPackedData = PrimVolumeParams.createFromPackedData(byteBufferWrap);
+        try {
+            sLTextureEntryCreate = SLTextureEntry.create(byteBufferWrap, byteBufferWrap.getInt());
+            try {
+                onTexturesUpdate(sLTextureEntryCreate);
+            } catch (Exception e2) {
+                Debug.Log("Failed to retrieve textures in compressed update");
+            }
+        } catch (Exception e3) {
+            sLTextureEntryCreate = null;
+        }
+        if (primVolumeParamsCreateFromPackedData != null) {
+            byteBufferWrap.position(iPosition2);
+            primVolumeParamsCreateFromPackedData.unpackExtraParams(byteBufferWrap);
+        }
+        PrimDrawParams primDrawParams = PrimParamsPool.get(new PrimDrawParams(primVolumeParamsCreateFromPackedData != null ? PrimParamsPool.get(primVolumeParamsCreateFromPackedData) : null, sLTextureEntryCreate));
+        if (!Objects.equal(this.primDrawParams, primDrawParams)) {
+            this.primDrawParams = primDrawParams;
+            DrawableObject drawableObject = getDrawableObject();
+            if (drawableObject != null) {
+                drawableObject.setPrimDrawParams(this.primDrawParams);
+            }
+        }
+        updateSpatialIndex(false);
+    }
+
+    public void ApplyTerseObjectUpdate(ImprovedTerseObjectUpdate.ObjectData objectData) {
+        ByteBuffer byteBufferWrap = ByteBuffer.wrap(objectData.Data);
+        byteBufferWrap.order(ByteOrder.LITTLE_ENDIAN);
+        byteBufferWrap.getInt();
+        this.attachmentID = attachmentIDFromState(byteBufferWrap.get());
+        if (byteBufferWrap.get() != 0) {
+            byteBufferWrap.position(byteBufferWrap.position() + 16);
+        }
+        LLVector3 floatVec = LLVector3.parseFloatVec(byteBufferWrap);
+        LLVector3 u16Vec = LLVector3.parseU16Vec(byteBufferWrap, -128.0f, 128.0f, -128.0f, 128.0f);
+        this.objectCoords.set(0, floatVec);
+        this.objectCoords.set(2, u16Vec);
+        byteBufferWrap.position(byteBufferWrap.position() + 6);
+        this.rotation = LLQuaternion.parseU16Vec3(byteBufferWrap, -1.0f, 1.0f);
+        byteBufferWrap.position(byteBufferWrap.position() + 6);
+        if (objectData.TextureEntry.length > 4) {
+            ByteBuffer byteBufferWrap2 = ByteBuffer.wrap(objectData.TextureEntry);
+            byteBufferWrap2.position(4);
+            SLTextureEntry sLTextureEntryCreate = SLTextureEntry.create(byteBufferWrap2, byteBufferWrap2.remaining());
+            onTexturesUpdate(sLTextureEntryCreate);
+            PrimDrawParams primDrawParams = this.primDrawParams;
+            if (primDrawParams != null && !sLTextureEntryCreate.equals(primDrawParams.getTextures())) {
+                PrimDrawParams primDrawParams2 = PrimParamsPool.get(new PrimDrawParams(primDrawParams.getVolumeParams(), sLTextureEntryCreate));
+                if (!Objects.equal(this.primDrawParams, primDrawParams2)) {
+                    this.primDrawParams = primDrawParams2;
+                    DrawableObject drawableObject = getDrawableObject();
+                    if (drawableObject != null) {
+                        drawableObject.setPrimDrawParams(this.primDrawParams);
+                    }
+                }
+            }
+        }
+        updateSpatialIndex(false);
+    }
+
+    public synchronized void addChild(SLObjectInfo sLObjectInfo) {
+        SLObjectInfo attachedTo;
+        this.treeNode.addChild(sLObjectInfo.treeNode);
+        if (sLObjectInfo.isAttachment && (attachedTo = sLObjectInfo.getAttachedTo()) != null) {
+            attachedTo.updateAttachments();
+        }
+    }
+
+    public void clearDrawListEntry() {
+        synchronized (this) {
+            this.drawListEntry = null;
+        }
+    }
+
+    @Nonnull
+    protected abstract DrawListObjectEntry createDrawListEntry();
+
+    public LLVector3 getAbsolutePosition() {
+        SLObjectInfo parentObject = getParentObject();
+        LLVector3 lLVector3 = this.objectCoords.get(0);
+        if (parentObject == null) {
+            return lLVector3;
+        }
+        while (parentObject != null) {
+            parentObject.objectCoords.addToVector(0, lLVector3);
+            parentObject = parentObject.getParentObject();
+        }
+        return lLVector3;
+    }
+
+    public SLObjectInfo getAttachedTo() {
+        SLObjectInfo parentObject = getParentObject();
+        if (parentObject != null) {
+            return parentObject.isAvatar() ? parentObject : parentObject.getAttachedTo();
+        }
+        return null;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    @Nonnull
+    public DrawListObjectEntry getDrawListEntry() {
+        WeakReference<DrawListObjectEntry> weakReference = this.drawListEntry;
+        DrawListObjectEntry drawListObjectEntryCreateDrawListEntry = weakReference != null ? weakReference.get() : null;
+        if (drawListObjectEntryCreateDrawListEntry == null) {
+            synchronized (this) {
+                WeakReference<DrawListObjectEntry> weakReference2 = this.drawListEntry;
+                drawListObjectEntryCreateDrawListEntry = weakReference2 != null ? weakReference2.get() : null;
+                if (drawListObjectEntryCreateDrawListEntry == null) {
+                    drawListObjectEntryCreateDrawListEntry = createDrawListEntry();
+                    this.drawListEntry = new WeakReference<>(drawListObjectEntryCreateDrawListEntry);
+                }
+            }
+        }
+        return drawListObjectEntryCreateDrawListEntry;
+    }
+
+    @Nullable
+    public DrawListObjectEntry getExistingDrawListEntry() {
+        WeakReference<DrawListObjectEntry> weakReference = this.drawListEntry;
+        if (weakReference != null) {
+            return weakReference.get();
+        }
+        return null;
+    }
+
+    @Nullable
+    public HoverText getHoverText() {
+        return this.hoverText;
+    }
+
+    @Override // com.lumiyaviewer.lumiya.utils.Identifiable
+    public UUID getId() {
+        return this.uuid;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public Vector3Array getObjectCoords() {
+        return this.objectCoords;
+    }
+
+    public void getObjectExtents(MatrixStack matrixStack, boolean z, LLVector3 lLVector3, LLVector3 lLVector32) {
+        int elementOffset = this.objectCoords.getElementOffset(0);
+        int elementOffset2 = this.objectCoords.getElementOffset(1);
+        float[] data = this.objectCoords.getData();
+        matrixStack.glPushMatrix();
+        matrixStack.glTranslatef(data[elementOffset + 0], data[elementOffset + 1], data[elementOffset + 2]);
+        matrixStack.glMultMatrixf(this.rotation.getInverseMatrix(), 0);
+        float[] fArr = {(-data[elementOffset2 + 0]) / 2.0f, (-data[elementOffset2 + 1]) / 2.0f, (-data[elementOffset2 + 2]) / 2.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+        Matrix.multiplyMV(fArr, 4, matrixStack.getMatrixData(), matrixStack.getMatrixDataOffset(), fArr, 0);
+        if (z) {
+            lLVector3.x = fArr[4];
+            lLVector3.y = fArr[5];
+            lLVector3.z = fArr[6];
+            lLVector32.x = fArr[4];
+            lLVector32.y = fArr[5];
+            lLVector32.z = fArr[6];
+        } else {
+            lLVector3.x = Math.min(lLVector3.x, fArr[4]);
+            lLVector3.y = Math.min(lLVector3.y, fArr[5]);
+            lLVector3.z = Math.min(lLVector3.z, fArr[6]);
+            lLVector32.x = Math.max(lLVector32.x, fArr[4]);
+            lLVector32.y = Math.max(lLVector32.y, fArr[5]);
+            lLVector32.z = Math.max(lLVector32.z, fArr[6]);
+        }
+        fArr[0] = data[elementOffset2 + 0] / 2.0f;
+        fArr[1] = data[elementOffset2 + 1] / 2.0f;
+        fArr[2] = data[elementOffset2 + 2] / 2.0f;
+        fArr[3] = 1.0f;
+        Matrix.multiplyMV(fArr, 4, matrixStack.getMatrixData(), matrixStack.getMatrixDataOffset(), fArr, 0);
+        lLVector3.x = Math.min(lLVector3.x, fArr[4]);
+        lLVector3.y = Math.min(lLVector3.y, fArr[5]);
+        lLVector3.z = Math.min(lLVector3.z, fArr[6]);
+        lLVector32.x = Math.max(lLVector32.x, fArr[4]);
+        lLVector32.y = Math.max(lLVector32.y, fArr[5]);
+        lLVector32.z = Math.max(lLVector32.z, fArr[6]);
+        try {
+            Iterator<SLObjectInfo> it = this.treeNode.iterator();
+            while (it.hasNext()) {
+                it.next().getObjectExtents(matrixStack, false, lLVector3, lLVector32);
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+        }
+        matrixStack.glPopMatrix();
+    }
+
+    public UUID getOwnerUUID() {
+        return (this.ownerUUID != null && this.ownerUUID.getLeastSignificantBits() == 0 && this.ownerUUID.getMostSignificantBits() == 0) ? this.creatorUUID : this.ownerUUID;
+    }
+
+    public SLObjectInfo getParentObject() {
+        return this.treeNode.getParent();
+    }
+
+    @Nullable
+    public PayInfo getPayInfo() {
+        return this.payInfo;
+    }
+
+    public PrimDrawParams getPrimDrawParams() {
+        return this.primDrawParams;
+    }
+
+    public SLObjectInfo getRootPrim() {
+        SLObjectInfo parent = this.treeNode.getParent();
+        return (parent == null || parent.isAvatar()) ? this : parent.getRootPrim();
+    }
+
+    public final LLQuaternion getRotation() {
+        return this.rotation;
+    }
+
+    public String getTouchName() {
+        return this.touchName;
+    }
+
+    public boolean hasTouchableChildren() {
+        try {
+            Iterator<SLObjectInfo> it = this.treeNode.iterator();
+            while (it.hasNext()) {
+                if (it.next().isTouchable()) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public abstract boolean isAvatar();
+
+    public synchronized boolean isAvatarSittingOn() {
+        try {
+            for (SLObjectInfo sLObjectInfo : this.treeNode) {
+                if ((sLObjectInfo instanceof SLObjectAvatarInfo) && ((SLObjectAvatarInfo) sLObjectInfo).isMyAvatar()) {
+                    return true;
+                }
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isMyAttachment() {
+        SLObjectInfo parentObject = getParentObject();
+        if (parentObject instanceof SLObjectAvatarInfo) {
+            return ((SLObjectAvatarInfo) parentObject).isMyAvatar();
+        }
+        return false;
+    }
+
+    public final boolean isPayable() {
+        return (this.UpdateFlags & 512) != 0;
+    }
+
+    public final boolean isTouchable() {
+        return (this.UpdateFlags & 128) != 0;
+    }
+
+    protected void onTexturesUpdate(SLTextureEntry sLTextureEntry) {
+    }
+
+    public synchronized void removeChild(SLObjectInfo sLObjectInfo) {
+        SLObjectInfo attachedTo;
+        if (sLObjectInfo.isAttachment && (attachedTo = sLObjectInfo.getAttachedTo()) != null) {
+            attachedTo.updateAttachments();
+        }
+        this.treeNode.removeChild(sLObjectInfo.treeNode);
+    }
+
+    public void removeFromSpatialIndex() {
+        DrawListObjectEntry existingDrawListEntry = getExistingDrawListEntry();
+        if (existingDrawListEntry != null) {
+            existingDrawListEntry.requestEntryRemoval();
+        }
+        if (isAvatar()) {
+            return;
+        }
+        Iterator<SLObjectInfo> it = this.treeNode.iterator();
+        while (it.hasNext()) {
+            it.next().removeFromSpatialIndex();
+        }
+    }
+
+    public synchronized void setIsAttachmentAll(boolean z) {
+        this.isAttachment = z;
+        try {
+            for (SLObjectInfo sLObjectInfo : this.treeNode) {
+                if (!sLObjectInfo.isAvatar()) {
+                    sLObjectInfo.setIsAttachmentAll(z);
+                }
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setPayInfo(@Nullable PayInfo payInfo) {
+        this.payInfo = payInfo;
+    }
+
+    public void updateSpatialIndex(boolean z) {
+        updateSpatialIndex(SpatialIndex.getInstance().getObjectIndex(), z);
+    }
+
+    public void updateWorldMatrix(boolean z) {
+        SLObjectInfo parentObject = getParentObject();
+        float[] matrix = (parentObject == null || parentObject.isAvatar()) ? IdentityMatrix.getMatrix() : parentObject.worldMatrix;
+        if (matrix != null) {
+            this.objRadius = this.objectCoords.getMaxComponent(1) / 2.0f;
+            float[] fArrCalculateWorldMatrix = calculateWorldMatrix(matrix);
+            float[] fArr = this.worldMatrix;
+            if (fArr == null || !Arrays.equals(fArrCalculateWorldMatrix, fArr)) {
+                this.worldMatrix = fArrCalculateWorldMatrix;
+                this.objectCoords.set(3, this.worldMatrix[12], this.worldMatrix[13], this.worldMatrix[14]);
+                if (z) {
+                    Iterator<SLObjectInfo> it = this.treeNode.iterator();
+                    while (it.hasNext()) {
+                        it.next().updateWorldMatrix(true);
+                    }
+                }
+            }
+        }
+    }
+}
