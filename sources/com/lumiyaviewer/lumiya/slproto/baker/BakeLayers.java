@@ -10,7 +10,7 @@ import java.util.Map;
 
 /* JADX INFO: loaded from: classes.dex */
 // Updated for modern Second Life Bento and PBR support
-// Now supports 21 baked texture layer sets (was 6)
+// Now supports 41 baked texture layer sets (was 6)
 public class BakeLayers {
     public static Map<BakedTextureIndex, BakeLayerSet> layerSets = new EnumMap(BakedTextureIndex.class);
 
@@ -66,5 +66,42 @@ public class BakeLayers {
         
         // Specular maps - lower body (placeholder for PBR specular maps)
         layerSets.put(BakedTextureIndex.BAKED_LOWER_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_LOWER_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        
+        // Bento mesh bakes - hands
+        layerSets.put(BakedTextureIndex.BAKED_LEFT_HAND, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_HAND, 256, 256, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_RIGHT_HAND, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_HAND, 256, 256, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
+        
+        // Bento mesh bakes - hands normal maps
+        layerSets.put(BakedTextureIndex.BAKED_LEFT_HAND_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_HAND_NORMAL, 256, 256, false, new BakeLayer[0], new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_RIGHT_HAND_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_HAND_NORMAL, 256, 256, false, new BakeLayer[0], new BakeLayer[0]));
+        
+        // Bento mesh bakes - wings
+        layerSets.put(BakedTextureIndex.BAKED_LEFT_WING, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_WING, 512, 512, false, new BakeLayer[]{new BakeLayer("wing_fabric", null, false, 0, false, false, true, AvatarTextureFaceIndex.TEX_LEFT_WING_BAKE, false, null, false, new int[0])}, new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_RIGHT_WING, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_WING, 512, 512, false, new BakeLayer[]{new BakeLayer("wing_fabric", null, false, 0, false, false, true, AvatarTextureFaceIndex.TEX_RIGHT_WING_BAKE, false, null, false, new int[0])}, new BakeLayer[0]));
+        
+        // Bento mesh bakes - wings normal maps
+        layerSets.put(BakedTextureIndex.BAKED_LEFT_WING_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_WING_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_RIGHT_WING_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_WING_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        
+        // Bento mesh bakes - tail
+        layerSets.put(BakedTextureIndex.BAKED_TAIL, new BakeLayerSet(BakedTextureIndex.BAKED_TAIL, 512, 512, false, new BakeLayer[]{new BakeLayer("tail_fabric", null, false, 0, false, false, true, AvatarTextureFaceIndex.TEX_TAIL_BAKE, false, null, false, new int[0])}, new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_TAIL_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_TAIL_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        
+        // Bento mesh bakes - hindlimbs
+        layerSets.put(BakedTextureIndex.BAKED_LEFT_HINDLIMB, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_HINDLIMB, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_RIGHT_HINDLIMB, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_HINDLIMB, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_LEFT_HINDLIMB_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_HINDLIMB_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_RIGHT_HINDLIMB_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_HINDLIMB_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        
+        // Additional PBR specular for limbs
+        layerSets.put(BakedTextureIndex.BAKED_LEFT_ARM_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_ARM_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_RIGHT_ARM_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_ARM_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_LEFT_LEG_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_LEG_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_RIGHT_LEG_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_LEG_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        
+        // PBR shiny maps (new SL material system)
+        layerSets.put(BakedTextureIndex.BAKED_HEAD_SHINY, new BakeLayerSet(BakedTextureIndex.BAKED_HEAD_SHINY, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_UPPER_SHINY, new BakeLayerSet(BakedTextureIndex.BAKED_UPPER_SHINY, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
+        layerSets.put(BakedTextureIndex.BAKED_LOWER_SHINY, new BakeLayerSet(BakedTextureIndex.BAKED_LOWER_SHINY, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
     }
 }
