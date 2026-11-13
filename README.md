@@ -1,108 +1,99 @@
-# Lumiya — Second Life Viewer for Android (Decompiled Resources)
+# Lumiya Viewer (64-Bit `arm64-v8a` Modernization Project)
 
-This repository contains the extracted and decompiled resources from **Lumiya** (version 3.4.2), a Third-party Second Life virtual world viewer client for Android. Lumiya was discontinued, and these resources have been open-sourced for archival and research purposes.
+**Package**: `com.lumiyaviewer.lumiya`  
+**Base Version**: `3.4.2` (`versionCode 66`)  
+**Minimum Android OS**: Android 8.0 Oreo (`minSdkVersion 26`)  
+**Target ABI**: Pure 64-bit ARM (`arm64-v8a`)
 
-## About Lumiya
+---
 
-Lumiya was a mobile Second Life viewer for Android that allowed users to explore the Second Life virtual world, manage their avatar, chat with other users, and interact with the in-world environment from a mobile device. It supported features such as 3D rendering via OpenGL ES, Google Cardboard VR mode, inventory management, group communication, and Windlight environment presets.
+## 1. Architecture & 64-Bit (`arm64-v8a`) Compatibility
 
-## Repository Structure
+Both the compiled native libraries (`lib/arm64-v8a/`) and the Java/JNI layer are 64-bit (`arm64-v8a`) compatible. All 32-bit (`armeabi-v7a`, `armeabi`, `x86`, `mips`) and non-ARM64 binaries have been removed to keep the project strictly 64-bit `arm64-v8a`.
 
-```
-.
-├── assets/
-│   ├── anims/          # Avatar animation files (BVH-derived binary format, 27 animations)
-│   ├── character/      # 3D avatar mesh models in LBM format
-│   │   ├── avatar_eye.lbm
-│   │   ├── avatar_head.lbm
-│   │   └── avatar_skirt.lbm
-│   ├── shaders/        # GLSL ES shader programs for 3D rendering
-│   │   ├── sky.vsh / sky.fsh           # Sky dome rendering
-│   │   ├── sky_no_clouds.fsh           # Sky without clouds
-│   │   ├── stars.vsh / stars.fsh       # Starfield rendering
-│   │   ├── water.vsh                   # Water surface rendering
-│   │   ├── rigged_mesh.vsh             # Skinned/rigged avatar mesh rendering
-│   │   ├── prim.vsh                    # Primitive object rendering
-│   │   ├── raw.vsh                     # Raw geometry rendering
-│   │   ├── quad.vsh / quad.fsh         # Fullscreen quad rendering
-│   │   └── external_texture.vsh        # External texture rendering
-│   ├── tga/            # TGA alpha-channel textures for avatar clothing/body parts
-│   └── windlight/      # Windlight environment preset files (LLSD XML format)
-│       ├── A-6PM.xml   # Evening lighting preset
-│       └── A-9PM.xml   # Night lighting preset
-├── lib/                # Native shared libraries (.so) for multiple CPU architectures
-│   ├── armeabi/        # ARMv5/v6 (libopenjpeg.so)
-│   ├── armeabi-v7a/    # ARMv7 (libgvr.so)
-│   ├── mips/
-│   ├── mips64/
-│   ├── x86/            # x86 (libgvr.so, libopenjpeg.so)
-│   └── x86_64/
-├── res/                # Compiled Android resources
-│   ├── layout/         # Activity and fragment XML layouts (86 files)
-│   ├── drawable/       # Drawable assets (images, shape drawables)
-│   ├── menu/           # Menu definition XML files
-│   ├── anim/           # View animation XML definitions
-│   ├── animator/       # Property animator XML definitions
-│   ├── color/          # Color state list definitions
-│   └── xml/            # Preference screen XML definitions
-├── resources.arsc      # Compiled Android resource table (4706 string entries)
-├── resources.zip       # Zip archive of compiled resources
-└── sources.zip         # Zip archive of decompiled source files
-```
+### Native Libraries (`lib/arm64-v8a/`)
+| Library | Architecture | Size | Purpose | ELF Alignment |
+| :--- | :--- | :--- | :--- | :--- |
+| `libopenjpeg.so` | 64-bit ARM (`EM_AARCH64`) | 196.9 KB | JPEG2000 (`.j2c`) texture decoding, DXT1/ETC1 compression & terrain heightmaps (20 JNI exports) | `0x10000` (64 KB aligned — passes Android 15+ 16 KB page check) |
+| `librawbuf.so` | 64-bit ARM (`EM_AARCH64`) | 9.8 KB | Native off-heap memory buffers for OpenGL vertex/index arrays (8 JNI exports) | `0x10000` (64 KB aligned — passes Android 15+ 16 KB page check) |
+| `libgvr.so` | 64-bit ARM (`EM_AARCH64`) | 1.83 MB | Google VR / Cardboard head-tracking & lens distortion | `0x1000` (4 KB aligned) |
 
-## Native Libraries
+### Java JNI Layer
+- `com.lumiyaviewer.lumiya.openjpeg.OpenJPEG`: Stores memory-mapped addresses and sizes as 64-bit `long` (`mmappedAddr`, `mmappedSize`) and passes direct `java.nio.ByteBuffer` references to JNI.
+- `com.lumiyaviewer.rawbuffers.DirectByteBuffer`: Uses JNI `NewDirectByteBuffer` / `GetDirectBufferAddress` on `ByteBuffer` instances, storing 64-bit pointers safely inside `Buffer.address`.
 
-| Library | Purpose |
-|---|---|
-| `libgvr.so` | Google VR (Cardboard) SDK — enables stereoscopic VR rendering mode |
-| `libopenjpeg.so` | OpenJPEG — JPEG 2000 image codec used by Second Life for textures |
+---
 
-Libraries are provided for the following ABI targets: `armeabi`, `armeabi-v7a`, `mips`, `mips64`, `x86`, `x86_64`.
+## 2. What is Broken (Runtime & Source Blockers)
 
-## Shaders
+### A. 3D Mesh Objects & Mesh Avatars Never Load (`GetMesh` Deadlock)
+- **Files**: `SLCaps.java`, `MeshCache.java`
+- **Root Cause**: Lumiya requests the legacy `GetMesh` capability and lacks `GetMesh2`. When a simulator only returns `GetMesh2` (or disables `GetMesh`), `getMeshCapURL()` returns `null` and `MeshCache.java` blocks indefinitely in `capURLlock.wait()`.
 
-The GLSL ES shaders implement the Windlight atmospheric rendering system used by Second Life:
+### B. Inventory Loading Fails — Cascading into Broken Outfits & Avatar Appearance
+- **Files**: `SLInventory.java`, `SLInventoryHTTPFetchRequest.java`, `SLAvatarAppearance.java`
+- **Root Cause**:
+  1. `SLInventory` requests `FetchInventoryDescendents2` and falls back to `SLInventoryUDPFetchRequest` (`FetchInventoryDescendents` over UDP, which Linden Lab permanently disabled).
+  2. Modern Second Life uses **AISv3 (`InventoryAPIv3`)** and updated capability endpoints.
+  3. **Cascading Effect**: `SLAvatarAppearance` waits for the **Current Outfit Folder (COF, `typeDefault == 46`)** to finish loading (`cofReady = true`) before running `ForceUpdateAppearance()` or `RequestServerRebake()` (`UpdateAvatarAppearance`). When inventory fails, `cofReady` stays `false`, preventing avatar appearance and attachment syncing.
 
-- **Sky shaders** — Atmosphere scattering simulation with cloud noise, haze, and horizon effects
-- **Star shaders** — Procedural starfield for nighttime rendering
-- **Water shaders** — Reflective water surface
-- **Rigged mesh shaders** — GPU skinning with up to 4 bone influences per vertex, diffuse lighting
-- **Primitive shaders** — Basic object rendering
+### C. Texture Fetching (UDP Disabled by Linden Lab)
+- **Files**: `SLTextureFetcher.java`, `TextureCompressedCache.java`, `SLHTTPSConnection.java`
+- **Root Cause**: Second Life disabled UDP `RequestImage` / `ImageData` / `ImagePacket` transfers in favor of HTTP CDN downloads via the `GetTexture` capability.
 
-## Windlight Environment Presets
+### D. AWS Cloud Migration Issues (Hardcoded Dead IPs & Hostname Rewriting)
+- **Files**: `SLHTTPSConnection.java`, `SLCaps.java`
+- **Root Cause**:
+  - `SLHTTPSConnection` uses a custom `SLDNS` resolver with a hardcoded fallback IP `216.82.57.58` for `login.agni.lindenlab.com` (decommissioned datacenter IP prior to Linden Lab's 2020 AWS migration).
+  - `SLCaps.repairCapabilityURL` rewrites unqualified simulator hostnames to `sim*.agni.lindenlab.com` instead of AWS `simhost-*.agni.secondlife.io`.
 
-The `assets/windlight/` directory contains LLSD (Linden Lab Structured Data) XML files defining sky/atmosphere parameters including ambient color, atmospheric scattering coefficients (`blue_density`, `blue_horizon`), cloud properties, sun angle, and fog settings.
+### E. Missing "Bakes on Mesh" (BoM) & Universal Wearable Support
+- **Files**: `BakedTextureIndex.java`, `AvatarTextureFaceIndex.java`, `SLWearableType.java`
+- **Root Cause**:
+  - Bento skeleton support (all 133 bones in `SLSkeletonBoneID.java` and 55 attachment points in `SLAttachmentPoint.java`) is already present.
+  - **Bakes on Mesh (BoM)** is missing: `BakedTextureIndex.java` only has the original 6 channels (`Head`, `Upper`, `Lower`, `Eyes`, `Skirt`, `Hair`) and lacks the 5 BoM channels (`LeftArm`, `LeftLeg`, `Aux1`, `Aux2`, `Aux3`), Universal wearable types, and magic BoM texture UUID mapping on mesh attachments.
 
-## Avatar Assets
+### F. Dead External Plugins (Voice & Google Drive Sync)
+- **Voice Chat** (`SLVoice.java`): Relies on external plugin `com.lumiyaviewer.lumiya.voice` (unavailable on Google Play; Second Life is transitioning to WebRTC voice).
+- **Cloud Sync** (`DriveSyncService.java`): Relies on external plugin `com.lumiyaviewer.lumiya.cloud` and the deprecated Google Drive Android API.
 
-The `assets/character/` directory holds avatar mesh data in LBM (Linden Binary Mesh) format for the head, eyes, and skirt. The `assets/tga/` directory contains alpha-channel TGA textures used for clothing layer blending (collar, sleeves, skirt slits, highlights, etc.).
+### G. 36 JADX Un-decompiled Methods in `sources/`
+- 36 methods across 36 Lumiya classes failed JADX control-flow recovery during the initial export and contain `throw new UnsupportedOperationException("Method not decompiled: ...")`.
+- Full bytecode for all 36 methods is preserved in `base.apk` inside `Lumiya_com,lumiyaviewer,lumiya_3,4,2.apks` (`classes.dex`) and will be reconstructed in Phase 1.
 
-## App Features (from UI layouts)
+---
 
-Analysis of the resource layouts reveals the following major UI screens and features:
+## 3. What is Outdated
 
-- **Login & account management** — Multi-account support
-- **3D world view** — OpenGL ES viewport with HUD controls
-- **VR / Cardboard mode** — Stereoscopic rendering layout (`cardboard_layout.xml`)
-- **Inventory management** — Folder/item browser with search
-- **Outfit management** — Current outfit viewer and editor
-- **Avatar profile & appearance** — Asset info panels
-- **Group management** — Group info, roles, permissions, member lists
-- **Instant messaging & chat** — Chat history, nearby chat, IM threads
-- **Minimap** — Nearby user map overlay
-- **Notecard editor** — In-world notecard reading/editing
-- **Parcel/land information** — Object popups and location info
-- **Mute list management**
-- **Transaction log** — L$ transaction history
-- **Notifications** — Local and IM notification preferences
+1. **Android Target SDK & Manifest Rules (`AndroidManifest.xml`)**:
+   - Minimum SDK is now set to **API 26 (Android 8.0)**.
+   - Raising `targetSdkVersion` to modern Android (API 33–35) requires `android:exported="true|false"` on components with `<intent-filter>`, `PendingIntent.FLAG_IMMUTABLE`, `foregroundServiceType` on `GridConnectionService` and `StreamingMediaService`, `RECEIVER_NOT_EXPORTED` on `registerReceiver()`, and Scoped Storage updates.
+2. **Bundled Decompiled Third-Party Libraries in `sources/`**:
+   - 1,704 of the 2,996 Java files in `sources/` are decompiled third-party libraries (`android.support.*`, `com.google.common.*`, `com.google.gson.*`, `okhttp3.*`, `okio.*`, `butterknife.*`, `de.greenrobot.dao.*`, `com.google.vr.*`, `com.astuetz.*`, `com.nineoldandroids.*`, `uk.co.senab.photoview.*`), while 1,292 files are Lumiya's own code (`com.lumiyaviewer.*`).
+3. **3D Graphics & Environment Shaders**:
+   - Uses OpenGL ES 2.0 / 3.0 shaders with static Windlight XML presets (`assets/windlight/`) rather than EEP (Extended Environment Project) and glTF / PBR materials.
+4. **Predefined Grid List (`res/values/arrays.xml`)**:
+   - Lists defunct OpenSim grids (`Inworldz`, `Avination`, `New World Grid`) and plain `http://` URLs.
 
-## License
+---
 
-This repository contains decompiled resources from the Lumiya application. Lumiya was developed by Mako Cederstrom and published under the package name `com.lumiyaviewer.lumiya`. These resources are shared for archival and research purposes. All original copyrights remain with their respective owners.
+## 4. Four-Phase Modernization Roadmap
 
-## References
+### Phase 1: Clean Gradle Build (`minSdk 26`, `arm64-v8a`) & Recover 36 Decompilation Errors
+1. Set up the Android Gradle build system (`settings.gradle`, `build.gradle`, `gradle.properties`, `gradlew`) configured for `minSdkVersion 26` and `abiFilters 'arm64-v8a'`.
+2. Replace decompiled third-party libraries in `sources/` with clean Maven/Gradle dependencies (or resolve duplicate class conflicts) and fix JADX resource compilation issues in `res/`.
+3. Reconstruct all 36 un-decompiled methods in `sources/com/lumiyaviewer/` from `base.apk` (`classes.dex`) and fix JADX lambda/synthetic syntax artifacts so the full project compiles into a working `arm64-v8a` APK.
 
-- [Second Life](https://secondlife.com/) — the virtual world platform Lumiya connected to
-- [Linden Lab](https://www.lindenlab.com/) — creators of Second Life
-- [OpenJPEG](https://www.openjpeg.org/) — open-source JPEG 2000 codec
-- [Google VR SDK](https://developers.google.com/vr) — Google Cardboard/Daydream VR platform
+### Phase 2: Fix Broken Second Life Protocol & Capabilities
+1. **Mesh Loading**: Add `GetMesh2` capability support in `SLCaps.java` and eliminate the infinite wait deadlock in `MeshCache.java`.
+2. **Inventory & COF Loading**: Update `SLInventory.java` and `SLInventoryHTTPFetchRequest.java` to support modern Second Life inventory capabilities (`FetchInventoryDescendents2` / `InventoryAPIv3` AISv3) so inventory and the Current Outfit Folder (`cofReady`) load reliably.
+3. **Networking & HTTPS**: Remove the dead `216.82.57.58` IP fallback and outdated `sim*.agni.lindenlab.com` URL rewriting in `SLHTTPSConnection.java` and `SLCaps.java`, and ensure reliable HTTP `GetTexture` CDN fetching.
+
+### Phase 3: Add Bakes on Mesh (BoM) & Modern Avatar Support
+1. Extend `BakedTextureIndex.java` and `AvatarTextureFaceIndex.java` with the 5 BoM channels (`LeftArm`, `LeftLeg`, `Aux1`, `Aux2`, `Aux3`) and Universal wearable types (`SLWearableType.java`).
+2. Map BoM magic bake texture UUIDs onto mesh attachments so mesh bodies and heads display baked skin, tattoo, and clothing layers properly.
+
+### Phase 4: Android OS Modernization
+1. Update `AndroidManifest.xml` (`android:exported`, `foregroundServiceType`, `usesCleartextTraffic="true"` for HTTP OpenSim grids, `POST_NOTIFICATIONS`).
+2. Add `FLAG_IMMUTABLE` to `PendingIntent` calls and modernize cache directory selection in `GlobalOptions.java`.
+3. Update the predefined grids list in `res/values/arrays.xml`.
