@@ -1,8 +1,6 @@
 package com.lumiyaviewer.lumiya.slproto.avatar;
 
 /* JADX INFO: loaded from: classes.dex */
-// Updated for modern Second Life Bento and PBR support
-// Now supports 81 texture face indices (was 32)
 public enum AvatarTextureFaceIndex {
     TEX_HEAD_BODYPAINT("head"),
     TEX_UPPER_SHIRT("upper"),
@@ -32,62 +30,7 @@ public enum AvatarTextureFaceIndex {
     TEX_HAIR_ALPHA("hair"),
     TEX_HEAD_TATTOO("head"),
     TEX_UPPER_TATTOO("upper"),
-    TEX_LOWER_TATTOO("lower"),
-    TEX_HEAD_PHYSICS_BAKE("head"),
-    TEX_UPPER_PHYSICS_BAKE("upper"),
-    TEX_LOWER_PHYSICS_BAKE("lower"),
-    TEX_LEFT_ARM_BAKE("upper"),
-    TEX_RIGHT_ARM_BAKE("upper"),
-    TEX_LEFT_LEG_BAKE("lower"),
-    TEX_RIGHT_LEG_BAKE("lower"),
-    TEX_SPINE_BAKE("lower"),
-    TEX_PELVIS_BAKE("lower"),
-    TEX_HEAD_NORMAL("head"),
-    TEX_UPPER_NORMAL("upper"),
-    TEX_LOWER_NORMAL("lower"),
-    TEX_LEFT_ARM_NORMAL("upper"),
-    TEX_RIGHT_ARM_NORMAL("upper"),
-    TEX_LEFT_LEG_NORMAL("lower"),
-    TEX_RIGHT_LEG_NORMAL("lower"),
-    TEX_SPINE_NORMAL("lower"),
-    TEX_PELVIS_NORMAL("lower"),
-    TEX_HEAD_SPECULAR("head"),
-    TEX_UPPER_SPECULAR("upper"),
-    TEX_LOWER_SPECULAR("lower"),
-    // Bento mesh texture indices - hands
-    TEX_LEFT_HAND_BAKE("upper"),
-    TEX_RIGHT_HAND_BAKE("upper"),
-    TEX_LEFT_HAND_NORMAL("upper"),
-    TEX_RIGHT_HAND_NORMAL("upper"),
-    // Bento mesh texture indices - wings
-    TEX_LEFT_WING_BAKE("upper"),
-    TEX_RIGHT_WING_BAKE("upper"),
-    TEX_LEFT_WING_NORMAL("upper"),
-    TEX_RIGHT_WING_NORMAL("upper"),
-    // Bento mesh texture indices - tail
-    TEX_TAIL_BAKE("lower"),
-    TEX_TAIL_NORMAL("lower"),
-    // Bento mesh texture indices - hindlimbs
-    TEX_LEFT_HINDLIMB_BAKE("lower"),
-    TEX_RIGHT_HINDLIMB_BAKE("lower"),
-    TEX_LEFT_HINDLIMB_NORMAL("lower"),
-    TEX_RIGHT_HINDLIMB_NORMAL("lower"),
-    // Bento face mesh textures
-    TEX_FACE_JAW_BAKE("head"),
-    TEX_FACE_CHIN_BAKE("head"),
-    TEX_FACE_NOSE_BAKE("head"),
-    TEX_FACE_TONGUE_BAKE("head"),
-    // PBR gloss maps (extending specular for more regions)
-    TEX_LEFT_ARM_SPECULAR("upper"),
-    TEX_RIGHT_ARM_SPECULAR("upper"),
-    TEX_LEFT_LEG_SPECULAR("lower"),
-    TEX_RIGHT_LEG_SPECULAR("lower"),
-    TEX_LEFT_HAND_SPECULAR("upper"),
-    TEX_RIGHT_HAND_SPECULAR("upper"),
-    // Additional PBR - shiny maps (new SL material system)
-    TEX_HEAD_SHINY("head"),
-    TEX_UPPER_SHINY("upper"),
-    TEX_LOWER_SHINY("lower");
+    TEX_LOWER_TATTOO("lower");
 
     private String bakedTextureName;
 

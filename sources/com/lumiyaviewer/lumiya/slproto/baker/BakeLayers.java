@@ -9,8 +9,6 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /* JADX INFO: loaded from: classes.dex */
-// Updated for modern Second Life Bento and PBR support
-// Now supports 41 baked texture layer sets (was 6)
 public class BakeLayers {
     public static Map<BakedTextureIndex, BakeLayerSet> layerSets = new EnumMap(BakedTextureIndex.class);
 
@@ -21,87 +19,5 @@ public class BakeLayers {
         layerSets.put(BakedTextureIndex.BAKED_LOWER, new BakeLayerSet(BakedTextureIndex.BAKED_LOWER, 512, 512, true, new BakeLayer[]{new BakeLayer("lower body bump base", null, true, -8355712, true, false, false, null, false, null, false, new int[0]), new BakeLayer("base_lowerbody bump", null, false, 0, true, false, false, null, false, "bump_lowerbody_base.tga", false, new int[]{878}), new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0]), new BakeLayer("shadow", null, false, 0, false, false, false, null, false, "lowerbody_shading_alpha.tga", true, new int[]{160}), new BakeLayer("highlight", null, false, 0, false, false, false, null, false, "lowerbody_highlights_alpha.tga", true, new int[]{161}), new BakeLayer("toenails", null, false, 0, false, false, false, null, false, "lowerbody_color.tga", false, new int[0]), new BakeLayer("lower_bodypaint", null, false, 0, false, false, false, AvatarTextureFaceIndex.TEX_LOWER_BODYPAINT, false, null, false, new int[0]), new BakeLayer("freckles lower", null, true, -2146160776, false, false, false, null, false, null, false, new int[]{777}), new BakeLayer("lower_tattoo", null, false, 0, false, false, false, AvatarTextureFaceIndex.TEX_LOWER_TATTOO, false, null, false, new int[]{1068, 1069, 1070}), new BakeLayer("lower_underpants bump", null, true, -8355712, true, false, false, AvatarTextureFaceIndex.TEX_LOWER_UNDERPANTS, true, null, false, new int[]{1055, 1057}), new BakeLayer("lower_underpants", null, false, 0, false, false, false, AvatarTextureFaceIndex.TEX_LOWER_UNDERPANTS, false, null, false, new int[]{824, 825, 826, 1054, 1056}), new BakeLayer("lower_socks bump", null, true, -8355712, true, false, false, AvatarTextureFaceIndex.TEX_LOWER_SOCKS, true, null, false, new int[]{1051}), new BakeLayer("lower_socks", null, false, 0, false, false, false, AvatarTextureFaceIndex.TEX_LOWER_SOCKS, false, null, false, new int[]{818, 819, 820, 1050}), new BakeLayer("lower_shoes bump", null, true, -8355712, true, false, false, AvatarTextureFaceIndex.TEX_LOWER_SHOES, true, null, false, new int[]{1053}), new BakeLayer("lower_shoes", null, false, 0, false, false, false, AvatarTextureFaceIndex.TEX_LOWER_SHOES, false, null, false, new int[]{812, 813, 817, 1052}), new BakeLayer("lower_clothes_shadow", null, false, 0, false, false, false, AvatarTextureFaceIndex.TEX_LOWER_PANTS, false, null, false, new int[]{913, 914, 915}), new BakeLayer("lower_pants base bump", null, true, -8355712, true, false, false, AvatarTextureFaceIndex.TEX_LOWER_PANTS, true, null, false, new int[]{1035, 1036}), new BakeLayer("lower_pants bump", null, false, 0, true, false, false, AvatarTextureFaceIndex.TEX_LOWER_PANTS, true, "bump_pants_wrinkles.tga", false, new int[]{869, PointerIconCompat.TYPE_TOP_LEFT_DIAGONAL_DOUBLE_ARROW, 1018}), new BakeLayer("lower_pants", null, false, 0, false, false, false, AvatarTextureFaceIndex.TEX_LOWER_PANTS, false, null, false, new int[]{806, 807, 808, 614, 615}), new BakeLayer("lower_jacket base bump", null, true, -8355712, true, false, false, AvatarTextureFaceIndex.TEX_LOWER_JACKET, true, null, false, new int[]{1033, 1034}), new BakeLayer("lower_jacket bump", null, false, 0, true, false, false, AvatarTextureFaceIndex.TEX_LOWER_JACKET, true, "bump_pants_wrinkles.tga", false, new int[]{876, 1027, 1028}), new BakeLayer("lower_jacket", null, false, 0, false, false, false, AvatarTextureFaceIndex.TEX_LOWER_JACKET, false, null, false, new int[]{809, 810, 811, 621, 623})}, new BakeLayer[]{new BakeLayer("lower alpha", null, false, 0, false, true, false, AvatarTextureFaceIndex.TEX_LOWER_ALPHA, false, null, false, new int[0])}));
         layerSets.put(BakedTextureIndex.BAKED_EYES, new BakeLayerSet(BakedTextureIndex.BAKED_EYES, 128, 128, true, new BakeLayer[]{new BakeLayer("whites", null, false, 0, false, false, false, null, false, "eyewhite.tga", false, new int[0]), new BakeLayer("iris", SLAvatarGlobalColor.eye_color, false, 0, false, false, false, AvatarTextureFaceIndex.TEX_EYES_IRIS, false, null, false, new int[0])}, new BakeLayer[]{new BakeLayer("eyes alpha", null, false, 0, false, true, false, AvatarTextureFaceIndex.TEX_EYES_ALPHA, false, null, false, new int[0])}));
         layerSets.put(BakedTextureIndex.BAKED_SKIRT, new BakeLayerSet(BakedTextureIndex.BAKED_SKIRT, 512, 512, false, new BakeLayer[]{new BakeLayer("skirt_fabric", null, false, 0, false, false, true, AvatarTextureFaceIndex.TEX_SKIRT, false, null, false, new int[]{921, 922, 923}), new BakeLayer("skirt_fabric_alpha", null, false, 0, false, false, false, null, false, null, false, new int[]{858, 859, 860, 861, 862})}, new BakeLayer[0]));
-        
-        // Bento mesh parts - left arm
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_ARM, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_ARM, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0]), new BakeLayer("shadow", null, false, 0, false, false, false, null, false, "upperbody_shading_alpha.tga", true, new int[0]), new BakeLayer("highlight", null, false, 0, false, false, false, null, false, "upperbody_highlights_alpha.tga", true, new int[0])}, new BakeLayer[0]));
-        
-        // Bento mesh parts - right arm
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_ARM, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_ARM, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0]), new BakeLayer("shadow", null, false, 0, false, false, false, null, false, "upperbody_shading_alpha.tga", true, new int[0]), new BakeLayer("highlight", null, false, 0, false, false, false, null, false, "upperbody_highlights_alpha.tga", true, new int[0])}, new BakeLayer[0]));
-        
-        // Bento mesh parts - left leg
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_LEG, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_LEG, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0]), new BakeLayer("shadow", null, false, 0, false, false, false, null, false, "lowerbody_shading_alpha.tga", true, new int[0]), new BakeLayer("highlight", null, false, 0, false, false, false, null, false, "lowerbody_highlights_alpha.tga", true, new int[0])}, new BakeLayer[0]));
-        
-        // Bento mesh parts - right leg
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_LEG, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_LEG, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0]), new BakeLayer("shadow", null, false, 0, false, false, false, null, false, "lowerbody_shading_alpha.tga", true, new int[0]), new BakeLayer("highlight", null, false, 0, false, false, false, null, false, "lowerbody_highlights_alpha.tga", true, new int[0])}, new BakeLayer[0]));
-        
-        // Bento mesh parts - spine
-        layerSets.put(BakedTextureIndex.BAKED_SPINE, new BakeLayerSet(BakedTextureIndex.BAKED_SPINE, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0]), new BakeLayer("shadow", null, false, 0, false, false, false, null, false, "upperbody_shading_alpha.tga", true, new int[0]), new BakeLayer("highlight", null, false, 0, false, false, false, null, false, "upperbody_highlights_alpha.tga", true, new int[0])}, new BakeLayer[0]));
-        
-        // Bento mesh parts - pelvis
-        layerSets.put(BakedTextureIndex.BAKED_PELVIS, new BakeLayerSet(BakedTextureIndex.BAKED_PELVIS, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0]), new BakeLayer("shadow", null, false, 0, false, false, false, null, false, "lowerbody_shading_alpha.tga", true, new int[0]), new BakeLayer("highlight", null, false, 0, false, false, false, null, false, "lowerbody_highlights_alpha.tga", true, new int[0])}, new BakeLayer[0]));
-        
-        // Physics bakes - head (placeholder for physics simulations)
-        layerSets.put(BakedTextureIndex.BAKED_HEAD_PHYSICS, new BakeLayerSet(BakedTextureIndex.BAKED_HEAD_PHYSICS, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "head_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
-        
-        // Physics bakes - upper body (placeholder for physics simulations)
-        layerSets.put(BakedTextureIndex.BAKED_UPPER_PHYSICS, new BakeLayerSet(BakedTextureIndex.BAKED_UPPER_PHYSICS, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
-        
-        // Physics bakes - lower body (placeholder for physics simulations)
-        layerSets.put(BakedTextureIndex.BAKED_LOWER_PHYSICS, new BakeLayerSet(BakedTextureIndex.BAKED_LOWER_PHYSICS, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
-        
-        // Normal maps - head (placeholder for PBR normal maps)
-        layerSets.put(BakedTextureIndex.BAKED_HEAD_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_HEAD_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Normal maps - upper body (placeholder for PBR normal maps)
-        layerSets.put(BakedTextureIndex.BAKED_UPPER_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_UPPER_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Normal maps - lower body (placeholder for PBR normal maps)
-        layerSets.put(BakedTextureIndex.BAKED_LOWER_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_LOWER_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Specular maps - head (placeholder for PBR specular maps)
-        layerSets.put(BakedTextureIndex.BAKED_HEAD_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_HEAD_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Specular maps - upper body (placeholder for PBR specular maps)
-        layerSets.put(BakedTextureIndex.BAKED_UPPER_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_UPPER_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Specular maps - lower body (placeholder for PBR specular maps)
-        layerSets.put(BakedTextureIndex.BAKED_LOWER_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_LOWER_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Bento mesh bakes - hands
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_HAND, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_HAND, 256, 256, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_HAND, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_HAND, 256, 256, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
-        
-        // Bento mesh bakes - hands normal maps
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_HAND_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_HAND_NORMAL, 256, 256, false, new BakeLayer[0], new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_HAND_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_HAND_NORMAL, 256, 256, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Bento mesh bakes - wings
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_WING, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_WING, 512, 512, false, new BakeLayer[]{new BakeLayer("wing_fabric", null, false, 0, false, false, true, AvatarTextureFaceIndex.TEX_LEFT_WING_BAKE, false, null, false, new int[0])}, new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_WING, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_WING, 512, 512, false, new BakeLayer[]{new BakeLayer("wing_fabric", null, false, 0, false, false, true, AvatarTextureFaceIndex.TEX_RIGHT_WING_BAKE, false, null, false, new int[0])}, new BakeLayer[0]));
-        
-        // Bento mesh bakes - wings normal maps
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_WING_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_WING_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_WING_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_WING_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Bento mesh bakes - tail
-        layerSets.put(BakedTextureIndex.BAKED_TAIL, new BakeLayerSet(BakedTextureIndex.BAKED_TAIL, 512, 512, false, new BakeLayer[]{new BakeLayer("tail_fabric", null, false, 0, false, false, true, AvatarTextureFaceIndex.TEX_TAIL_BAKE, false, null, false, new int[0])}, new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_TAIL_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_TAIL_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Bento mesh bakes - hindlimbs
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_HINDLIMB, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_HINDLIMB, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_HINDLIMB, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_HINDLIMB, 512, 512, true, new BakeLayer[]{new BakeLayer("base", SLAvatarGlobalColor.skin_color, false, 0, false, false, false, null, false, "body_skingrain.tga", false, new int[0])}, new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_HINDLIMB_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_HINDLIMB_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_HINDLIMB_NORMAL, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_HINDLIMB_NORMAL, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // Additional PBR specular for limbs
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_ARM_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_ARM_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_ARM_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_ARM_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_LEFT_LEG_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_LEFT_LEG_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_RIGHT_LEG_SPECULAR, new BakeLayerSet(BakedTextureIndex.BAKED_RIGHT_LEG_SPECULAR, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        
-        // PBR shiny maps (new SL material system)
-        layerSets.put(BakedTextureIndex.BAKED_HEAD_SHINY, new BakeLayerSet(BakedTextureIndex.BAKED_HEAD_SHINY, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_UPPER_SHINY, new BakeLayerSet(BakedTextureIndex.BAKED_UPPER_SHINY, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
-        layerSets.put(BakedTextureIndex.BAKED_LOWER_SHINY, new BakeLayerSet(BakedTextureIndex.BAKED_LOWER_SHINY, 512, 512, false, new BakeLayer[0], new BakeLayer[0]));
     }
 }

@@ -269,18 +269,10 @@ public class SLAvatarAppearance extends SLModule implements SLWearable.OnWearabl
     private void ForceUpdateAppearance(boolean z) {
         this.needUpdateAppearance = true;
         if (this.caps.getCapability(SLCaps.SLCapability.UpdateAvatarAppearance) == null) {
-            // Legacy client-side baking path
-            Debug.Printf("AvatarAppearance: Using legacy client-side baking", new Object[0]);
             this.eventBus.publish(new SLBakingProgressEvent(true, false, 0));
         } else if (z) {
-            // Modern server-side baking path - force rebake
-            Debug.Printf("AvatarAppearance: Using modern server-side baking, forcing rebake", new Object[0]);
             this.lastCofUpdatedVersion = 0;
             this.currentCofAppearanceVersion = 0;
-            RequestServerRebake();
-        } else {
-            // Modern server-side baking path - normal update
-            Debug.Printf("AvatarAppearance: Using modern server-side baking", new Object[0]);
             RequestServerRebake();
         }
         StartUpdatingAppearance();
@@ -953,12 +945,8 @@ public class SLAvatarAppearance extends SLModule implements SLWearable.OnWearabl
 
     public void HandleAvatarAppearance(AvatarAppearance avatarAppearance) {
         if (avatarAppearance.AppearanceData_Fields.size() > 0) {
-            int newCofVersion = avatarAppearance.AppearanceData_Fields.get(0).CofVersion;
-            this.currentCofAppearanceVersion = newCofVersion;
-            Debug.Printf("AvatarAppearance: inventory COF %d, last updated COF %d, appearance COF %d (updated: %s)", Integer.valueOf(this.currentCofInventoryVersion), Integer.valueOf(this.lastCofUpdatedVersion), Integer.valueOf(this.currentCofAppearanceVersion), Boolean.valueOf(newCofVersion == this.lastCofUpdatedVersion));
-            if (newCofVersion == this.lastCofUpdatedVersion) {
-                Debug.Printf("AvatarAppearance: Server-side bake successfully applied", new Object[0]);
-            }
+            this.currentCofAppearanceVersion = avatarAppearance.AppearanceData_Fields.get(0).CofVersion;
+            Debug.Printf("AvatarAppearance: inventory COF %d, last updated COF %d, appearance COF %d", Integer.valueOf(this.currentCofInventoryVersion), Integer.valueOf(this.lastCofUpdatedVersion), Integer.valueOf(this.currentCofAppearanceVersion));
         }
     }
 
@@ -1201,8 +1189,6 @@ public class SLAvatarAppearance extends SLModule implements SLWearable.OnWearabl
                     }
                 }
                 this.lastCofUpdateError = false;
-                this.currentCofAppearanceVersion = i;
-                Debug.Printf("AvatarAppearance: Server-side bake completed successfully, version %d", Integer.valueOf(i));
                 return;
             } catch (Exception e) {
                 Debug.Printf("AvatarAppearance: server-side update error: [exception %s]", e.toString());

@@ -11,10 +11,8 @@ import java.nio.ByteOrder;
 import java.util.UUID;
 
 /* JADX INFO: loaded from: classes.dex */
-// Updated for modern Second Life Bento and PBR support
-// Now supports 54 texture face indices (was 32)
 public class SLTextureEntry {
-    public static final int MAX_FACES = 64;
+    public static final int MAX_FACES = 32;
     private static final SLTextureEntryFace[] emptyFaces = new SLTextureEntryFace[0];
     private static final InternPool<SLTextureEntry> pool = new InternPool<>();
     private final SLTextureEntryFace DefaultTexture;
@@ -44,7 +42,7 @@ public class SLTextureEntry {
             this.hashValue = getHashValue();
             return;
         }
-        MutableSLTextureEntryFace[] mutableSLTextureEntryFaceArr = new MutableSLTextureEntryFace[MAX_FACES];
+        MutableSLTextureEntryFace[] mutableSLTextureEntryFaceArr = new MutableSLTextureEntryFace[32];
         int[] iArr = new int[1];
         int[] iArr2 = new int[1];
         mutableSLTextureEntryFace.setTextureID(UUIDPool.getUUID(getUUID(byteBuffer)));
@@ -245,7 +243,7 @@ public class SLTextureEntry {
     }
 
     private static MutableSLTextureEntryFace CreateFace(MutableSLTextureEntryFace[] mutableSLTextureEntryFaceArr, int i, int[] iArr) {
-        if (i >= MAX_FACES) {
+        if (i >= 32) {
             return null;
         }
         if (mutableSLTextureEntryFaceArr[i] != null) {
@@ -371,7 +369,7 @@ public class SLTextureEntry {
     }
 
     public final SLTextureEntryFace GetFace(int i) {
-        if (i >= MAX_FACES) {
+        if (i >= 32) {
             return null;
         }
         if (i < this.FaceTextures.length && this.FaceTextures[i] != null) {

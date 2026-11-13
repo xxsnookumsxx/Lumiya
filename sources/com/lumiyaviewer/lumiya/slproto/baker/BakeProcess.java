@@ -132,7 +132,7 @@ public class BakeProcess implements SLTextureUploadRequest.TextureUploadComplete
     private SLTextureEntry PrepareAvatarTextureEntry() {
         UUID uploadedID;
         SLTextureEntryFace sLTextureEntryFaceCreate = SLTextureEntryFace.create(new MutableSLTextureEntryFace(-1));
-        SLTextureEntryFace[] sLTextureEntryFaceArr = new SLTextureEntryFace[AvatarTextureFaceIndex.valuesCustom().length];
+        SLTextureEntryFace[] sLTextureEntryFaceArr = new SLTextureEntryFace[32];
         for (BakedTextureIndex bakedTextureIndex : BakedTextureIndex.valuesCustom()) {
             int iOrdinal = bakedTextureIndex.getFaceIndex().ordinal();
             BakedImage bakedImage = this.bakedImages.get(bakedTextureIndex);
