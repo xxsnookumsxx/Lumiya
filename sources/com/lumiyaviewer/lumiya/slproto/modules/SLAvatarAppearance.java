@@ -304,6 +304,10 @@ public class SLAvatarAppearance extends SLModule implements SLWearable.OnWearabl
     }
 
     private void SendAgentIsNowWearing() {
+        SendAgentIsNowWearing(true);
+    }
+
+    private void SendAgentIsNowWearing(boolean markCOFDirty) {
         boolean z;
         AgentIsNowWearing agentIsNowWearing = new AgentIsNowWearing();
         agentIsNowWearing.AgentData_Field.AgentID = this.circuitInfo.agentID;
@@ -332,7 +336,9 @@ public class SLAvatarAppearance extends SLModule implements SLWearable.OnWearabl
         Debug.Log("AvatarAppearance: Sending AgentIsNowWearing, " + agentIsNowWearing.WearableData_Fields.size() + " wearables.");
         agentIsNowWearing.isReliable = true;
         SendMessage(agentIsNowWearing);
-        this.needUpdateCOF.set(true);
+        if (markCOFDirty) {
+            this.needUpdateCOF.set(true);
+        }
         UpdateCOFContents();
     }
 
@@ -405,14 +411,15 @@ public class SLAvatarAppearance extends SLModule implements SLWearable.OnWearabl
             if (map != null) {
                 hashMap2.putAll(map);
             }
+            InventoryDB database = this.userManager != null ? this.userManager.getInventoryManager().getDatabase() : null;
             boolean z3 = true;
             for (SLInventoryEntry sLInventoryEntry : data) {
                 if (sLInventoryEntry.assetType == SLAssetType.AT_LINK.getTypeCode()) {
                     if (sLInventoryEntry.invType == SLInventoryType.IT_WEARABLE.getTypeCode()) {
-                        if (!hashSet.contains(sLInventoryEntry.assetUUID)) {
+                        if (!hashSet.contains(sLInventoryEntry.assetUUID) && database != null && database.resolveLink(sLInventoryEntry) != null) {
                             linkedList.add(sLInventoryEntry.uuid);
                         }
-                    } else if (sLInventoryEntry.invType == SLInventoryType.IT_OBJECT.getTypeCode() && map != null && !map.containsKey(sLInventoryEntry.assetUUID)) {
+                    } else if (sLInventoryEntry.invType == SLInventoryType.IT_OBJECT.getTypeCode() && this.multiLayerDone && map != null && !map.containsKey(sLInventoryEntry.assetUUID) && database != null && database.resolveLink(sLInventoryEntry) != null) {
                         Debug.Printf("Attached entry %s (%s) not found in wanted attachments", sLInventoryEntry.assetUUID, sLInventoryEntry.name);
                         linkedList.add(sLInventoryEntry.uuid);
                     }
@@ -485,7 +492,7 @@ public class SLAvatarAppearance extends SLModule implements SLWearable.OnWearabl
             }
             if (WearItemList(database, linkedList, false)) {
                 Debug.Printf("AvatarAppearance: MultiLayer: had some extra layers.", new Object[0]);
-                SendAgentIsNowWearing();
+                SendAgentIsNowWearing(false);
                 StartUpdatingAppearance();
             } else {
                 Debug.Printf("AvatarAppearance: MultiLayer: no extra layers.", new Object[0]);
@@ -1240,7 +1247,7 @@ public class SLAvatarAppearance extends SLModule implements SLWearable.OnWearabl
         UpdateWearableNames();
         this.legacyAppearanceReady = true;
         ProcessMultiLayer();
-        SendAgentIsNowWearing();
+        SendAgentIsNowWearing(false);
         StartUpdatingAppearance();
     }
 

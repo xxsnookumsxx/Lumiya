@@ -125,6 +125,7 @@ public class RenderContext {
     public RiggedMeshProgram30 currentRiggedMeshProgram = null;
     private MeshRiggingData boundMeshRiggingData = null;
     private DrawableFaceTexture boundFaceTexture = null;
+    private PrimProgram boundFaceTextureProgram = null;
     public int frameCount = 0;
     private final LinkedList<GLQuery> activeOcclusionQueries = new LinkedList<>();
 
@@ -373,8 +374,9 @@ public class RenderContext {
     }
 
     public void bindFaceTexture(@Nullable DrawableFaceTexture drawableFaceTexture) {
-        if (this.boundFaceTexture != drawableFaceTexture) {
+        if (this.boundFaceTexture != drawableFaceTexture || this.boundFaceTextureProgram != this.curPrimProgram) {
             this.boundFaceTexture = drawableFaceTexture;
+            this.boundFaceTextureProgram = this.curPrimProgram;
             boolean zGLDraw = drawableFaceTexture != null ? drawableFaceTexture.GLDraw(this) : false;
             if (this.curPrimProgram != null) {
                 this.curPrimProgram.setTextureEnabled(zGLDraw);
@@ -397,6 +399,7 @@ public class RenderContext {
 
     void clearFaceTexture() {
         this.boundFaceTexture = null;
+        this.boundFaceTextureProgram = null;
     }
 
     @TargetApi(18)

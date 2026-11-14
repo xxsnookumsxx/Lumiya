@@ -56,6 +56,10 @@ public class TextureUDPTransfer {
         this.lastReceivedPacket = System.currentTimeMillis();
         try {
             if (this.nextExpectedPacket == 0 && this.outputStream == null) {
+                File parentFile = this.outputFile.getParentFile();
+                if (parentFile != null && !parentFile.exists()) {
+                    parentFile.mkdirs();
+                }
                 this.outputStream = new FileOutputStream(this.outputFile);
             }
             if (this.outputStream != null) {
@@ -91,6 +95,18 @@ public class TextureUDPTransfer {
         if (this.retries > 2) {
             return false;
         }
+        if (this.outputStream != null) {
+            try {
+                this.outputStream.close();
+            } catch (IOException e) {
+            }
+            this.outputStream = null;
+        }
+        this.outOfOrderPackets.clear();
+        this.nextExpectedPacket = 0;
+        this.gotSize = 0;
+        this.headerReceived = false;
+        this.completed = false;
         StartTransfer(sLAgentCircuit, sLCircuitInfo);
         return true;
     }

@@ -132,7 +132,7 @@ public class DrawableObject implements IntersectPickable, ResourceConsumer {
             }
             renderContext.glPushObjectScale(f, f2, f3);
             GLES10.glDepthFunc(515);
-            drawablePrim.Draw(renderContext, true, primFlexibleInfo, 3);
+            drawablePrim.Draw(renderContext, true, primFlexibleInfo, 7);
             GLES10.glDepthFunc(InputDeviceCompat.SOURCE_DPAD);
             renderContext.glPopObjectScale();
             renderContext.glObjWorldPopMatrix();

@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /* loaded from: classes.dex */
 public class SLTextureFetcher extends SLModule implements SLIdleHandler {
-    private static final int MAX_UDP_TRANSFERS = 2;
+    private static final int MAX_UDP_TRANSFERS = 4;
     private String agentAppearanceService;
     private String capURL;
     private long lastCheckForStalls;
@@ -42,7 +42,7 @@ public class SLTextureFetcher extends SLModule implements SLIdleHandler {
 
     private synchronized void RunUDPQueue() {
         SLTextureFetchRequest poll;
-        if (this.udpTransfers.size() < 2 && (poll = this.udpQueue.poll()) != null) {
+        while (this.udpTransfers.size() < MAX_UDP_TRANSFERS && (poll = this.udpQueue.poll()) != null) {
             TextureUDPTransfer textureUDPTransfer = new TextureUDPTransfer(poll.destFile, poll);
             this.udpTransfers.put(poll.textureID, textureUDPTransfer);
             textureUDPTransfer.StartTransfer(this.agentCircuit, this.circuitInfo);
@@ -81,7 +81,7 @@ public class SLTextureFetcher extends SLModule implements SLIdleHandler {
 
     @SLMessageHandler
     public void HandleImageData(ImageData imageData) {
-        SLTextureFetchRequest sLTextureFetchRequest;
+        SLTextureFetchRequest sLTextureFetchRequest = null;
         synchronized (this) {
             TextureUDPTransfer textureUDPTransfer = this.udpTransfers.get(imageData.ImageID_Field.ID);
             if (textureUDPTransfer != null) {
@@ -89,10 +89,12 @@ public class SLTextureFetcher extends SLModule implements SLIdleHandler {
                 if (textureUDPTransfer.isCompleted()) {
                     this.udpTransfers.remove(imageData.ImageID_Field.ID);
                     sLTextureFetchRequest = textureUDPTransfer.fetchReq;
+                    if (sLTextureFetchRequest != null) {
+                        sLTextureFetchRequest.outputFile = textureUDPTransfer.getOutputFile();
+                    }
                     RunUDPQueue();
                 }
             }
-            sLTextureFetchRequest = null;
         }
         if (sLTextureFetchRequest == null || sLTextureFetchRequest.onFetchComplete == null) {
             return;
@@ -116,7 +118,7 @@ public class SLTextureFetcher extends SLModule implements SLIdleHandler {
 
     @SLMessageHandler
     public void HandleImagePacket(ImagePacket imagePacket) {
-        SLTextureFetchRequest sLTextureFetchRequest;
+        SLTextureFetchRequest sLTextureFetchRequest = null;
         synchronized (this) {
             TextureUDPTransfer textureUDPTransfer = this.udpTransfers.get(imagePacket.ImageID_Field.ID);
             if (textureUDPTransfer != null) {
@@ -124,12 +126,13 @@ public class SLTextureFetcher extends SLModule implements SLIdleHandler {
                 if (textureUDPTransfer.isCompleted()) {
                     this.udpTransfers.remove(imagePacket.ImageID_Field.ID);
                     SLTextureFetchRequest sLTextureFetchRequest2 = textureUDPTransfer.fetchReq;
-                    sLTextureFetchRequest2.outputFile = textureUDPTransfer.getOutputFile();
+                    if (sLTextureFetchRequest2 != null) {
+                        sLTextureFetchRequest2.outputFile = textureUDPTransfer.getOutputFile();
+                    }
                     RunUDPQueue();
                     sLTextureFetchRequest = sLTextureFetchRequest2;
                 }
             }
-            sLTextureFetchRequest = null;
         }
         if (sLTextureFetchRequest == null || sLTextureFetchRequest.onFetchComplete == null) {
             return;

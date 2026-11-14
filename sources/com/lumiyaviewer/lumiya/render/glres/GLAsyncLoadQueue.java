@@ -1,6 +1,7 @@
 package com.lumiyaviewer.lumiya.render.glres;
 
 import android.opengl.GLES10;
+import android.opengl.GLES20;
 import android.os.SystemClock;
 import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.render.RenderContext;
@@ -93,7 +94,7 @@ public class GLAsyncLoadQueue extends GLLoadQueue implements GLLoadQueue.GLLoadH
                         GLLoadQueue.GLLoadable gLLoadableTake = GLAsyncLoadQueue.this.loadQueue.take();
                         if (TextureMemoryTracker.canAllocateMemory(gLLoadableTake.GLGetLoadSize())) {
                             gLLoadableTake.GLLoad(andSet, GLAsyncLoadQueue.this);
-                            GLES10.glFinish();
+                            GLES20.glFlush();
                             i = 0;
                         } else {
                             GLAsyncLoadQueue.this.loadQueue.offer(gLLoadableTake);

@@ -26,7 +26,10 @@ public class OpenJPEG implements GLTexture {
     /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-openjpeg-OpenJPEG$ImageFormatSwitchesValues, reason: not valid java name */
     private static /* synthetic */ int[] f5x2156f8d4 = null;
     private static final int ETC1_BYTES_PER_PIXEL = 888;
+    private static final int ALPHA_CUTOUT = 1;
+    private static final int ALPHA_SEMI_TRANSPARENT = 2;
     public int bytes_per_pixel;
+    private int cachedAlphaMode = -1;
     public int error_code;
     public int height;
     private boolean mmapped = false;
@@ -352,6 +355,7 @@ public class OpenJPEG implements GLTexture {
         if (this.rawBuffer == null || openJPEG.rawBuffer == null || this.num_components < 4 || openJPEG.num_components < 4) {
             return;
         }
+        this.cachedAlphaMode = -1;
         drawBuf(this.rawBuffer, this.width, this.height, this.num_components, openJPEG.rawBuffer, openJPEG.width, openJPEG.height, openJPEG.num_components, 0, false, true, z, false);
     }
 
@@ -359,6 +363,7 @@ public class OpenJPEG implements GLTexture {
         if (this.rawBuffer == null || openJPEG.rawBuffer == null) {
             return;
         }
+        this.cachedAlphaMode = -1;
         drawBuf(this.rawBuffer, this.width, this.height, this.num_components, openJPEG.rawBuffer, openJPEG.width, openJPEG.height, openJPEG.num_components, i, z, false, false, false);
     }
 
@@ -366,6 +371,7 @@ public class OpenJPEG implements GLTexture {
         if (this.rawBuffer == null || openJPEG.rawBuffer == null || this.num_extra_components < 1 || openJPEG.num_components < 4) {
             return;
         }
+        this.cachedAlphaMode = -1;
         drawBuf(this.rawBuffer, this.width, this.height, this.num_components, openJPEG.rawBuffer, openJPEG.width, openJPEG.height, openJPEG.num_components, 0, false, false, z2, true);
     }
 
@@ -467,11 +473,54 @@ public class OpenJPEG implements GLTexture {
         return this.width;
     }
 
+    private int getAlphaMode() {
+        int mode = this.cachedAlphaMode;
+        if (mode >= 0) {
+            return mode;
+        }
+        if (this.bytes_per_pixel == ETC1_BYTES_PER_PIXEL) {
+            mode = 0;
+        } else if (this.num_components == 1) {
+            mode = ALPHA_CUTOUT;
+        } else if (this.num_components < 4) {
+            mode = 0;
+        } else if (this.rawBuffer == null) {
+            mode = ALPHA_CUTOUT;
+        } else {
+            int stride = this.num_components;
+            int totalPixels = Math.min(this.rawBuffer.capacity() / stride, this.width * this.height);
+            int limit = totalPixels * stride;
+            int semiThreshold = Math.max(4, totalPixels / 20);
+            int semiCount = 0;
+            mode = 0;
+            for (int off = 3; off < limit; off += stride) {
+                int alpha = this.rawBuffer.get(off) & 255;
+                if (alpha < 255) {
+                    mode |= ALPHA_CUTOUT;
+                    if (alpha > 0 && alpha < 250) {
+                        semiCount++;
+                        if (semiCount > semiThreshold) {
+                            mode |= ALPHA_SEMI_TRANSPARENT;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        this.cachedAlphaMode = mode;
+        return mode;
+    }
+
     public boolean hasAlphaLayer() {
-        return this.bytes_per_pixel != ETC1_BYTES_PER_PIXEL && (this.num_components >= 4 || this.num_components == 1);
+        return (getAlphaMode() & ALPHA_CUTOUT) != 0;
+    }
+
+    public boolean hasSemiTransparentAlpha() {
+        return (getAlphaMode() & ALPHA_SEMI_TRANSPARENT) != 0;
     }
 
     public void putPixelRow(int i, int[] iArr, int i2) {
+        this.cachedAlphaMode = -1;
         int i3 = 0;
         if (this.rawBuffer != null) {
             int i4 = this.width * this.num_components * i;
@@ -507,6 +556,7 @@ public class OpenJPEG implements GLTexture {
 
     public void setComponent(int i, byte b) {
         if (this.rawBuffer != null) {
+            this.cachedAlphaMode = -1;
             setComponentBuf(this.rawBuffer, this.width, this.height, this.num_components, this.num_extra_components, i, b);
         }
     }

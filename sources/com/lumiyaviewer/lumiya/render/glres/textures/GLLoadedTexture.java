@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 /* JADX INFO: loaded from: classes.dex */
 public class GLLoadedTexture extends GLResourceTexture {
     private final boolean hasAlphaLayer;
+    private final boolean hasSemiTransparentAlpha;
     private final int height;
     private final int width;
 
@@ -27,6 +28,7 @@ public class GLLoadedTexture extends GLResourceTexture {
             GLES10.glBindTexture(3553, this.handle);
         }
         this.hasAlphaLayer = bitmap.hasAlpha();
+        this.hasSemiTransparentAlpha = false;
         this.width = bitmap.getWidth();
         this.height = bitmap.getHeight();
         renderContext.KeepTexture(bitmap);
@@ -57,6 +59,7 @@ public class GLLoadedTexture extends GLResourceTexture {
             GLES10.glBindTexture(3553, this.handle);
         }
         this.hasAlphaLayer = openJPEG.hasAlphaLayer();
+        this.hasSemiTransparentAlpha = openJPEG.hasSemiTransparentAlpha();
         this.width = openJPEG.getWidth();
         this.height = openJPEG.getHeight();
         renderContext.KeepTexture(openJPEG);
@@ -113,5 +116,9 @@ public class GLLoadedTexture extends GLResourceTexture {
 
     public boolean hasAlphaLayer() {
         return this.hasAlphaLayer;
+    }
+
+    public boolean hasSemiTransparentAlpha() {
+        return this.hasSemiTransparentAlpha;
     }
 }

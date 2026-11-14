@@ -25,9 +25,10 @@ import java.util.UUID;
 
 /* JADX INFO: loaded from: classes.dex */
 public class DrawablePrim {
-    public static final int RENDER_PASS_ALL = 3;
+    public static final int RENDER_PASS_ALL = 7;
     public static final int RENDER_PASS_OPAQUE = 1;
     public static final int RENDER_PASS_TRANSPARENT = 2;
+    public static final int RENDER_PASS_TRANSLUCENT = 4;
     private final int[] FaceColorsIDs;
     private final int FaceCount;
     private final DrawableFaceTexture[] FaceTextures;
@@ -195,11 +196,18 @@ public class DrawablePrim {
         if ((i & ViewCompat.MEASURED_STATE_MASK) == -16777216) {
             return 0;
         }
-        boolean zHasAlphaLayer = (i & ViewCompat.MEASURED_STATE_MASK) != 0;
-        if (!zHasAlphaLayer && drawableFaceTexture != null) {
-            zHasAlphaLayer = drawableFaceTexture.hasAlphaLayer();
+        if ((i & ViewCompat.MEASURED_STATE_MASK) != 0) {
+            return RENDER_PASS_TRANSLUCENT;
         }
-        return zHasAlphaLayer ? 2 : 1;
+        if (drawableFaceTexture != null) {
+            if (drawableFaceTexture.hasSemiTransparentAlpha()) {
+                return RENDER_PASS_TRANSLUCENT;
+            }
+            if (drawableFaceTexture.hasAlphaLayer()) {
+                return RENDER_PASS_TRANSPARENT;
+            }
+        }
+        return RENDER_PASS_OPAQUE;
     }
 
     private void initFaceUVMatrix(SLTextureEntryFace sLTextureEntryFace, SLTextureEntryFace sLTextureEntryFace2, float[] fArr, int i) {

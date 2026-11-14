@@ -114,7 +114,7 @@ public class DrawableHUD {
                 drawableObject.DrawHoverText(renderContext, true);
                 objectIntersectInfoPickObject = objectIntersectInfo;
             } else {
-                drawableObject.Draw(renderContext, 3);
+                drawableObject.Draw(renderContext, 7);
                 if (touchHUDEvent == null || (objectIntersectInfoPickObject = drawableObject.PickObject(renderContext, touchHUDEvent.x, touchHUDEvent.y, Float.NEGATIVE_INFINITY)) == null || (objectIntersectInfo != null && objectIntersectInfoPickObject.pickDepth >= objectIntersectInfo.pickDepth)) {
                     objectIntersectInfoPickObject = objectIntersectInfo;
                 }

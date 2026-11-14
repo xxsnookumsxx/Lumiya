@@ -534,18 +534,32 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                     }
                     renderContext.curPrimProgram = null;
                     renderContext.clearFaceTexture();
+                    boolean hasTranslucent = false;
                     for (int i4 = size - 1; i4 >= 0; i4--) {
-                        if ((iArr2[i4] & 2) != 0) {
+                        int mask = iArr2[i4];
+                        if ((mask & 2) != 0) {
                             arrayList.get(i4).Draw(renderContext, 2);
                         }
-                    }
-                    if (renderContext.hasGL30) {
-                        BoundingBox.PrepareOcclusionQueries(renderContext);
-                        Iterator it2 = arrayList.iterator();
-                        while (it2.hasNext()) {
-                            ((DrawableObject) it2.next()).TestOcclusion(renderContext, this.currentFrustrumInfo.mvpMatrix);
+                        if ((mask & 4) != 0) {
+                            hasTranslucent = true;
                         }
-                        BoundingBox.EndOcclusionQueries(renderContext);
+                    }
+                    if (hasTranslucent) {
+                        if (renderContext.hasGL20) {
+                            GLES20.glDepthMask(false);
+                        } else {
+                            GLES10.glDepthMask(false);
+                        }
+                        for (int i4 = size - 1; i4 >= 0; i4--) {
+                            if ((iArr2[i4] & 4) != 0) {
+                                arrayList.get(i4).Draw(renderContext, 4);
+                            }
+                        }
+                        if (renderContext.hasGL20) {
+                            GLES20.glDepthMask(true);
+                        } else {
+                            GLES10.glDepthMask(true);
+                        }
                     }
                     if (this.screenshotHandler != null) {
                         takeScreenshot(renderContext, this.screenshotHandler);
@@ -563,7 +577,6 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                         GLES10.glMatrixMode(5888);
                     }
                     if (renderContext.hasGL20 && renderContext.useFXAA && this.Colorbuffers != null) {
-                        GLES20.glFinish();
                         GLES20.glBindTexture(3553, this.Colorbuffers[1]);
                         GLES20.glFramebufferTexture2D(36160, 36064, 3553, this.Colorbuffers[1], 0);
                         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -673,13 +686,6 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
         this.renderThreadExecutor.runQueuedTasks();
         if (this.drawingEnabled.get() && (renderContext = this.renderContext.get()) != null) {
             long jCurrentTimeMillis = System.currentTimeMillis();
-            long j = jCurrentTimeMillis - this.previousFrameTime;
-            if (j < 33) {
-                try {
-                    Thread.sleep(33 - j);
-                } catch (InterruptedException e) {
-                }
-            }
             this.previousFrameTime = jCurrentTimeMillis;
             this.thisFrameTime = jCurrentTimeMillis - this.firstFrameTime;
             this.fpsFrameCount++;
@@ -694,9 +700,6 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
             renderContext.ClearFrameKeeps();
             renderContext.glResourceManager.Cleanup();
             renderContext.frameCount++;
-            if (renderContext.hasGL30) {
-                renderContext.processOcclusionQueries();
-            }
             renderContext.glModelResetIdentity();
             renderContext.setActiveProjectionMatrix(renderContext.projectionMatrix);
             if (this.avatarControl != null) {

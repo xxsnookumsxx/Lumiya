@@ -1,12 +1,14 @@
 package com.lumiyaviewer.lumiya.render.avatar;
 
 import android.annotation.SuppressLint;
+import android.opengl.GLES20;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.render.DrawableObject;
 import com.lumiyaviewer.lumiya.render.RenderContext;
+import com.lumiyaviewer.lumiya.render.drawable.DrawablePrim;
 import com.lumiyaviewer.lumiya.render.glres.buffers.GLLoadableBuffer;
 import com.lumiyaviewer.lumiya.slproto.avatar.BakedTextureIndex;
 import com.lumiyaviewer.lumiya.slproto.avatar.SLSkeletonBoneID;
@@ -99,18 +101,28 @@ class DrawableAttachments {
                 while (it.hasNext()) {
                     iDrawRigged30 = it.next().DrawRigged30(renderContext, 1) | iDrawRigged30;
                 }
-                if ((iDrawRigged30 & 2) != 0) {
+                if ((iDrawRigged30 & 6) != 0) {
                     renderContext.setupRiggedMeshProgram(false);
-                    Iterator<DrawableObject> it2 = this.rigged.iterator();
-                    while (it2.hasNext()) {
-                        it2.next().DrawRigged30(renderContext, 2);
+                    if ((iDrawRigged30 & 2) != 0) {
+                        Iterator<DrawableObject> it2 = this.rigged.iterator();
+                        while (it2.hasNext()) {
+                            it2.next().DrawRigged30(renderContext, 2);
+                        }
+                    }
+                    if ((iDrawRigged30 & 4) != 0) {
+                        GLES20.glDepthMask(false);
+                        Iterator<DrawableObject> it2b = this.rigged.iterator();
+                        while (it2b.hasNext()) {
+                            it2b.next().DrawRigged30(renderContext, 4);
+                        }
+                        GLES20.glDepthMask(true);
                     }
                 }
                 renderContext.clearRiggedMeshProgram();
             } else {
                 Iterator<DrawableObject> it3 = this.rigged.iterator();
                 while (it3.hasNext()) {
-                    it3.next().DrawRigged(renderContext, avatarSkeleton, 3);
+                    it3.next().DrawRigged(renderContext, avatarSkeleton, DrawablePrim.RENDER_PASS_ALL);
                 }
             }
         }
@@ -123,7 +135,7 @@ class DrawableAttachments {
                     if (drawableObject.isRiggedMesh()) {
                         z3 = true;
                     } else {
-                        drawableObject.Draw(renderContext, 3);
+                        drawableObject.Draw(renderContext, DrawablePrim.RENDER_PASS_ALL);
                     }
                 }
                 renderContext.glObjWorldPopMatrix();

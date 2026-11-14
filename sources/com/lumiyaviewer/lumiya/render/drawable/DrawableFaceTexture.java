@@ -14,6 +14,7 @@ public class DrawableFaceTexture implements ResourceConsumer, GLCleanable {
     private boolean textureRequested = false;
     private volatile GLLoadedTexture loadedTexture = null;
     private volatile boolean hasAlphaLayer = false;
+    private volatile boolean hasSemiTransparentAlpha = false;
 
     public DrawableFaceTexture(DrawableTextureParams drawableTextureParams) {
         this.drawableTextureParams = drawableTextureParams;
@@ -27,6 +28,7 @@ public class DrawableFaceTexture implements ResourceConsumer, GLCleanable {
         this.textureRequested = false;
         this.loadedTexture = null;
         this.hasAlphaLayer = false;
+        this.hasSemiTransparentAlpha = false;
     }
 
     public final boolean GLDraw(RenderContext renderContext) {
@@ -51,13 +53,19 @@ public class DrawableFaceTexture implements ResourceConsumer, GLCleanable {
             GLLoadedTexture gLLoadedTexture = (GLLoadedTexture) obj;
             this.loadedTexture = gLLoadedTexture;
             this.hasAlphaLayer = gLLoadedTexture.hasAlphaLayer();
+            this.hasSemiTransparentAlpha = gLLoadedTexture.hasSemiTransparentAlpha();
         } else if (obj == null) {
             this.loadedTexture = null;
             this.hasAlphaLayer = false;
+            this.hasSemiTransparentAlpha = false;
         }
     }
 
     boolean hasAlphaLayer() {
         return this.hasAlphaLayer;
+    }
+
+    boolean hasSemiTransparentAlpha() {
+        return this.hasSemiTransparentAlpha;
     }
 }
