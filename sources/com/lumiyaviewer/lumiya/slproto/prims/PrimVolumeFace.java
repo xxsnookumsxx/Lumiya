@@ -507,7 +507,7 @@ public class PrimVolumeFace {
             while (true) {
                 int i10 = i9;
                 if (i10 < size2 + 1) {
-                    this.vertexArray.LerpPlanarVertex(i6, vertexArray, 0, vertexArray, 1, vertexArray, 3, i8 / size2, i10 / size2, lLVector35, lLVector36, lLVector2, lLVector22);
+                    this.vertexArray.LerpPlanarVertex(i6, vertexArray, 0, vertexArray, 1, vertexArray, 3, ((float) i8) / ((float) size2), ((float) i10) / ((float) size2), lLVector35, lLVector36, lLVector2, lLVector22);
                     this.vertexArray.getNormals().set(i6, lLVector33);
                     if (i8 == 0 && i10 == 0) {
                         vector3Array2.get(i6, lLVector3);

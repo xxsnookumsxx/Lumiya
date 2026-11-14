@@ -30,7 +30,7 @@ public class LLSDDate extends LLSDNode {
     @Override // com.lumiyaviewer.lumiya.slproto.llsd.LLSDNode
     public void toBinary(DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeByte(100);
-        dataOutputStream.writeDouble(this.value.getTime() / 1000);
+        dataOutputStream.writeDouble(this.value.getTime() / 1000.0d);
     }
 
     @Override // com.lumiyaviewer.lumiya.slproto.llsd.LLSDNode

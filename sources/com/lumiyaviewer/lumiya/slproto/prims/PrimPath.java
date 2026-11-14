@@ -78,7 +78,7 @@ public class PrimPath {
         lLQuaternion2.setQuat(f22, lLVector3);
         pathPoint.rot.setMul(lLQuaternion, lLQuaternion2);
         this.Path.add(pathPoint);
-        for (float f23 = ((int) ((f21 + f20) * i)) / i; f23 < primPathParams.End; f23 += f20) {
+        for (float f23 = ((float) ((int) ((f21 + f20) * i))) / ((float) i); f23 < primPathParams.End; f23 += f20) {
             PathPoint pathPoint2 = new PathPoint();
             float f24 = 6.2831855f * f9 * f23;
             float fCos = (float) (Math.cos(f24) * ((double) PrimMath.lerp(f8, f15, f23)));

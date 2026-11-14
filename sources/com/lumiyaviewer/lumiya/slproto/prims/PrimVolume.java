@@ -249,7 +249,7 @@ public class PrimVolume {
         int iPow = (int) Math.pow(sculpt_sides(f), 2.0d);
         int i3 = (i * i2) / 4;
         int iMin = i3 > 0 ? Math.min(iPow, i3) : iPow;
-        int iMax = Math.max(iMin / Math.max((int) Math.sqrt(iMin / ((i == 0 || i2 == 0) ? 1.0f : i / i2)), 4), 4);
+        int iMax = Math.max(iMin / Math.max((int) Math.sqrt(iMin / ((i == 0 || i2 == 0) ? 1.0f : ((float) i) / ((float) i2))), 4), 4);
         this.sculptRequestedS = iMin / iMax;
         this.sculptRequestedT = iMax;
     }

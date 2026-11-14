@@ -186,7 +186,7 @@ public class PrimFlexibleInfo {
             fArr4[2] = this.sections[i5].Position.z;
             fArr4[3] = 1.0f;
             Matrix.multiplyMV(fArr4, 4, fArr3, 0, fArr4, 0);
-            float f8 = (i5 / this.NumSections) - 0.5f;
+            float f8 = (((float) i5) / ((float) this.NumSections)) - 0.5f;
             float[] fArr5 = new float[32];
             Matrix.setIdentityM(fArr5, 16);
             Matrix.translateM(fArr5, 16, fArr4[4], fArr4[5], fArr4[6] - f8);

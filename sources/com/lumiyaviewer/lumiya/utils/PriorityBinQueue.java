@@ -69,14 +69,14 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
     @Override // java.util.Collection
     public void clear() {
         this.lock.lock();
-        for (int i = 0; i < this.numBins; i++) {
-            try {
+        try {
+            for (int i = 0; i < this.numBins; i++) {
                 this.queues[i].clear();
-            } finally {
-                this.lock.unlock();
             }
+            this.allItems.clear();
+        } finally {
+            this.lock.unlock();
         }
-        this.allItems.clear();
     }
 
     @Override // java.util.concurrent.BlockingQueue, java.util.Collection
@@ -113,18 +113,18 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
     @Override // java.util.concurrent.BlockingQueue
     public int drainTo(Collection<? super T> collection) {
         this.lock.lock();
-        int i = 0;
-        for (int i2 = 0; i2 < this.numBins; i2++) {
-            try {
+        try {
+            int i = 0;
+            for (int i2 = 0; i2 < this.numBins; i2++) {
                 i += this.queues[i2].size();
                 collection.addAll(this.queues[i2]);
                 this.queues[i2].clear();
-            } finally {
-                this.lock.unlock();
             }
+            this.allItems.clear();
+            return i;
+        } finally {
+            this.lock.unlock();
         }
-        this.allItems.clear();
-        return i;
     }
 
     @Override // java.util.concurrent.BlockingQueue
@@ -170,16 +170,16 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
     public T peek() {
         T next;
         this.lock.lock();
-        for (int i = 0; i < this.numBins; i++) {
-            try {
+        try {
+            for (int i = 0; i < this.numBins; i++) {
                 if (!this.queues[i].isEmpty() && (next = this.queues[i].iterator().next()) != null) {
                     return next;
                 }
-            } finally {
-                this.lock.unlock();
             }
+            return null;
+        } finally {
+            this.lock.unlock();
         }
-        return null;
     }
 
     @Override // java.util.Queue
@@ -187,18 +187,18 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         Iterator<T> it;
         T next;
         this.lock.lock();
-        for (int i = 0; i < this.numBins; i++) {
-            try {
+        try {
+            for (int i = 0; i < this.numBins; i++) {
                 if (!this.queues[i].isEmpty() && (next = (it = this.queues[i].iterator()).next()) != null) {
                     it.remove();
                     this.allItems.remove(next);
                     return next;
                 }
-            } finally {
-                this.lock.unlock();
             }
+            return null;
+        } finally {
+            this.lock.unlock();
         }
-        return null;
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:12:0x002b, code lost:
@@ -259,16 +259,16 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
     @Override // java.util.concurrent.BlockingQueue, java.util.Collection
     public boolean remove(Object obj) {
         this.lock.lock();
-        boolean z = false;
-        for (int i = 0; i < this.numBins; i++) {
-            try {
+        try {
+            boolean z = false;
+            for (int i = 0; i < this.numBins; i++) {
                 z |= this.queues[i].remove(obj);
-            } finally {
-                this.lock.unlock();
             }
+            this.allItems.remove(obj);
+            return z;
+        } finally {
+            this.lock.unlock();
         }
-        this.allItems.remove(obj);
-        return z;
     }
 
     @Override // java.util.Collection
@@ -284,30 +284,30 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
     @Override // java.util.Collection
     public boolean retainAll(Collection<?> collection) {
         this.lock.lock();
-        boolean z = false;
-        for (int i = 0; i < this.numBins; i++) {
-            try {
+        try {
+            boolean z = false;
+            for (int i = 0; i < this.numBins; i++) {
                 z |= this.queues[i].retainAll(collection);
-            } finally {
-                this.lock.unlock();
             }
+            this.allItems.keySet().retainAll(collection);
+            return z;
+        } finally {
+            this.lock.unlock();
         }
-        this.allItems.keySet().retainAll(collection);
-        return z;
     }
 
     @Override // java.util.Collection
     public int size() {
         this.lock.lock();
-        int i = 0;
-        for (int i2 = 0; i2 < this.numBins; i2++) {
-            try {
+        try {
+            int i = 0;
+            for (int i2 = 0; i2 < this.numBins; i2++) {
                 i += this.queues[i2].size();
-            } finally {
-                this.lock.unlock();
             }
+            return i;
+        } finally {
+            this.lock.unlock();
         }
-        return i;
     }
 
     @Override // java.util.concurrent.BlockingQueue

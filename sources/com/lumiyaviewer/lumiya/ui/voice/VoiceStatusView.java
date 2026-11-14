@@ -206,7 +206,7 @@ public class VoiceStatusView extends FrameLayout {
             public void onProgressChanged(SeekBar seekBar, int i, boolean z) {
                 VoicePluginServiceConnection voicePluginServiceConnection;
                 if (z && (!VoiceStatusView.this.updatingAudioVolume)) {
-                    float max = i / seekBar.getMax();
+                    float max = ((float) i) / ((float) seekBar.getMax());
                     GridConnectionService serviceInstance = GridConnectionService.getServiceInstance();
                     if (serviceInstance == null || (voicePluginServiceConnection = serviceInstance.getVoicePluginServiceConnection()) == null) {
                         return;
@@ -273,7 +273,7 @@ public class VoiceStatusView extends FrameLayout {
             public void onProgressChanged(SeekBar seekBar, int i, boolean z) {
                 VoicePluginServiceConnection voicePluginServiceConnection;
                 if (z && (!VoiceStatusView.this.updatingAudioVolume)) {
-                    float max = i / seekBar.getMax();
+                    float max = ((float) i) / ((float) seekBar.getMax());
                     GridConnectionService serviceInstance = GridConnectionService.getServiceInstance();
                     if (serviceInstance == null || (voicePluginServiceConnection = serviceInstance.getVoicePluginServiceConnection()) == null) {
                         return;
@@ -340,7 +340,7 @@ public class VoiceStatusView extends FrameLayout {
             public void onProgressChanged(SeekBar seekBar, int i2, boolean z) {
                 VoicePluginServiceConnection voicePluginServiceConnection;
                 if (z && (!VoiceStatusView.this.updatingAudioVolume)) {
-                    float max = i2 / seekBar.getMax();
+                    float max = ((float) i2) / ((float) seekBar.getMax());
                     GridConnectionService serviceInstance = GridConnectionService.getServiceInstance();
                     if (serviceInstance == null || (voicePluginServiceConnection = serviceInstance.getVoicePluginServiceConnection()) == null) {
                         return;
@@ -408,7 +408,7 @@ public class VoiceStatusView extends FrameLayout {
             public void onProgressChanged(SeekBar seekBar, int i22, boolean z) {
                 VoicePluginServiceConnection voicePluginServiceConnection;
                 if (z && (!VoiceStatusView.this.updatingAudioVolume)) {
-                    float max = i22 / seekBar.getMax();
+                    float max = ((float) i22) / ((float) seekBar.getMax());
                     GridConnectionService serviceInstance = GridConnectionService.getServiceInstance();
                     if (serviceInstance == null || (voicePluginServiceConnection = serviceInstance.getVoicePluginServiceConnection()) == null) {
                         return;
