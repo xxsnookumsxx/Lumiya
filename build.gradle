@@ -25,8 +25,8 @@ android {
         applicationId "com.lumiyaviewer.lumiya"
         minSdkVersion 26
         targetSdkVersion 26
-        versionCode 187
-        versionName "3.4.2"
+        versionCode 500
+        versionName "5.0.0"
 
         ndk {
             abiFilters 'arm64-v8a'

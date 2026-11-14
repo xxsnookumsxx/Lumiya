@@ -1,7 +1,7 @@
 # Lumiya Viewer (64-Bit `arm64-v8a` Modernization Project)
 
 **Package**: `com.lumiyaviewer.lumiya`  
-**Base Version**: `3.4.2` (`versionCode 66`)  
+**Version**: `5.0.0` (`versionCode 500`; base `3.4.2`)  
 **Minimum Android OS**: Android 8.0 Oreo (`minSdkVersion 26`)  
 **Target ABI**: Pure 64-bit ARM (`arm64-v8a`)
 

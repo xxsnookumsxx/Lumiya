@@ -6,6 +6,6 @@ public final class BuildConfig {
     public static final String BUILD_TYPE = "release";
     public static final boolean DEBUG = false;
     public static final String FLAVOR = "gplay";
-    public static final int VERSION_CODE = 66;
-    public static final String VERSION_NAME = "3.4.2";
+    public static final int VERSION_CODE = 500;
+    public static final String VERSION_NAME = "5.0.0";
 }
