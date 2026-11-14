@@ -23,15 +23,26 @@ public class Debug {
     }
 
     public static void Log(String str) {
+        if (BuildConfig.DEBUG && str != null) {
+            Log.d(LOG_TAG, str);
+        }
     }
 
     public static void Printf(String str, Object... objArr) {
+        if (BuildConfig.DEBUG && str != null) {
+            StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[3];
+            String className = stackTraceElement.getClassName();
+            Log.d(LOG_TAG, "[" + className.substring(className.lastIndexOf(46) + 1) + "::" + stackTraceElement.getMethodName() + "] " + String.format(str, objArr));
+        }
     }
 
     public static void Warning(Throwable th) {
+        if (BuildConfig.DEBUG && th != null) {
+            Log.w(LOG_TAG, th.toString(), th);
+        }
     }
 
     public static boolean isDebugBuild() {
-        return false;
+        return BuildConfig.DEBUG;
     }
 }
