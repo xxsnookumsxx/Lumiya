@@ -232,29 +232,21 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
             SLAgentCircuit activeAgentCircuit = this.userManager.getActiveAgentCircuit();
             UUID sessionID = activeAgentCircuit != null ? activeAgentCircuit.getSessionID() : null;
             synchronized (this.chatEventLock) {
-                if (source.getSourceType() == ChatMessageSource.ChatMessageSourceType.User) {
-                    if (source instanceof ChatMessageSourceUser) {
-                        UserName load = this.userManager.getDaoSession().getUserNameDao().load(source.getSourceUUID());
-                        if (load != null) {
-                            ChatMessageSourceUser chatMessageSourceUser = (ChatMessageSourceUser) source;
-                            if (load.getDisplayName() != null) {
-                                chatMessageSourceUser.setDisplayName(load.getDisplayName());
-                            }
-                            if (load.getUserName() != null) {
-                                chatMessageSourceUser.setLegacyName(load.getUserName());
-                            }
-                            if (load.isComplete()) {
-                                z4 = true;
-                                if (!z4) {
-                                    uuid = source.getSourceUUID();
-                                }
-                            }
+                if (source.getSourceType() == ChatMessageSource.ChatMessageSourceType.User && (source instanceof ChatMessageSourceUser)) {
+                    UserName load = this.userManager.getDaoSession().getUserNameDao().load(source.getSourceUUID());
+                    if (load != null) {
+                        ChatMessageSourceUser chatMessageSourceUser = (ChatMessageSourceUser) source;
+                        if (load.getDisplayName() != null) {
+                            chatMessageSourceUser.setDisplayName(load.getDisplayName());
                         }
+                        if (load.getUserName() != null) {
+                            chatMessageSourceUser.setLegacyName(load.getUserName());
+                        }
+                        z4 = load.isComplete();
+                    } else {
                         z4 = false;
-                        if (!z4) {
-                        }
                     }
-                    uuid = null;
+                    uuid = !z4 ? source.getSourceUUID() : null;
                 } else {
                     uuid = null;
                 }

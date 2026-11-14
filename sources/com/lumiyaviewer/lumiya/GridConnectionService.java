@@ -326,8 +326,15 @@ public class GridConnectionService extends Service implements SharedPreferences.
 
     private static NotificationSettings notifySettingsByType(NotificationType notificationType) {
         switch (m13xc4a7bd01()[notificationType.ordinal()]) {
+            case 1:
+                return notifyGroup;
+            case 2:
+                return notifyLocalChat;
+            case 3:
+                return notifyPrivate;
+            default:
+                return notifyLocalChat;
         }
-        return notifyLocalChat;
     }
 
     /* JADX INFO: Access modifiers changed from: private */
@@ -588,7 +595,7 @@ public class GridConnectionService extends Service implements SharedPreferences.
         }
         builder.setOngoing(false);
         builder.setNumber(unreadNotificationInfo.totalUnreadCount());
-        builder.setContentIntent(PendingIntent.getActivity(this, R.id.unread_notify_request_code, intent, SLMoveEvents.AGENT_CONTROL_AWAY));
+        builder.setContentIntent(PendingIntent.getActivity(this, R.id.unread_notify_request_code, intent, SLMoveEvents.AGENT_CONTROL_AWAY | 67108864));
         builder.setDefaults(0);
         if (quantityString2 != null) {
             builder.setTicker(quantityString2);

@@ -112,10 +112,28 @@ Both the compiled native libraries (`lib/arm64-v8a/`) and the Java/JNI layer are
    - Resolved `IMG_USE_BAKED_*` magic UUIDs on attached mesh faces to the avatar's active baked texture UUIDs (`AvatarTextures`), automatically refreshing when avatar bakes update.
    - Implemented automatic hiding of underlying classic system avatar meshes (`MESH_ID_HAIR`, `MESH_ID_HEAD` + `MESH_ID_EYELASH`, `MESH_ID_UPPER_BODY`, `MESH_ID_LOWER_BODY`, `MESH_ID_EYEBALL_LEFT` + `MESH_ID_EYEBALL_RIGHT`, `MESH_ID_SKIRT`) when an attachment uses the corresponding `IMG_USE_BAKED_*` channel (`LLVOAvatar::updateMeshVisibility`).
 
-### Phase 4: Android OS Modernization
-1. Update `AndroidManifest.xml` (`android:exported`, `foregroundServiceType`, `usesCleartextTraffic="true"` for HTTP OpenSim grids, `POST_NOTIFICATIONS`).
-2. Add `FLAG_IMMUTABLE` to `PendingIntent` calls and modernize cache directory selection in `GlobalOptions.java`.
-3. Update the predefined grids list in `res/values/arrays.xml`.
+### Phase 4: Android OS Modernization & Codebase-Wide Decompilation Error Fixes (✅ Completed)
+1. ✅ **Manifest & Network Security (`AndroidManifest.xml`)**:
+   - Added `FOREGROUND_SERVICE`, `POST_NOTIFICATIONS`, `ACCESS_NETWORK_STATE`, and `ACCESS_WIFI_STATE` permissions; removed duplicate `READ_EXTERNAL_STORAGE`.
+   - Added `android:usesCleartextTraffic="true"` on `<application>` so HTTP OpenSim grids and HTTP simulator capabilities work on Android 9.0+ (`API 28+`).
+   - Added explicit `android:exported="true"` on launcher/intent-filter activities (`LoginActivity`, `CardboardActivity`, `TeleportSLURLActivity`) and `android:exported="false"` on all internal activities and services (`GridConnectionService`, `StreamingMediaService`).
+2. ✅ **Notifications, `PendingIntent` Immutability & App Restart (`GridConnectionService.java`, `StreamingMediaService.java`, `OnlineNotificationInfo.java`, `VoicePluginServiceConnection.java`, `CloudSyncServiceConnection.java`, `LumiyaApp.java`)**:
+   - Added `PendingIntent.FLAG_IMMUTABLE` (`67108864`) to all `PendingIntent.getActivity` and `PendingIntent.getService` calls across the app for Android 12+ (`API 31+`) compatibility.
+   - Fixed `StreamingMediaService`, `VoicePluginServiceConnection`, and `CloudSyncServiceConnection` to pass valid `NotificationChannels` channel IDs to `NotificationCompat.Builder`, preventing silent notification drops and foreground service crashes on Android 8.0+ (`API 26+`).
+   - Fixed `LumiyaApp.restartApp()` targeting `LoginActivity.class` instead of `android.app.LauncherActivity`.
+3. ✅ **Scoped Storage, Cache Selection & `FileProvider` (`GlobalOptions.java`, `UserManager.java`, `ExportChatHistoryTask.java`, `res/xml/file_paths.xml`)**:
+   - Fixed `GlobalOptions.updateCacheDir()` where JADX dropped loop breaks and reset `file` on every iteration, restoring external cache and user-configured `cache_location` selection.
+   - Updated `UserManager.getInventoryDatabasePath()` to use `Context.getExternalCacheDir()` instead of hardcoded `Environment.getExternalStorageDirectory()` paths.
+   - Updated `ExportChatHistoryTask.java` and `res/xml/file_paths.xml` to fall back to `context.getCacheDir()/chat_logs` when public storage is restricted and share exported logs via `FileProvider.getUriForFile()` with `FLAG_GRANT_READ_URI_PERMISSION`, eliminating `FileUriExposedException` crashes on Android 7.0+.
+4. ✅ **Predefined Grids List (`res/values/arrays.xml`)**:
+   - Replaced defunct grids (`Inworldz`, `Avination`, `New World Grid`) with active grids (`Second Life`, `Second Life Beta (Aditi)`, `OSGrid`, `Kitely`, `Wolf Territories Grid`, `DigiWorldz`, `FrancoGrid`).
+5. ✅ **Codebase-Wide JADX Control-Flow & Rendering Fixes**:
+   - `SLAnimatedMeshData.java`: Fixed JADX control-flow inversion in `GLDraw()` that previously skipped drawing avatar meshes whenever a face texture was loaded or `null` and inverted the `renderContext.hasGL20` branch between GLES20 shaders and GLES10 fixed-function calls.
+   - `WorldViewActivity.java`: Fixed JADX boolean inversions and empty `if` blocks in `updateObjectPanel()` that broke fly/move/stand/HUD/camera button visibility and hid `objectControlsPanel` when an object was picked.
+   - `GridConnectionService.java`: Restored missing `switch` cases in `notifySettingsByType()`.
+   - `ActiveChattersManager.java` & `SyncManager.java`: Fixed JADX control-flow bugs in `handleChatEventInternal()` (sender UUID resolution for uncached usernames) and `syncMoreMessages()` (chatter flush loop).
+   - `RLVRestrictions.java`: Added missing `break;` statements in `RLVRestrictionList.isAllowed()` switch cases.
+   - `ContactsFragment.java` & `GLSyncLoadQueue.java`: Restored `updateOptionsMenu()` visibility toggling and `RunLoadQueue()` frame load counters.
 
 ### Phase 5: Full RLV / Restrained Love Viewer (RLVa) Modernization
 1. Update RLV protocol version reporting (`RLVCmdVersion.java`, `RLVController.java`) and support `@versionnum`, `@versionnew`, and modern RLV/RLVa version handshakes.

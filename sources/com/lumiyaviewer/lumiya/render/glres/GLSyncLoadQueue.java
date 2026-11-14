@@ -18,15 +18,7 @@ public class GLSyncLoadQueue extends GLLoadQueue implements GLLoadQueue.GLLoadHa
         gLLoadable.GLCompleteLoad();
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:19:0x005b, code lost:
-    
-        r3 = r1;
-        r1 = r0;
-     */
     @Override // com.lumiyaviewer.lumiya.render.glres.GLLoadQueue
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public void RunLoadQueue(@Nonnull RenderContext renderContext) {
         GLLoadQueue.GLLoadable poll;
         if (this.framesWait != 0) {
@@ -47,11 +39,11 @@ public class GLSyncLoadQueue extends GLLoadQueue implements GLLoadQueue.GLLoadHa
             int GLLoad = poll.GLLoad(renderContext, this) + i;
             this.framesWait = 3;
             int i3 = i2 + 1;
+            i2 = i3;
+            i = GLLoad;
             if (i3 >= 16 || GLLoad >= 4194304) {
                 break;
             }
-            i2 = i3;
-            i = GLLoad;
         }
         if (i2 != 0) {
             Debug.Printf("waitForMemory: loadedCount %d, size %d", Integer.valueOf(i2), Integer.valueOf(i));

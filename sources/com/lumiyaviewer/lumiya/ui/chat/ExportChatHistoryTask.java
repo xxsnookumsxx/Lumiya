@@ -99,11 +99,18 @@ public class ExportChatHistoryTask extends AsyncTask<ChatterID, Void, ExportResu
             }
             File file2 = new File(Environment.getExternalStoragePublicDirectory(Build.VERSION.SDK_INT >= 19 ? Environment.DIRECTORY_DOCUMENTS : Environment.DIRECTORY_DOWNLOADS), "Lumiya");
             File file3 = new File(file2, "Chat Logs");
-            File file4 = new File(file3, sanitizeName(this.gotChatterName.get()) + ".txt");
-            DateFormat dateTimeInstance = DateFormat.getDateTimeInstance(3, 3);
             try {
                 file2.mkdirs();
                 file3.mkdirs();
+            } catch (Exception e) {
+            }
+            if (!file3.exists() || !file3.canWrite()) {
+                file3 = new File(this.context.getCacheDir(), "chat_logs");
+                file3.mkdirs();
+            }
+            File file4 = new File(file3, sanitizeName(this.gotChatterName.get()) + ".txt");
+            DateFormat dateTimeInstance = DateFormat.getDateTimeInstance(3, 3);
+            try {
                 FileOutputStream fileOutputStream = new FileOutputStream(file4, false);
                 try {
                     LazyList<ChatMessage> messages = userManager.getChatterList().getActiveChattersManager().getMessages(chatterID);
@@ -204,7 +211,8 @@ public class ExportChatHistoryTask extends AsyncTask<ChatterID, Void, ExportResu
             intent.setType("text/plain");
             if (exportResult.outputFile != null) {
                 Debug.Printf("Export: exported as stream %s", exportResult.outputFile);
-                intent.putExtra("android.intent.extra.STREAM", Uri.fromFile(exportResult.outputFile));
+                intent.putExtra("android.intent.extra.STREAM", android.support.v4.content.FileProvider.getUriForFile(this.context, "com.lumiyaviewer.files", exportResult.outputFile));
+                intent.addFlags(1);
             } else {
                 Debug.Printf("Export: exported as text, %d bytes", Integer.valueOf(exportResult.rawText.length()));
                 intent.putExtra("android.intent.extra.TEXT", exportResult.rawText);

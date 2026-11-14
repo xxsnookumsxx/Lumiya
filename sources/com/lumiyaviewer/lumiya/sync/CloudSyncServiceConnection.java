@@ -231,8 +231,8 @@ public class CloudSyncServiceConnection implements ServiceConnection {
     }
 
     public void showSyncingError(String str, String str2, Intent intent) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this.context);
-        builder.setSmallIcon(R.drawable.ic_cloud_sync_notify).setContentTitle(str).setContentText(str2).setDefaults(0).setOngoing(false).setAutoCancel(true).setContentIntent(PendingIntent.getActivity(this.context, 0, intent, SLMoveEvents.AGENT_CONTROL_AWAY)).setOnlyAlertOnce(true);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this.context, com.lumiyaviewer.lumiya.ui.notify.NotificationChannels.getInstance().getChannelName(com.lumiyaviewer.lumiya.ui.notify.NotificationChannels.Channel.OnlineStatus));
+        builder.setSmallIcon(R.drawable.ic_cloud_sync_notify).setContentTitle(str).setContentText(str2).setDefaults(0).setOngoing(false).setAutoCancel(true).setContentIntent(PendingIntent.getActivity(this.context, 0, intent, SLMoveEvents.AGENT_CONTROL_AWAY | 67108864)).setOnlyAlertOnce(true);
         ((NotificationManager) this.context.getSystemService("notification")).notify(R.id.google_drive_problem_notify, builder.build());
     }
 

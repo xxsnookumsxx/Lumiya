@@ -23,6 +23,7 @@ import com.lumiyaviewer.lumiya.slproto.users.manager.UserManager;
 import com.lumiyaviewer.lumiya.ui.chat.profiles.ParcelPropertiesFragment;
 import com.lumiyaviewer.lumiya.ui.common.ActivityUtils;
 import com.lumiyaviewer.lumiya.ui.media.StreamingMediaActivity;
+import com.lumiyaviewer.lumiya.ui.notify.NotificationChannels;
 import java.lang.ref.WeakReference;
 import java.util.UUID;
 
@@ -132,12 +133,12 @@ public class StreamingMediaService extends Service {
     }
 
     private void showNotification() {
-        PendingIntent service = PendingIntent.getService(this, 0, new Intent(this, (Class<?>) StreamingMediaService.class), 1073741824);
+        PendingIntent service = PendingIntent.getService(this, 0, new Intent(this, (Class<?>) StreamingMediaService.class), 1073741824 | 67108864);
         Intent intent = new Intent(this, (Class<?>) StreamingMediaActivity.class);
         ActivityUtils.setActiveAgentID(intent, this.lastActiveAgentUUID);
         intent.putExtra(ParcelPropertiesFragment.PARCEL_DATA_KEY, this.lastParcelData);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.ic_playing_media).setContentTitle("Playing media").setContentText(this.lastLocationName).setDefaults(0).setOngoing(true).setContentIntent(PendingIntent.getActivity(this, 0, intent, SLMoveEvents.AGENT_CONTROL_AWAY)).addAction(R.drawable.icon_material_stop, "Stop", service).setDeleteIntent(service).setOnlyAlertOnce(true);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NotificationChannels.getInstance().getChannelName(NotificationChannels.Channel.OnlineStatus));
+        builder.setSmallIcon(R.drawable.ic_playing_media).setContentTitle("Playing media").setContentText(this.lastLocationName).setDefaults(0).setOngoing(true).setContentIntent(PendingIntent.getActivity(this, 0, intent, SLMoveEvents.AGENT_CONTROL_AWAY | 67108864)).addAction(R.drawable.icon_material_stop, "Stop", service).setDeleteIntent(service).setOnlyAlertOnce(true);
         startForeground(R.id.media_notify_id, builder.build());
     }
 

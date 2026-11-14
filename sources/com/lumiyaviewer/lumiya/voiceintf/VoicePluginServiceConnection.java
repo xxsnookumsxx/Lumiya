@@ -16,7 +16,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
+import com.lumiyaviewer.lumiya.ui.notify.NotificationChannels;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
@@ -354,15 +355,8 @@ public class VoicePluginServiceConnection implements ServiceConnection {
         return !installOfferDisplayed.getAndSet(true);
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:4:0x0061, code lost:
-    
-        if (r0 != null) goto L6;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     private void showIncomingCallNotification(VoiceRinging voiceRinging, String str, ChatterID chatterID) {
-        Intent intent;
+        Intent intent = null;
         Intent intent2 = new Intent(this.context, (Class<?>) GridConnectionService.class);
         intent2.setAction(ACTION_VOICE_REJECT);
         intent2.setData(voiceRinging.toUri());
@@ -374,14 +368,16 @@ public class VoicePluginServiceConnection implements ServiceConnection {
         if (userManager != null) {
             intent = userManager.getUnreadNotificationManager().captureNotify(UnreadNotificationInfo.create(userManager.getUserID(), 0, null, null, 1, NotificationType.Private, UnreadNotificationInfo.UnreadMessageSource.create(chatterID, null, null, 0), UnreadNotificationInfo.ObjectPopupNotification.create(0, 0, null)), createIntent);
         }
-        intent = createIntent;
+        if (intent == null) {
+            intent = createIntent;
+        }
         Intent intent3 = new Intent(this.context, (Class<?>) GridConnectionService.class);
         intent3.setAction(ACTION_VOICE_ACCEPT);
         intent3.setData(voiceRinging.toUri());
         intent3.putExtra(INTENT_EXTRA_RINGING_MESSSAGE, voiceRinging.toBundle());
         intent3.putExtra("chatterID", chatterID.toBundle());
-        intent3.putExtra(INTENT_EXTRA_OPEN_CHATTER, PendingIntent.getActivity(this.context, 0, intent, 0));
-        Notification build = new NotificationCompat.Builder(this.context).setSmallIcon(R.drawable.ic_incoming_voice_call).setContentTitle(str).setContentText(this.context.getString(R.string.incoming_voice_call_text)).setDefaults(-1).setPriority(1).setDeleteIntent(PendingIntent.getService(this.context, 0, intent2, 0)).setContentIntent(PendingIntent.getActivity(this.context, 0, intent, 0)).setAutoCancel(true).addAction(R.drawable.ic_voice_call_accept, this.context.getString(R.string.voice_call_accept), PendingIntent.getService(this.context, 0, intent3, 0)).addAction(R.drawable.ic_voice_call_reject, this.context.getString(R.string.voice_call_reject), PendingIntent.getService(this.context, 0, intent2, 0)).build();
+        intent3.putExtra(INTENT_EXTRA_OPEN_CHATTER, PendingIntent.getActivity(this.context, 0, intent, 67108864));
+        Notification build = new NotificationCompat.Builder(this.context, NotificationChannels.getInstance().getChannelName(NotificationChannels.Channel.IM)).setSmallIcon(R.drawable.ic_incoming_voice_call).setContentTitle(str).setContentText(this.context.getString(R.string.incoming_voice_call_text)).setDefaults(-1).setPriority(1).setDeleteIntent(PendingIntent.getService(this.context, 0, intent2, 67108864)).setContentIntent(PendingIntent.getActivity(this.context, 0, intent, 67108864)).setAutoCancel(true).addAction(R.drawable.ic_voice_call_accept, this.context.getString(R.string.voice_call_accept), PendingIntent.getService(this.context, 0, intent3, 67108864)).addAction(R.drawable.ic_voice_call_reject, this.context.getString(R.string.voice_call_reject), PendingIntent.getService(this.context, 0, intent2, 67108864)).build();
         String str2 = voiceRinging.voiceChannelInfo.voiceChannelURI;
         this.incomingCallNotificationTags.add(str2);
         ((NotificationManager) this.context.getSystemService("notification")).notify(str2, 1001, build);

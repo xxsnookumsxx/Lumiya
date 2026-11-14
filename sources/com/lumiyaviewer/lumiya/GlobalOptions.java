@@ -166,24 +166,19 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
             arrayList.add(cacheDir);
         }
         ImmutableList.Builder builder = ImmutableList.builder();
+        file = file2;
         Iterator it = arrayList.iterator();
-        while (true) {
-            file = file2;
-            if (!it.hasNext()) {
-                break;
-            }
-            file2 = (File) it.next();
-            Debug.Printf("Cache: checking cache location %s", file2);
-            if (isCacheDirectoryWriteable(file2)) {
-                builder.add(file2);
-                if (file != null) {
-                    if (string.isEmpty()) {
-                        file2 = file;
-                    } else if (file2.getAbsolutePath().equals(string)) {
+        while (it.hasNext()) {
+            File candidate = (File) it.next();
+            Debug.Printf("Cache: checking cache location %s", candidate);
+            if (isCacheDirectoryWriteable(candidate)) {
+                builder.add(candidate);
+                if (file == null) {
+                    if (string.isEmpty() || candidate.getAbsolutePath().equals(string)) {
+                        file = candidate;
                     }
                 }
             }
-            file2 = file;
         }
         if (file == null) {
             file = context.getCacheDir();

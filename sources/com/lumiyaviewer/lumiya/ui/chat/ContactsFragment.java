@@ -158,41 +158,31 @@ public class ContactsFragment extends Fragment {
         updateOptionsMenu();
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:10:0x001b  */
-    /* JADX WARN: Removed duplicated region for block: B:23:0x0042  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     private void updateOptionsMenu() {
-        boolean z;
+        boolean z = false;
         if (this.currentLocationInfo != null) {
             FragmentActivity activity = getActivity();
             if (activity instanceof DetailsActivity) {
                 Fragment currentDetailsFragment = ((DetailsActivity) activity).getCurrentDetailsFragment();
                 z = currentDetailsFragment == null || currentDetailsFragment == this;
-                if (z) {
-                    if (this.itemLocationDetails != null) {
-                        this.itemLocationDetails.setVisible(false);
-                    }
-                    if (this.itemPlayMedia != null) {
-                        this.itemPlayMedia.setVisible(false);
-                        return;
-                    }
-                    return;
-                }
-                if (this.itemLocationDetails != null) {
-                    this.itemLocationDetails.setVisible(true);
-                }
-                boolean z2 = this.currentLocationInfo.parcelData() != null ? !Strings.isNullOrEmpty(this.currentLocationInfo.parcelData().getMediaURL()) : false;
-                if (this.itemPlayMedia != null) {
-                    this.itemPlayMedia.setVisible(z2);
-                    return;
-                }
-                return;
             }
         }
-        z = false;
-        if (z) {
+        if (!z) {
+            if (this.itemLocationDetails != null) {
+                this.itemLocationDetails.setVisible(false);
+            }
+            if (this.itemPlayMedia != null) {
+                this.itemPlayMedia.setVisible(false);
+                return;
+            }
+            return;
+        }
+        if (this.itemLocationDetails != null) {
+            this.itemLocationDetails.setVisible(true);
+        }
+        boolean z2 = this.currentLocationInfo.parcelData() != null ? !Strings.isNullOrEmpty(this.currentLocationInfo.parcelData().getMediaURL()) : false;
+        if (this.itemPlayMedia != null) {
+            this.itemPlayMedia.setVisible(z2);
         }
     }
 

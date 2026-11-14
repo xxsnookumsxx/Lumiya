@@ -72,7 +72,7 @@ public class LumiyaApp extends Application {
     }
 
     public static void restartApp() {
-        ((AlarmManager) getContext().getSystemService(NotificationCompat.CATEGORY_ALARM)).set(1, System.currentTimeMillis() + 1000, PendingIntent.getActivity(getContext(), 0, new Intent(getContext(), (Class<?>) LauncherActivity.class), 268435456));
+        ((AlarmManager) getContext().getSystemService(NotificationCompat.CATEGORY_ALARM)).set(1, System.currentTimeMillis() + 1000, PendingIntent.getActivity(getContext(), 0, new Intent(getContext(), (Class<?>) com.lumiyaviewer.lumiya.ui.login.LoginActivity.class), 268435456 | 67108864));
         System.exit(0);
     }
 

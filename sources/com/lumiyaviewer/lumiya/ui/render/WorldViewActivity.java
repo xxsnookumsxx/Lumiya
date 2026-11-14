@@ -877,13 +877,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     /* JADX WARN: Removed duplicated region for block: B:66:0x0107  */
     /* JADX WARN: Removed duplicated region for block: B:75:0x0121  */
     /* JADX WARN: Removed duplicated region for block: B:84:0x0137  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     private void updateObjectPanel() {
-        int i;
-        int i2;
-        int i3;
         String orNull;
         MyAvatarState data = this.myAvatarState.getData();
         SLAgentCircuit data2 = this.agentCircuit.getData();
@@ -897,98 +891,50 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
         Debug.Printf("isSitting %b, isFlying %b, hasHUDs %b, isDragging %b", Boolean.valueOf(isSitting), Boolean.valueOf(isFlying), Boolean.valueOf(hasHUDs), Boolean.valueOf(this.isDragging));
         this.dragPointerLayout.setVisibility(this.isDragging ? 0 : 4);
         this.dragPointer.setVisibility(this.isDragging ? 0 : 4);
-        LinearLayout linearLayout = this.flyButtonsLayout;
-        if (isSitting || (!z)) {
-        }
-        if (!this.isDragging && !z2) {
-            i = 0;
-            linearLayout.setVisibility(i);
-            View view = this.moveButtonsLayout;
-            if (!isSitting || (!z)) {
-            }
-            if (!this.isDragging && !z2) {
-                i2 = 0;
-                view.setVisibility(i2);
-                this.buttonStandUp.setVisibility((!canStandUp && isSitting && (this.isDragging ^ true)) ? 0 : 8);
-                this.buttonHUD.setVisibility((!hasHUDs && (this.isDragging ^ true) && z) ? 0 : 8);
-                this.buttonFlyDownward.setVisibility(((isFlying || !z) && !(this.camButtonEnabled && this.manualCamMode)) ? 8 : 0);
-                ImageButton imageButton = this.buttonStopFlying;
-                if (isFlying && z) {
-                    if (!(!this.camButtonEnabled ? this.manualCamMode : false)) {
-                        i3 = 0;
-                        imageButton.setVisibility(i3);
-                        this.buttonCamOn.setVisibility((!this.camButtonEnabled && (this.manualCamMode ^ true) && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
-                        this.buttonCamOff.setVisibility((!this.camButtonEnabled && this.manualCamMode && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
-                        if (this.pickedObject != null || (!z)) {
-                            this.objectControlsPanel.setVisibility(8);
-                            return;
-                        }
-                        this.objectControlsPanel.setVisibility(0);
-                        boolean isTouchable = this.pickedObject.isTouchable();
-                        if (this.pickedObject.isAvatar()) {
-                            isTouchable |= this.pickedObject.hasTouchableChildren();
-                        }
-                        this.objectTouchButton.setVisibility(isTouchable ? 0 : 8);
-                        boolean isAvatar = this.pickedObject.isAvatar();
-                        boolean z3 = isSitting && this.pickedObject.localID == data.sittingOn();
-                        boolean z4 = !isAvatar ? !z3 : false;
-                        if (isAvatar) {
-                            z3 = false;
-                        }
-                        this.objectSitButton.setVisibility((z4 && canSit) ? 0 : 8);
-                        this.objectStandButton.setVisibility((z3 && canStandUp) ? 0 : 8);
-                        this.objectChatButton.setVisibility(isAvatar ? 0 : 8);
-                        this.avatarIconView.setVisibility(isAvatar ? 0 : 8);
-                        this.objectPayButton.setVisibility((this.pickedObject.isPayable() || this.pickedObject.saleType != 0) ? 0 : 8);
-                        if (this.pickedObject.isAvatar()) {
-                            orNull = this.pickedAvatarNameRetriever != null ? this.pickedAvatarNameRetriever.getResolvedName() : null;
-                        } else {
-                            SLObjectProfileData data3 = this.selectedObjectProfile.getData();
-                            orNull = (data3 == null || !Objects.equal(data3.objectUUID(), this.pickedObject.getId())) ? null : data3.name().orNull();
-                            if (orNull == null) {
-                                orNull = this.pickedObject.name;
-                            }
-                        }
-                        if (orNull == null) {
-                            orNull = getString(R.string.object_name_loading);
-                        }
-                        this.objectNameTextView.setText(orNull);
-                        return;
-                    }
-                }
-                i3 = 8;
-                imageButton.setVisibility(i3);
-                this.buttonCamOn.setVisibility((!this.camButtonEnabled && (this.manualCamMode ^ true) && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
-                this.buttonCamOff.setVisibility((!this.camButtonEnabled && this.manualCamMode && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
-                if (this.pickedObject != null) {
-                }
-                this.objectControlsPanel.setVisibility(8);
-                return;
-            }
-            i2 = 4;
-            view.setVisibility(i2);
-            this.buttonStandUp.setVisibility((!canStandUp && isSitting && (this.isDragging ^ true)) ? 0 : 8);
-            this.buttonHUD.setVisibility((!hasHUDs && (this.isDragging ^ true) && z) ? 0 : 8);
-            this.buttonFlyDownward.setVisibility(((isFlying || !z) && !(this.camButtonEnabled && this.manualCamMode)) ? 8 : 0);
-            ImageButton imageButton2 = this.buttonStopFlying;
-            if (isFlying) {
-                if (!(!this.camButtonEnabled ? this.manualCamMode : false)) {
-                }
-            }
-            i3 = 8;
-            imageButton2.setVisibility(i3);
-            this.buttonCamOn.setVisibility((!this.camButtonEnabled && (this.manualCamMode ^ true) && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
-            this.buttonCamOff.setVisibility((!this.camButtonEnabled && this.manualCamMode && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
-            if (this.pickedObject != null) {
-            }
+        boolean manualCamActive = this.camButtonEnabled && this.manualCamMode;
+        boolean showMoveControls = ((!isSitting && z) || manualCamActive) && !this.isDragging && !z2;
+        this.flyButtonsLayout.setVisibility(showMoveControls ? 0 : 8);
+        this.moveButtonsLayout.setVisibility(showMoveControls ? 0 : 4);
+        this.buttonStandUp.setVisibility((canStandUp && isSitting && !this.isDragging) ? 0 : 8);
+        this.buttonHUD.setVisibility((hasHUDs && !this.isDragging && z) ? 0 : 8);
+        this.buttonFlyDownward.setVisibility(((isFlying && z) || manualCamActive) ? 0 : 8);
+        this.buttonStopFlying.setVisibility((isFlying && z && !manualCamActive) ? 0 : 8);
+        this.buttonCamOn.setVisibility((this.camButtonEnabled && !this.manualCamMode && !this.isDragging && !z2) ? 0 : 8);
+        this.buttonCamOff.setVisibility((this.camButtonEnabled && this.manualCamMode && !this.isDragging && !z2) ? 0 : 8);
+        if (this.pickedObject == null || !z) {
             this.objectControlsPanel.setVisibility(8);
             return;
         }
-        i = 8;
-        linearLayout.setVisibility(i);
-        View view2 = this.moveButtonsLayout;
-        if (!isSitting) {
+        this.objectControlsPanel.setVisibility(0);
+        boolean isTouchable = this.pickedObject.isTouchable();
+        if (this.pickedObject.isAvatar()) {
+            isTouchable |= this.pickedObject.hasTouchableChildren();
         }
+        this.objectTouchButton.setVisibility(isTouchable ? 0 : 8);
+        boolean isAvatar = this.pickedObject.isAvatar();
+        boolean z3 = isSitting && this.pickedObject.localID == data.sittingOn();
+        boolean z4 = !isAvatar ? !z3 : false;
+        if (isAvatar) {
+            z3 = false;
+        }
+        this.objectSitButton.setVisibility((z4 && canSit) ? 0 : 8);
+        this.objectStandButton.setVisibility((z3 && canStandUp) ? 0 : 8);
+        this.objectChatButton.setVisibility(isAvatar ? 0 : 8);
+        this.avatarIconView.setVisibility(isAvatar ? 0 : 8);
+        this.objectPayButton.setVisibility((this.pickedObject.isPayable() || this.pickedObject.saleType != 0) ? 0 : 8);
+        if (this.pickedObject.isAvatar()) {
+            orNull = this.pickedAvatarNameRetriever != null ? this.pickedAvatarNameRetriever.getResolvedName() : null;
+        } else {
+            SLObjectProfileData data3 = this.selectedObjectProfile.getData();
+            orNull = (data3 == null || !Objects.equal(data3.objectUUID(), this.pickedObject.getId())) ? null : data3.name().orNull();
+            if (orNull == null) {
+                orNull = this.pickedObject.name;
+            }
+        }
+        if (orNull == null) {
+            orNull = getString(R.string.object_name_loading);
+        }
+        this.objectNameTextView.setText(orNull);
     }
 
     private void updateSimTimeOverride() {

@@ -264,7 +264,8 @@ public class UserManager {
 
     private static File getInventoryDatabasePath(String str) {
         if (PreferenceManager.getDefaultSharedPreferences(LumiyaApp.getContext()).getString("db_location", "internal").equals("sd")) {
-            File file = new File(Environment.getExternalStorageDirectory(), "/Android/data/com.lumiyaviewer.lumiya/cache/database");
+            File extCache = LumiyaApp.getContext().getExternalCacheDir();
+            File file = extCache != null ? new File(extCache, "database") : new File(Environment.getExternalStorageDirectory(), "/Android/data/com.lumiyaviewer.lumiya/cache/database");
             file.mkdirs();
             return new File(file, str);
         }

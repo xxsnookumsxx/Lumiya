@@ -248,22 +248,16 @@ public class SyncManager {
                 if (i != 0) {
                     LogMessageBatch logMessageBatch = new LogMessageBatch(this.userManager.getUserID(), resolvedName, builder.build(), j);
                     CloudSyncServiceConnection cloudSyncServiceConnection2 = this.syncServiceConnection.get();
-                    if (cloudSyncServiceConnection2 != null) {
-                        z = cloudSyncServiceConnection2.sendMessage(MessageType.LogMessageBatch, logMessageBatch);
-                        if (!this.flushChatterNames.isEmpty() && (cloudSyncServiceConnection = this.syncServiceConnection.get()) != null) {
-                            it = this.flushChatterNames.iterator();
-                            if (it.hasNext()) {
-                                String next2 = it.next();
-                                it.remove();
-                                cloudSyncServiceConnection.sendMessage(MessageType.LogFlushMessages, new LogFlushMessages(this.userManager.getUserID(), resolvedName, next2));
-                            }
-                        }
-                    }
+                    z = cloudSyncServiceConnection2 != null ? cloudSyncServiceConnection2.sendMessage(MessageType.LogMessageBatch, logMessageBatch) : false;
+                } else {
+                    z = false;
                 }
-                z = false;
-                if (!this.flushChatterNames.isEmpty()) {
+                if (!this.flushChatterNames.isEmpty() && (cloudSyncServiceConnection = this.syncServiceConnection.get()) != null) {
                     it = this.flushChatterNames.iterator();
                     if (it.hasNext()) {
+                        String next2 = it.next();
+                        it.remove();
+                        cloudSyncServiceConnection.sendMessage(MessageType.LogFlushMessages, new LogFlushMessages(this.userManager.getUserID(), resolvedName, next2));
                     }
                 }
             } else {

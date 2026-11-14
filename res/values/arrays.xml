@@ -46,12 +46,12 @@
     </string-array>
     <string-array name="grids">
         <item>Second Life;https://login.agni.lindenlab.com/cgi-bin/login.cgi;f14c5be7-0849-402c-946a-c80a52e9eccf</item>
+        <item>Second Life Beta (Aditi);https://login.aditi.lindenlab.com/cgi-bin/login.cgi;68162998-c133-4274-a81b-a1a2961124f1</item>
         <item>OSGrid;http://login.osgrid.org/;e071f438-0330-446c-bd35-79906aada9ee</item>
-        <item>Kitely;http://osgrid.kitely.com:8002/;b478555b-1349-4815-a37d-fbe3e3bfccc7</item>
-        <item>Inworldz;http://inworldz.com:8002/;e37c57e3-18e1-4749-a4aa-765cc01c1c49</item>
-        <item>New World Grid;http://grid.newworldgrid.com:8002/;3207a344-005a-4d71-8578-af2c2c90547a</item>
-        <item>Avination;https://login.avination.com/;8693abba-208d-47af-9135-eb76a2229d48</item>
-        <item>FrancoGrid;http://login.francogrid.org/;9cacf537-0819-4a0a-a44f-446364b105f9</item>
+        <item>Kitely;http://grid.kitely.com:8002/;b478555b-1349-4815-a37d-fbe3e3bfccc7</item>
+        <item>Wolf Territories Grid;http://grid.wolfterritories.org:8002/;3207a344-005a-4d71-8578-af2c2c90547a</item>
+        <item>DigiWorldz;http://login.digiworldz.com:8002/;8693abba-208d-47af-9135-eb76a2229d48</item>
+        <item>FrancoGrid;http://login.francogrid.org:8002/;9cacf537-0819-4a0a-a44f-446364b105f9</item>
     </string-array>
     <string-array name="outfit_list_type_names">
         <item>My Outfits</item>

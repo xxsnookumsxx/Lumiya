@@ -82,11 +82,6 @@ public class RLVRestrictions {
             return false;
         }
 
-        /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
-        /* JADX WARN: Removed duplicated region for block: B:18:0x003b A[RETURN] */
-        /*
-            Code decompiled incorrectly, please refer to instructions dump.
-        */
         public boolean isAllowed(RLVRestrictionType.RLVRuleMatchType rLVRuleMatchType, String str, UUID uuid, UUID uuid2) {
             if (rLVRuleMatchType == RLVRestrictionType.RLVRuleMatchType.TargetSpecifiesAllowance) {
                 if (this.restMap.containsKey("")) {
@@ -111,10 +106,12 @@ public class RLVRestrictions {
                             }
                         }
                     }
+                    break;
                 case 2:
                     if (this.restMap.containsKey("")) {
                         return !str.equals("") && this.restMap.containsKey(str);
                     }
+                    break;
                 case 3:
                     if (this.restMap.containsKey(str)) {
                         return false;
