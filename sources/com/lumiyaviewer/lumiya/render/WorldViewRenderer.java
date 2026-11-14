@@ -675,6 +675,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                 int meshObjs = 0;
                 int meshReady = 0;
                 int riggedObjs = 0;
+                int p0 = 0;
                 int p1 = 0;
                 int p2 = 0;
                 int p4 = 0;
@@ -701,6 +702,9 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                             riggedObjs++;
                         }
                         int m = masks[idx];
+                        if (m == 0) {
+                            p0++;
+                        }
                         if ((m & 1) != 0) {
                             p1++;
                         }
@@ -716,11 +720,11 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                 }
                 if (this.thisFrameTime != this.lastFrameTime) {
                     long frameDelta = this.thisFrameTime - this.lastFrameTime;
-                    Debug.Printf("Renderer: FPS %.2f frame time %d (prep %dms draw %dms objs %d primReady %d mesh %d/%d rigged %d pass %d/%d/%d avis %d terr %d)",
+                    Debug.Printf("Renderer: FPS %.2f frame time %d (prep %dms draw %dms objs %d primReady %d mesh %d/%d rigged %d pass %d/%d/%d skip %d avis %d terr %d)",
                             Float.valueOf(10000.0f / frameDelta), Long.valueOf(frameDelta),
                             Long.valueOf(this.lastPrepMs), Long.valueOf(this.lastDrawMs),
                             Integer.valueOf(objCount), Integer.valueOf(primReady), Integer.valueOf(meshReady), Integer.valueOf(meshObjs),
-                            Integer.valueOf(riggedObjs), Integer.valueOf(p1), Integer.valueOf(p2), Integer.valueOf(p4),
+                            Integer.valueOf(riggedObjs), Integer.valueOf(p1), Integer.valueOf(p2), Integer.valueOf(p4), Integer.valueOf(p0),
                             Integer.valueOf(aviCount), Integer.valueOf(terrCount));
                     this.lastFrameTime = this.thisFrameTime;
                 }

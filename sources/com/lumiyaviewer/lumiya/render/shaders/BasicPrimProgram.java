@@ -55,6 +55,13 @@ public class BasicPrimProgram extends ShaderProgram {
     	at jadx.core.dex.visitors.MethodThrowsVisitor.visit(MethodThrowsVisitor.java:68)
      */
     @Override // com.lumiyaviewer.lumiya.render.shaders.ShaderProgram
+    protected void preLink() {
+        GLES20.glBindAttribLocation(this.handle, 0, "vPosition");
+        GLES20.glBindAttribLocation(this.handle, 1, "vNormal");
+        GLES20.glBindAttribLocation(this.handle, 2, "vTexCoord");
+    }
+
+    @Override // com.lumiyaviewer.lumiya.render.shaders.ShaderProgram
     protected void bindVariables() {
         this.vPosition = GLES20.glGetAttribLocation(this.handle, "vPosition");
         this.vTexCoord = GLES20.glGetAttribLocation(this.handle, "vTexCoord");

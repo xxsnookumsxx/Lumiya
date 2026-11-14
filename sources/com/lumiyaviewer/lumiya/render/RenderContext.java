@@ -119,6 +119,7 @@ public class RenderContext {
     public final WindlightDay windlightDay = new WindlightDay();
     public final LLVector3 myAviPosition = new LLVector3();
     public final LLVector3 frameCamera = new LLVector3();
+    private final Object frameKeepLock = new Object();
     private final List<DirectByteBuffer> frameKeepBuffers = new LinkedList();
     private final List<OpenJPEG> frameKeepTextures = new LinkedList();
     private final List<Bitmap> frameKeepBitmaps = new LinkedList();
@@ -348,21 +349,29 @@ public class RenderContext {
     }
 
     final void ClearFrameKeeps() {
-        this.frameKeepTextures.clear();
-        this.frameKeepBuffers.clear();
-        this.frameKeepBitmaps.clear();
+        synchronized (this.frameKeepLock) {
+            this.frameKeepTextures.clear();
+            this.frameKeepBuffers.clear();
+            this.frameKeepBitmaps.clear();
+        }
     }
 
     public final void KeepBuffer(@Nonnull DirectByteBuffer directByteBuffer) {
-        this.frameKeepBuffers.add(directByteBuffer);
+        synchronized (this.frameKeepLock) {
+            this.frameKeepBuffers.add(directByteBuffer);
+        }
     }
 
     public final void KeepTexture(@Nonnull Bitmap bitmap) {
-        this.frameKeepBitmaps.add(bitmap);
+        synchronized (this.frameKeepLock) {
+            this.frameKeepBitmaps.add(bitmap);
+        }
     }
 
     public final void KeepTexture(@Nonnull OpenJPEG openJPEG) {
-        this.frameKeepTextures.add(openJPEG);
+        synchronized (this.frameKeepLock) {
+            this.frameKeepTextures.add(openJPEG);
+        }
     }
 
     final void RunLoadQueue() {

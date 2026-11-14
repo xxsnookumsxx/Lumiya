@@ -82,9 +82,15 @@ public class TextureMemoryTracker {
         return z;
     }
 
+    private static volatile long lastStatsPrintMs = 0L;
+
     private static void printStats() {
         if (Debug.isDebugBuild()) {
-            Debug.Printf("Texture mem used: %d Mb oj %d mmap %d tot %d limit %d Mb buf %dk", Integer.valueOf(textureMemoryUsed.get() / 1048576), Integer.valueOf(openJpegMemoryUsed.get() / 1048576), Integer.valueOf(openJpegMemoryMmapped.get() / 1048576), Integer.valueOf((textureMemoryUsed.get() + openJpegMemoryUsed.get()) / 1048576), Integer.valueOf(textureMemoryLimit.get() / 1048576), Integer.valueOf(bufMemory.get() / 1024));
+            long now = android.os.SystemClock.uptimeMillis();
+            if (now - lastStatsPrintMs >= 5000L) {
+                lastStatsPrintMs = now;
+                Debug.Printf("Texture mem used: %d Mb oj %d mmap %d tot %d limit %d Mb buf %dk", Integer.valueOf(textureMemoryUsed.get() / 1048576), Integer.valueOf(openJpegMemoryUsed.get() / 1048576), Integer.valueOf(openJpegMemoryMmapped.get() / 1048576), Integer.valueOf((textureMemoryUsed.get() + openJpegMemoryUsed.get()) / 1048576), Integer.valueOf(textureMemoryLimit.get() / 1048576), Integer.valueOf(bufMemory.get() / 1024));
+            }
         }
     }
 

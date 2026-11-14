@@ -253,11 +253,18 @@ public class OpenJPEG implements GLTexture {
         }
     }
 
+    private void checkUploadGLError(String str, int i) {
+        if (i != 0) {
+            Debug.AlwaysPrintf("OpenJPEG: %s GL error 0x%x (%dx%d comp=%d bpp=%d cap=%d)", str, Integer.valueOf(i), Integer.valueOf(this.width), Integer.valueOf(this.height), Integer.valueOf(this.num_components), Integer.valueOf(this.bytes_per_pixel), Integer.valueOf(this.rawBuffer != null ? this.rawBuffer.capacity() : -1));
+        }
+    }
+
     @TargetApi(18)
     public int SetAsImmutableTexture() {
         int i;
         int i2;
         if (this.rawBuffer != null) {
+            this.rawBuffer.rewind();
             if (this.bytes_per_pixel == ETC1_BYTES_PER_PIXEL) {
                 GLES30.glTexStorage2D(3553, 1, 37492, this.width, this.height);
                 GLES30.glCompressedTexSubImage2D(3553, 0, 0, 0, this.width, this.height, 37492, this.rawBuffer.capacity(), this.rawBuffer);
@@ -284,6 +291,7 @@ public class OpenJPEG implements GLTexture {
                         break;
                 }
                 int i4 = (this.bytes_per_pixel == 2 && this.num_components == 3) ? 33635 : i3;
+                GLES30.glPixelStorei(3317, 1);
                 GLES30.glTexStorage2D(3553, 1, i, this.width, this.height);
                 GLES30.glTexSubImage2D(3553, 0, 0, 0, this.width, this.height, i2, i4, this.rawBuffer);
                 if (this.num_components == 1) {
@@ -293,6 +301,7 @@ public class OpenJPEG implements GLTexture {
                     GLES30.glTexParameteri(3553, 36421, 6403);
                 }
             }
+            checkUploadGLError("SetAsImmutableTexture", GLES30.glGetError());
         }
         return getLoadedSize();
     }
@@ -301,6 +310,7 @@ public class OpenJPEG implements GLTexture {
     public int SetAsTexture() {
         int i;
         if (this.rawBuffer != null) {
+            this.rawBuffer.rewind();
             if (this.bytes_per_pixel == ETC1_BYTES_PER_PIXEL) {
                 GLES10.glCompressedTexImage2D(3553, 0, 36196, this.width, this.height, 0, this.rawBuffer.capacity(), this.rawBuffer);
             } else {
@@ -323,8 +333,10 @@ public class OpenJPEG implements GLTexture {
                 if (this.bytes_per_pixel == 2 && this.num_components == 3) {
                     i2 = 33635;
                 }
+                GLES10.glPixelStorei(3317, 1);
                 GLES10.glTexImage2D(3553, 0, i, this.width, this.height, 0, i, i2, this.rawBuffer);
             }
+            checkUploadGLError("SetAsTexture", GLES10.glGetError());
         }
         return getLoadedSize();
     }
@@ -334,9 +346,11 @@ public class OpenJPEG implements GLTexture {
         if (this.rawBuffer == null) {
             return 0;
         }
+        this.rawBuffer.rewind();
         if (this.bytes_per_pixel == ETC1_BYTES_PER_PIXEL) {
             int iCapacity = this.rawBuffer.capacity();
             GLES20.glCompressedTexImage2D(i, 0, 36196, this.width, this.height, 0, iCapacity, this.rawBuffer);
+            checkUploadGLError("SetAsTextureTarget", GLES20.glGetError());
             return iCapacity;
         }
         int i3 = 5121;
@@ -358,7 +372,9 @@ public class OpenJPEG implements GLTexture {
         if (this.bytes_per_pixel == 2 && this.num_components == 3) {
             i3 = 33635;
         }
+        GLES20.glPixelStorei(3317, 1);
         GLES20.glTexImage2D(i, 0, i2, this.width, this.height, 0, i2, i3, this.rawBuffer);
+        checkUploadGLError("SetAsTextureTarget", GLES20.glGetError());
         return this.width * this.height * this.bytes_per_pixel;
     }
 

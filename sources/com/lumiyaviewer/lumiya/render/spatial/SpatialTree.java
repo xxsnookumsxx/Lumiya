@@ -111,7 +111,6 @@ class SpatialTree {
     }
 
     void walkTree(FrustrumPlanes frustrumPlanes, float f) {
-        Debug.Printf("SpatialTree: walkTree: starting to walk.", new Object[0]);
         this.drawDistance = f;
         this.rootNode.walkTree(frustrumPlanes, 1, this.depthBuf);
         this.treeWalkNeeded = false;

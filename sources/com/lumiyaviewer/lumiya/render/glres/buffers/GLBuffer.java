@@ -30,7 +30,6 @@ public class GLBuffer extends GLResource {
         public void GLFree() {
             int[] iArr = (int[]) GLBuffer.idBuffer.get();
             iArr[0] = this.handle;
-            Debug.Printf("GLBuffer: deleted buffer %d", Integer.valueOf(iArr[0]));
             GLES11.glDeleteBuffers(1, iArr, 0);
             if (this.rawBuffer != null) {
                 TextureMemoryTracker.releaseBufferMemory(this.rawBuffer.getCapacity());
@@ -51,7 +50,6 @@ public class GLBuffer extends GLResource {
     protected int Allocate(GLResourceManager gLResourceManager) {
         int[] iArr = idBuffer.get();
         GLES11.glGenBuffers(1, iArr, 0);
-        Debug.Printf("GLBuffer: allocated buffer %d", Integer.valueOf(iArr[0]));
         return iArr[0];
     }
 }

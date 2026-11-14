@@ -358,7 +358,6 @@ public class AnimationData {
 
     ImmutableList<AvatarRunningAnimation> createRunningAnimations(AvatarRunningSequence avatarRunningSequence) {
         int size = this.jointSets.size();
-        Debug.Printf("Animation: creating anims: %d anims", Integer.valueOf(size));
         ImmutableList.Builder builder = ImmutableList.builder();
         for (int i = 0; i < size; i++) {
             builder.add(new AvatarRunningAnimation(avatarRunningSequence, this.jointSets.valueAt(i)));

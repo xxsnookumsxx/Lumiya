@@ -167,6 +167,9 @@ public class DrawableObject implements IntersectPickable, ResourceConsumer {
                 return;
             }
             this.attachedTo.onRiggedMeshReady(this);
+        } else if (obj == null && isMeshObject()) {
+            PrimDrawParams params = this.rawPrimDrawParams;
+            Debug.AlwaysPrintf("DrawableObject: mesh prim load failed (localID=%d, mesh=%s, attached=%b)", Integer.valueOf(this.objInfo.localID), params != null ? params.getVolumeParams().SculptID : null, Boolean.valueOf(this.attachedTo != null));
         }
     }
 

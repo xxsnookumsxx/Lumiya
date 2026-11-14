@@ -23,6 +23,14 @@ public class RiggedMeshProgram30 extends PrimProgram {
         super(Shader.RiggedMeshVertexShader30, z ? Shader.PrimOpaqueFragmentShader30 : Shader.PrimFragmentShader30);
     }
 
+    @Override // com.lumiyaviewer.lumiya.render.shaders.BasicPrimProgram, com.lumiyaviewer.lumiya.render.shaders.ShaderProgram
+    @TargetApi(18)
+    protected void preLink() {
+        super.preLink();
+        GLES20.glBindAttribLocation(this.handle, 3, "vWeight");
+        GLES20.glBindAttribLocation(this.handle, 4, "vJoint");
+    }
+
     @Override // com.lumiyaviewer.lumiya.render.shaders.PrimProgram, com.lumiyaviewer.lumiya.render.shaders.BasicPrimProgram, com.lumiyaviewer.lumiya.render.shaders.ShaderProgram
     @TargetApi(18)
     protected void bindVariables() {

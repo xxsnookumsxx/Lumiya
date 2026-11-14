@@ -21,6 +21,7 @@ abstract class ShaderProgram {
         this.handle = GLES20.glCreateProgram();
         GLES20.glAttachShader(this.handle, this.vertexShader.getHandle());
         GLES20.glAttachShader(this.handle, this.fragmentShader.getHandle());
+        preLink();
         GLES20.glLinkProgram(this.handle);
         int[] iArr = new int[1];
         GLES20.glGetProgramiv(this.handle, 35714, iArr, 0);
@@ -31,6 +32,9 @@ abstract class ShaderProgram {
         bindVariables();
         Debug.Printf("Shaders: Compiled, handle %d", Integer.valueOf(this.handle));
         return this.handle;
+    }
+
+    protected void preLink() {
     }
 
     protected abstract void bindVariables();

@@ -70,6 +70,9 @@ public class MeshCache extends ResourceFileCache<UUID, MeshData> {
                 }
             }
             if (str == null || (this.downloadTask != null && this.downloadTask.isCancelled())) {
+                if (str == null) {
+                    Debug.AlwaysPrintf("MeshFetch: aborted mesh %s (capURL null after wait)", getParams());
+                }
                 completeRequest(null);
                 return;
             }
@@ -107,11 +110,13 @@ public class MeshCache extends ResourceFileCache<UUID, MeshData> {
                     }
                 } catch (IOException e2) {
                     Debug.Warning(e2);
+                    Debug.AlwaysPrintf("MeshFetch: attempt %d/%d failed for %s: %s", Integer.valueOf(i + 1), Integer.valueOf(MAX_ATTEMPTS), getParams(), e2.getMessage());
                 }
             }
             if (this.downloadTask != null && this.downloadTask.isCancelled()) {
                 return;
             }
+            Debug.AlwaysPrintf("MeshFetch: exhausted retries for mesh %s", getParams());
             completeRequest(null);
         }
     }
@@ -134,6 +139,7 @@ public class MeshCache extends ResourceFileCache<UUID, MeshData> {
             return new MeshData(file);
         } catch (IOException e) {
             Debug.Warning(e);
+            Debug.AlwaysPrintf("MeshCache: failed to parse cached mesh %s: %s", uuid, e.getMessage());
             return null;
         }
     }

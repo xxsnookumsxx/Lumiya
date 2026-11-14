@@ -183,7 +183,6 @@ public class SLAvatarControl extends SLModule {
                 this.agentHeading = this.cameraParams.getHeading();
             }
             double d = (((double) this.agentHeading) * 3.141592653589793d) / 180.0d;
-            Debug.Printf("AgentUpdate: agent heading %.2f", Float.valueOf(this.agentHeading));
             float fCos = (float) Math.cos(d);
             float fSin = (float) Math.sin(d);
             LLQuaternion lLQuaternionMayaQ = LLQuaternion.mayaQ(0.0f, 0.0f, this.agentHeading, LLQuaternion.Order.YZX);
