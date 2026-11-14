@@ -9,6 +9,8 @@ import com.lumiyaviewer.lumiya.render.TextureMemoryTracker;
 import com.lumiyaviewer.lumiya.render.avatar.AnimationSequenceInfo;
 import com.lumiyaviewer.lumiya.render.glres.GLLoadQueue;
 import com.lumiyaviewer.lumiya.res.collections.WeakQueue;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
@@ -85,6 +87,14 @@ public class GLAsyncLoadQueue extends GLLoadQueue implements GLLoadQueue.GLLoadH
             if (eGLContextCreateContext != null) {
                 Debug.Printf("TexLoad: thread init: eglGetError = %d", Integer.valueOf(GLAsyncLoadQueue.this.egl10.eglGetError()));
                 Debug.Printf("TexLoad: thread init: rc = %b, eglGetError = %d", Boolean.valueOf(GLAsyncLoadQueue.this.egl10.eglMakeCurrent(GLAsyncLoadQueue.this.eglDisplay, this.eglSurface, this.eglSurface, eGLContextCreateContext)), Integer.valueOf(GLAsyncLoadQueue.this.egl10.eglGetError()));
+                final List<GLLoadQueue.GLLoadable> batchLoaded = new ArrayList<>(8);
+                final List<GLLoadQueue.GLLoadable> deferred = new ArrayList<>(8);
+                GLLoadQueue.GLLoadHandler batchHandler = new GLLoadQueue.GLLoadHandler() {
+                    @Override
+                    public void GLResourceLoaded(GLLoadQueue.GLLoadable loaded) {
+                        batchLoaded.add(loaded);
+                    }
+                };
                 while (true) {
                     int i2 = i;
                     if (GLAsyncLoadQueue.this.mustExit.get()) {
@@ -92,12 +102,35 @@ public class GLAsyncLoadQueue extends GLLoadQueue implements GLLoadQueue.GLLoadH
                     }
                     try {
                         GLLoadQueue.GLLoadable gLLoadableTake = GLAsyncLoadQueue.this.loadQueue.take();
-                        if (TextureMemoryTracker.canAllocateMemory(gLLoadableTake.GLGetLoadSize())) {
-                            gLLoadableTake.GLLoad(andSet, GLAsyncLoadQueue.this);
-                            GLES20.glFlush();
+                        batchLoaded.clear();
+                        deferred.clear();
+                        int loadedInBatch = 0;
+                        GLLoadQueue.GLLoadable current = gLLoadableTake;
+                        while (current != null) {
+                            if (TextureMemoryTracker.canAllocateMemory(current.GLGetLoadSize())) {
+                                current.GLLoad(andSet, batchHandler);
+                                loadedInBatch++;
+                                if (loadedInBatch >= 8) {
+                                    break;
+                                }
+                            } else {
+                                deferred.add(current);
+                                if (deferred.size() >= 8) {
+                                    break;
+                                }
+                            }
+                            current = GLAsyncLoadQueue.this.loadQueue.poll();
+                        }
+                        for (int d = 0; d < deferred.size(); d++) {
+                            GLAsyncLoadQueue.this.loadQueue.offer(deferred.get(d));
+                        }
+                        if (loadedInBatch > 0) {
+                            GLES20.glFinish();
+                            for (int b = 0; b < batchLoaded.size(); b++) {
+                                GLAsyncLoadQueue.this.loadedQueue.offer(batchLoaded.get(b));
+                            }
                             i = 0;
                         } else {
-                            GLAsyncLoadQueue.this.loadQueue.offer(gLLoadableTake);
                             Thread.sleep(1000L);
                             i = i2 + 1;
                             if (i >= 10) {

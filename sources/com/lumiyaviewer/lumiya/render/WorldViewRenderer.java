@@ -146,6 +146,9 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
     private long thisFrameTime = 0;
     private int fpsFrameCount = 0;
     private long previousFrameTime = 0;
+    private long lastPrepMs = 0;
+    private long lastDrawMs = 0;
+    private boolean logStatsThisFrame = false;
     private DrawList currentDrawList = null;
     private final float[] extTextureMatrix = new float[64];
     private final float[] extTextureHitVector = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -430,6 +433,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
 
     public synchronized void onDrawFrame(GL10 gl10, @Nullable HeadTransformCompat headTransformCompat, @Nullable float[] fArr, @Nullable int[] iArr, @Nullable float[] fArr2, @Nullable float[] fArr3, int i) {
         if (this.drawingEnabled.get()) {
+            long drawStartTime = System.currentTimeMillis();
             RenderContext renderContext = this.renderContext.get();
             if (renderContext == null) {
                 return;
@@ -662,6 +666,65 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                 GLES20.glActiveTexture(33984);
                 renderContext.quad.DrawSingleQuadShader(renderContext, renderContext.fxaaProgram.vPosition, renderContext.fxaaProgram.vTexCoord);
             }
+            this.lastDrawMs = System.currentTimeMillis() - drawStartTime;
+            if (this.logStatsThisFrame) {
+                this.logStatsThisFrame = false;
+                DrawList statsList = this.currentDrawList;
+                int objCount = 0;
+                int primReady = 0;
+                int meshObjs = 0;
+                int meshReady = 0;
+                int riggedObjs = 0;
+                int p1 = 0;
+                int p2 = 0;
+                int p4 = 0;
+                int aviCount = 0;
+                int terrCount = 0;
+                if (statsList != null) {
+                    ArrayList<DrawableObject> objs = statsList.objects;
+                    int[] masks = statsList.renderPasses;
+                    objCount = objs.size();
+                    for (int idx = 0; idx < objCount; idx++) {
+                        DrawableObject dobj = objs.get(idx);
+                        boolean hasPrim = dobj.hasDrawablePrim();
+                        boolean isMesh = dobj.isMeshObject();
+                        if (hasPrim) {
+                            primReady++;
+                        }
+                        if (isMesh) {
+                            meshObjs++;
+                            if (hasPrim) {
+                                meshReady++;
+                            }
+                        }
+                        if (dobj.isRiggedMesh()) {
+                            riggedObjs++;
+                        }
+                        int m = masks[idx];
+                        if ((m & 1) != 0) {
+                            p1++;
+                        }
+                        if ((m & 2) != 0) {
+                            p2++;
+                        }
+                        if ((m & 4) != 0) {
+                            p4++;
+                        }
+                    }
+                    aviCount = statsList.avatars.size();
+                    terrCount = statsList.terrain.size();
+                }
+                if (this.thisFrameTime != this.lastFrameTime) {
+                    long frameDelta = this.thisFrameTime - this.lastFrameTime;
+                    Debug.Printf("Renderer: FPS %.2f frame time %d (prep %dms draw %dms objs %d primReady %d mesh %d/%d rigged %d pass %d/%d/%d avis %d terr %d)",
+                            Float.valueOf(10000.0f / frameDelta), Long.valueOf(frameDelta),
+                            Long.valueOf(this.lastPrepMs), Long.valueOf(this.lastDrawMs),
+                            Integer.valueOf(objCount), Integer.valueOf(primReady), Integer.valueOf(meshReady), Integer.valueOf(meshObjs),
+                            Integer.valueOf(riggedObjs), Integer.valueOf(p1), Integer.valueOf(p2), Integer.valueOf(p4),
+                            Integer.valueOf(aviCount), Integer.valueOf(terrCount));
+                    this.lastFrameTime = this.thisFrameTime;
+                }
+            }
         }
     }
 
@@ -691,10 +754,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
             this.fpsFrameCount++;
             if (this.fpsFrameCount >= 10) {
                 this.fpsFrameCount = 0;
-                if (this.thisFrameTime != this.lastFrameTime) {
-                    Debug.Printf("Renderer: FPS %.2f frame time %d", Float.valueOf(10000.0f / (this.thisFrameTime - this.lastFrameTime)), Long.valueOf(this.thisFrameTime - this.lastFrameTime));
-                    this.lastFrameTime = this.thisFrameTime;
-                }
+                this.logStatsThisFrame = true;
             }
             TextureMemoryTracker.releaseFrameMemory();
             renderContext.ClearFrameKeeps();
@@ -756,6 +816,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                 }
             }
             processObjectPick();
+            this.lastPrepMs = System.currentTimeMillis() - jCurrentTimeMillis;
         }
     }
 

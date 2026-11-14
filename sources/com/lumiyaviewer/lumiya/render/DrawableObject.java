@@ -320,6 +320,15 @@ public class DrawableObject implements IntersectPickable, ResourceConsumer {
         return false;
     }
 
+    final boolean hasDrawablePrim() {
+        return this.drawablePrim != null;
+    }
+
+    final boolean isMeshObject() {
+        PrimDrawParams primDrawParams = this.rawPrimDrawParams;
+        return primDrawParams != null && primDrawParams.getVolumeParams().isMesh();
+    }
+
     public final boolean isRiggedMesh() {
         DrawablePrim drawablePrim = this.drawablePrim;
         if (drawablePrim != null) {

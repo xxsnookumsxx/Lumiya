@@ -9,7 +9,7 @@ public class Debug {
 
     public static void AlwaysPrintf(String str, Object... objArr) {
         if (str != null) {
-            Log.d(LOG_TAG, objArr.length == 0 ? str : String.format(str, objArr));
+            Log.d(LOG_TAG, (objArr == null || objArr.length == 0) ? str : String.format(str, objArr));
         }
     }
 
@@ -30,7 +30,7 @@ public class Debug {
 
     public static void Printf(String str, Object... objArr) {
         if (BuildConfig.DEBUG && str != null) {
-            Log.d(LOG_TAG, objArr.length == 0 ? str : String.format(str, objArr));
+            Log.d(LOG_TAG, (objArr == null || objArr.length == 0) ? str : String.format(str, objArr));
         }
     }
 

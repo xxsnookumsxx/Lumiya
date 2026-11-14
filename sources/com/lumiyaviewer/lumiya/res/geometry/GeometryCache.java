@@ -1,5 +1,6 @@
 package com.lumiyaviewer.lumiya.res.geometry;
 
+import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.openjpeg.OpenJPEG;
 import com.lumiyaviewer.lumiya.render.drawable.DrawableGeometry;
 import com.lumiyaviewer.lumiya.render.tex.DrawableTextureParams;
@@ -53,6 +54,7 @@ public class GeometryCache extends ResourceMemoryCache<PrimVolumeParams, Drawabl
             try {
                 completeRequest(new DrawableGeometry(this.meshData));
             } catch (Exception e) {
+                Debug.Warning(e);
                 completeRequest(null);
             }
         }
@@ -94,6 +96,7 @@ public class GeometryCache extends ResourceMemoryCache<PrimVolumeParams, Drawabl
             try {
                 completeRequest(new DrawableGeometry(getParams(), this.sculptData));
             } catch (Exception e) {
+                Debug.Warning(e);
                 completeRequest(null);
             }
         }
@@ -120,6 +123,7 @@ public class GeometryCache extends ResourceMemoryCache<PrimVolumeParams, Drawabl
             try {
                 completeRequest(new DrawableGeometry(getParams(), null));
             } catch (Exception e) {
+                Debug.Warning(e);
                 completeRequest(null);
             }
         }

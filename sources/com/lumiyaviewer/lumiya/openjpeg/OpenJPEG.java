@@ -28,8 +28,9 @@ public class OpenJPEG implements GLTexture {
     private static final int ETC1_BYTES_PER_PIXEL = 888;
     private static final int ALPHA_CUTOUT = 1;
     private static final int ALPHA_SEMI_TRANSPARENT = 2;
+    private static final Object J2K_LOCK = new Object();
     public int bytes_per_pixel;
-    private int cachedAlphaMode = -1;
+    private volatile int cachedAlphaMode = -1;
     public int error_code;
     public int height;
     private boolean mmapped = false;
@@ -94,7 +95,9 @@ public class OpenJPEG implements GLTexture {
         if (file == null) {
             throw new IOException("Null source file");
         }
-        this.rawBuffer = decompress(file.getAbsolutePath(), 0, 0, z, i, i2);
+        synchronized (J2K_LOCK) {
+            this.rawBuffer = decompress(file.getAbsolutePath(), 0, 0, z, i, i2);
+        }
         if (this.rawBuffer == null) {
             throw new IOException("Failed to decompress texture (" + this.error_code + ") " + file.getAbsolutePath());
         }
@@ -109,7 +112,9 @@ public class OpenJPEG implements GLTexture {
         boolean z2 = textureClass == TextureClass.Prim ? !z : false;
         switch (m22x89faf778()[imageFormat.ordinal()]) {
             case 1:
-                this.rawBuffer = decompress(file.getAbsolutePath(), z2 ? 1 : 0, z2 ? 6 : 0, textureClass == TextureClass.Prim, 0, 0);
+                synchronized (J2K_LOCK) {
+                    this.rawBuffer = decompress(file.getAbsolutePath(), z2 ? 1 : 0, z2 ? 6 : 0, textureClass == TextureClass.Prim, 0, 0);
+                }
                 if (this.rawBuffer == null) {
                     throw new IOException("Failed to decompress texture (" + this.error_code + ") " + file.getAbsolutePath());
                 }
@@ -221,8 +226,14 @@ public class OpenJPEG implements GLTexture {
     }
 
     public void SaveJPEG2K(File file) throws IOException {
-        if (this.rawBuffer != null && writeJPEG2K(file.getAbsolutePath(), this.rawBuffer, this.width, this.height, this.num_components, this.num_extra_components) != 0) {
-            throw new IOException("Failed to save JPEG2k to " + file.getAbsolutePath());
+        int res;
+        if (this.rawBuffer != null) {
+            synchronized (J2K_LOCK) {
+                res = writeJPEG2K(file.getAbsolutePath(), this.rawBuffer, this.width, this.height, this.num_components, this.num_extra_components);
+            }
+            if (res != 0) {
+                throw new IOException("Failed to save JPEG2k to " + file.getAbsolutePath());
+            }
         }
     }
 
@@ -493,17 +504,30 @@ public class OpenJPEG implements GLTexture {
             int semiThreshold = Math.max(4, totalPixels / 20);
             int semiCount = 0;
             mode = 0;
-            for (int off = 3; off < limit; off += stride) {
-                int alpha = this.rawBuffer.get(off) & 255;
-                if (alpha < 255) {
-                    mode |= ALPHA_CUTOUT;
-                    if (alpha > 0 && alpha < 250) {
-                        semiCount++;
-                        if (semiCount > semiThreshold) {
-                            mode |= ALPHA_SEMI_TRANSPARENT;
-                            break;
+            if (limit > 0) {
+                ByteBuffer dup = this.rawBuffer.duplicate();
+                dup.position(0);
+                int chunkBytes = Math.min(limit, 4096 * stride);
+                byte[] chunk = new byte[chunkBytes];
+                int remaining = limit;
+                while (remaining > 0) {
+                    int toRead = Math.min(remaining, chunkBytes);
+                    dup.get(chunk, 0, toRead);
+                    for (int off = 3; off < toRead; off += stride) {
+                        int alpha = chunk[off] & 255;
+                        if (alpha < 255) {
+                            mode |= ALPHA_CUTOUT;
+                            if (alpha > 0 && alpha < 250) {
+                                semiCount++;
+                                if (semiCount > semiThreshold) {
+                                    mode |= ALPHA_SEMI_TRANSPARENT;
+                                    remaining = 0;
+                                    break;
+                                }
+                            }
                         }
                     }
+                    remaining -= toRead;
                 }
             }
         }

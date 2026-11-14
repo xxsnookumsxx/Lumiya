@@ -127,6 +127,7 @@ public class MeshCache extends ResourceFileCache<UUID, MeshData> {
         try {
             return new MeshData(file);
         } catch (IOException e) {
+            Debug.Warning(e);
             return null;
         }
     }

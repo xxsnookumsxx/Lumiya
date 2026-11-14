@@ -30,7 +30,7 @@ public class TextureCache extends ResourceMemoryCache<DrawableTextureParams, Ope
     private final Object cacheDirLock = new Object();
     private final AtomicBoolean isLowMemory = new AtomicBoolean(false);
     private final TextureCompressedCache textureCompressedCache = new TextureCompressedCache();
-    private final ExecutorService decompressorExecutor = new WeakExecutor("TextureDecompressor", 4, new PriorityBlockingQueue());
+    private final ExecutorService decompressorExecutor = new WeakExecutor("TextureDecompressor", 2, new PriorityBlockingQueue());
     private final StartingExecutor memoryAwareExecutor = new StartingExecutor();
 
     private static class InstanceHolder {
@@ -87,7 +87,9 @@ public class TextureCache extends ResourceMemoryCache<DrawableTextureParams, Ope
             try {
                 DrawableTextureParams params = getParams();
                 if (file2.exists()) {
-                    return new OpenJPEG(file2, params.textureClass(), OpenJPEG.ImageFormat.Raw, z);
+                    OpenJPEG cached = new OpenJPEG(file2, params.textureClass(), OpenJPEG.ImageFormat.Raw, z);
+                    cached.hasAlphaLayer();
+                    return cached;
                 }
                 Object[] objArr = new Object[4];
                 objArr[0] = z ? "high" : "low";
@@ -96,6 +98,7 @@ public class TextureCache extends ResourceMemoryCache<DrawableTextureParams, Ope
                 objArr[3] = file2.getAbsolutePath();
                 Debug.Printf("Decompressing (%s) %s texture %s to %s", objArr);
                 OpenJPEG openJPEG = new OpenJPEG(file, params.textureClass(), OpenJPEG.ImageFormat.JPEG2000, z);
+                openJPEG.hasAlphaLayer();
                 file2.getParentFile().mkdirs();
                 File file3 = new File(file2.getAbsolutePath() + ".tmpdec");
                 if (params.textureClass() == TextureClass.Prim && GlobalOptions.getInstance().getCompressedTextures()) {
