@@ -135,7 +135,19 @@ Both the compiled native libraries (`lib/arm64-v8a/`) and the Java/JNI layer are
    - `RLVRestrictions.java`: Added missing `break;` statements in `RLVRestrictionList.isAllowed()` switch cases.
    - `ContactsFragment.java` & `GLSyncLoadQueue.java`: Restored `updateOptionsMenu()` visibility toggling and `RunLoadQueue()` frame load counters.
 
-### Phase 5: Full RLV / Restrained Love Viewer (RLVa) Modernization
-1. Update RLV protocol version reporting (`RLVCmdVersion.java`, `RLVController.java`) and support `@versionnum`, `@versionnew`, and modern RLV/RLVa version handshakes.
-2. Update RLV attachment and wearable commands (`@getattach`, `@getoutfit`, `@remattach`, `@detach`, `@remoutfit`, `@attach`, `@attachover`, `@attachall`, `@attachallover`, `@detachall`, `@detachallthis`, `@getinv`, `@getinvworn`, `@findfolder`, `@findfolders`, `@getpath`, `@getpathnew`) to support all 55 Bento/modern attachment points (`RLVCmdGetAttach.java` currently caps at `40` instead of `SLAttachmentPoint.NUM_POINTS = 56`) and `WT_PHYSICS` / `WT_UNIVERSAL` wearable types.
-3. Expand RLV restrictions and command coverage (`@unsit`, `@sit`, `@sittp`, `@standtp`, `@tpto`, `@tploc`, `@tplure`, `@tpv`, `@accepttp`, `@acceptpermission`, `@edit`, `@rez`, `@Touch`/`@touchall`/`@touchworld`/`@touchthis`/`@touchfar`, `@fartouch`, `@shownames`, `@NAMETAGS`, `@camdistmax`/`@camdistmin`, `@setgroup`, `@getgroup`, `@ clear` and exception handling) and verify full RLVa/#RLV shared folder compliance.
+### Phase 5: Full RLV / Restrained Love Viewer (RLVa) Modernization (✅ Completed)
+1. ✅ **RLV / RLVa Version Reporting (`RLVCmdVersion.java`)**:
+   - Updated `@version`, `@versionnew`, and `@versionnum` to report `RestrainedLove viewer v2.9.28 (RLVa 2.4.2)` and `2092800`, enabling Bento attachment points and `#RLV` shared folder features in modern Second Life collars, furniture, and HUDs.
+   - Replaced the hardcoded JADX enum switch table in `RLVCmdVersion.java` with a clean `switch (rLVCommands)` block.
+2. ✅ **Bento Attachment Points & `@clear` Fix (`RLVCmdGetAttach.java`, `RLVCmdClear.java`, `RLVCmdDetach.java`, `RLVController.java`)**:
+   - Updated `RLVCmdGetAttach.NUM_ATTACHMENT_POINTS_LSL` from `41` to `SLAttachmentPoint.NUM_ATTACHMENT_POINTS` (`56`), reporting all 55 attachment points (`0..55`) including all 15 Bento points (`Left/Right Ring Finger`, `Tail Base/Tip`, `Left/Right Wing`, `Jaw`, `Alt Left/Right Ear`, `Alt Left/Right Eye`, `Tongue`, `Groin`, `Left/Right Hind Foot`).
+   - Fixed `RLVCmdClear.java` string reference comparison (`str == ""`) and made `@clear` case-insensitive across both `=filter` and `:filter` forms.
+   - Normalized command names and parameters in `RLVController.handleRLVCommand` so mixed-case commands (`@Clear`, `@Version`, `@Sit`) work reliably.
+3. ✅ **`#RLV` Shared Folder Inventory Commands (`RLVController.java`, `RLVCmdAttach.java`, `RLVCmdDetach.java`, `RLVCmdGetInv.java`, `RLVCmdFindFolder.java`, `SLAvatarAppearance.java`)**:
+   - Implemented `#RLV` folder hierarchy resolution in `RLVController.java` querying `InventoryDB` (`Entries_parent_id` index), supporting inventory links, wearable items, and object attachments (including `(attachment point)` name suffixes and `+subfolder` auto-attachment).
+   - Added `@attach`, `@attachover`, `@attachoverorreplace`, `@attachall`, `@attachallover`, `@detachall`, `@remattach`, `@attachthis`, `@attachallthis`, `@detachthis`, `@detachallthis`, `@getinv`, `@getinvworn`, `@findfolder`, `@findfolders`, `@getpath`, and `@getpathnew`.
+4. ✅ **Extended Touch, World, Group & Avatar Commands (`RLVRestrictionType.java`, `RLVCommands.java`, `RLVCmdTouch.java`, `RLVCmdGroup.java`, `RLVCmdAvatar.java`, `RLVCmdSit.java`, `RLVCmdUnsit.java`, `SLAgentCircuit.java`, `SLGroupManager.java`, `SLUserProfiles.java`)**:
+   - Added and enforced `@touch`, `@touchall`, `@touchworld`, `@touchthis`, `@touchme`, and `@fartouch`/`@touchfar` (1.5m reach limit) in `RLVController.canTouchObject()` and `SLAgentCircuit.TouchObject()` / `TouchObjectFace()`.
+   - Enforced `@rez` restriction in `SLAgentCircuit.RezObject()`.
+   - Added `@getgroup` and `@setgroup` (`RLVCmdGroup.java`, `SLGroupManager.java`, `SLUserProfiles.java`) to query or force-activate groups by name/UUID (or `"none"`) and enforce `@setgroup=n`.
+   - Added `@setrot:<angle_radians>=force`, `@adjustheight`, `@standtp` (saving standing position before `@sit` and teleporting back on `@unsit=force`), `@shownames`, `@shownametags`, and `@rediremote`.

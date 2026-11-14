@@ -20,6 +20,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
@@ -167,9 +168,7 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
         }
         ImmutableList.Builder builder = ImmutableList.builder();
         file = file2;
-        Iterator it = arrayList.iterator();
-        while (it.hasNext()) {
-            File candidate = (File) it.next();
+        for (File candidate : (List<File>) arrayList) {
             Debug.Printf("Cache: checking cache location %s", candidate);
             if (isCacheDirectoryWriteable(candidate)) {
                 builder.add(candidate);

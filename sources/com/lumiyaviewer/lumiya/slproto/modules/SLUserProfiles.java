@@ -135,6 +135,9 @@ public class SLUserProfiles extends SLModule {
 
     @SLMessageHandler
     public void HandleAgentDataUpdate(AgentDataUpdate agentDataUpdate) {
+        if (agentDataUpdate.AgentData_Field != null && this.agentCircuit.getModules() != null && this.agentCircuit.getModules().groupManager != null) {
+            this.agentCircuit.getModules().groupManager.setActiveGroupID(agentDataUpdate.AgentData_Field.ActiveGroupID);
+        }
         if (this.agentDataUpdateResultHandler != null) {
             this.agentDataUpdateResultHandler.onResultData(agentDataUpdate.AgentData_Field.AgentID, agentDataUpdate);
         }

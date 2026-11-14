@@ -285,12 +285,24 @@ public class SLGroupManager extends SLModule {
     }
 
     public void ActivateGroup(UUID uuid) {
+        if (!this.agentCircuit.getModules().rlvController.canSetGroup()) {
+            return;
+        }
+        ForceActivateGroup(uuid);
+    }
+
+    public void ForceActivateGroup(UUID uuid) {
+        this.activeGroupID = uuid;
         ActivateGroup activateGroup = new ActivateGroup();
         activateGroup.AgentData_Field.AgentID = this.circuitInfo.agentID;
         activateGroup.AgentData_Field.SessionID = this.circuitInfo.sessionID;
         activateGroup.AgentData_Field.GroupID = uuid;
         activateGroup.isReliable = true;
         SendMessage(activateGroup);
+    }
+
+    public void setActiveGroupID(UUID uuid) {
+        this.activeGroupID = uuid;
     }
 
     public void AddMemberToRole(UUID uuid, UUID uuid2, UUID uuid3) {

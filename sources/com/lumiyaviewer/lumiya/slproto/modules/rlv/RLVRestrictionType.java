@@ -21,7 +21,21 @@ public enum RLVRestrictionType {
     remoutfit(RLVRuleMatchType.TargetSpecifiesRestriction),
     addoutfit(RLVRuleMatchType.TargetSpecifiesRestriction),
     redirchat(RLVRuleMatchType.TargetSpecifiesRestriction),
-    sendchannel(RLVRuleMatchType.TargetSpecifiesException);
+    sendchannel(RLVRuleMatchType.TargetSpecifiesException),
+    touchall(RLVRuleMatchType.TargetNoExceptions),
+    touchworld(RLVRuleMatchType.TargetSpecifiesException),
+    touchthis(RLVRuleMatchType.TargetSpecifiesRestriction),
+    touchme(RLVRuleMatchType.TargetNoExceptions),
+    fartouch(RLVRuleMatchType.TargetNoExceptions),
+    shownames(RLVRuleMatchType.TargetSpecifiesException),
+    shownametags(RLVRuleMatchType.TargetSpecifiesException),
+    standtp(RLVRuleMatchType.TargetNoExceptions),
+    setgroup(RLVRuleMatchType.TargetNoExceptions),
+    rediremote(RLVRuleMatchType.TargetSpecifiesRestriction),
+    detachthis(RLVRuleMatchType.TargetSpecifiesRestriction),
+    attachthis(RLVRuleMatchType.TargetSpecifiesRestriction),
+    detachallthis(RLVRuleMatchType.TargetSpecifiesRestriction),
+    attachallthis(RLVRuleMatchType.TargetSpecifiesRestriction);
 
     private RLVRuleMatchType ruleMatchType;
 

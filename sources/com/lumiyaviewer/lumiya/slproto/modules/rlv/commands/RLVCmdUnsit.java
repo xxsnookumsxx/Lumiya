@@ -4,7 +4,7 @@ import com.lumiyaviewer.lumiya.slproto.modules.rlv.RLVController;
 import com.lumiyaviewer.lumiya.slproto.modules.rlv.RLVRestrictionType;
 import java.util.UUID;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class RLVCmdUnsit extends RLVCmdGenericRestriction {
     public RLVCmdUnsit() {
         super(RLVRestrictionType.unsit, false);
@@ -12,6 +12,9 @@ public class RLVCmdUnsit extends RLVCmdGenericRestriction {
 
     @Override // com.lumiyaviewer.lumiya.slproto.modules.rlv.commands.RLVCmdGenericRestriction
     protected void HandleForce(RLVController rLVController, UUID uuid, String str) {
-        rLVController.getModules().avatarControl.ForceStand();
+        if (rLVController.getRestrictions().isAllowed(RLVRestrictionType.unsit, "", null, uuid)) {
+            rLVController.getModules().avatarControl.ForceStand();
+            rLVController.handleStandTp(uuid);
+        }
     }
 }

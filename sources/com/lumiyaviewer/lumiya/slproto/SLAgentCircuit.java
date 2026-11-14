@@ -1559,6 +1559,9 @@ public class SLAgentCircuit extends SLThreadingCircuit implements SLCapEventQueu
     }
 
     public void RezObject(SLInventoryEntry sLInventoryEntry) {
+        if (!getModules().rlvController.canRezObjects()) {
+            return;
+        }
         CurrentLocationInfo currentLocationInfoSnapshot;
         ParcelData parcelData;
         UUID activeGroupID = null;
@@ -1935,6 +1938,10 @@ public class SLAgentCircuit extends SLThreadingCircuit implements SLCapEventQueu
     }
 
     public void TouchObject(int i) {
+        SLObjectInfo objectInfo = this.gridConn != null && this.gridConn.parcelInfo != null ? this.gridConn.parcelInfo.getObjectInfo(i) : null;
+        if (!getModules().rlvController.canTouchObject(objectInfo)) {
+            return;
+        }
         ObjectGrab objectGrab = new ObjectGrab();
         objectGrab.AgentData_Field.AgentID = this.circuitInfo.agentID;
         objectGrab.AgentData_Field.SessionID = this.circuitInfo.sessionID;
@@ -1951,6 +1958,9 @@ public class SLAgentCircuit extends SLThreadingCircuit implements SLCapEventQueu
     }
 
     public void TouchObjectFace(SLObjectInfo sLObjectInfo, int i, float f, float f2, float f3, float f4, float f5, float f6, float f7) {
+        if (!getModules().rlvController.canTouchObject(sLObjectInfo)) {
+            return;
+        }
         Debug.Printf("Touch: Object %d, face %d, pos (%f, %f, %f), uv (%f, %f)", Integer.valueOf(sLObjectInfo.localID), Integer.valueOf(i), Float.valueOf(f), Float.valueOf(f2), Float.valueOf(f3), Float.valueOf(f4), Float.valueOf(f5));
         ObjectGrab objectGrab = new ObjectGrab();
         objectGrab.AgentData_Field.AgentID = this.circuitInfo.agentID;

@@ -1469,6 +1469,16 @@ public class SLAvatarAppearance extends SLModule implements SLWearable.OnWearabl
         return this.wornWearables.containsRow(sLWearableType);
     }
 
+    @Nonnull
+    public ImmutableMap<UUID, String> getWornAttachments() {
+        return this.wornAttachments;
+    }
+
+    @Nonnull
+    public Table<SLWearableType, UUID, SLWearable> getWornWearables() {
+        return this.wornWearables;
+    }
+
     public boolean isItemWorn(SLInventoryEntry sLInventoryEntry) {
         return isItemWorn(sLInventoryEntry, false);
     }

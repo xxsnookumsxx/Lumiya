@@ -6,164 +6,41 @@ import com.lumiyaviewer.lumiya.slproto.modules.rlv.RLVCommands;
 import com.lumiyaviewer.lumiya.slproto.modules.rlv.RLVController;
 import java.util.UUID;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class RLVCmdVersion implements RLVCommand {
-
-    /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-slproto-modules-rlv-RLVCommandsSwitchesValues, reason: not valid java name */
-    private static /* synthetic */ int[] f128x22b61868 = null;
     private static final int RLV_VERSION_BUILD = 0;
-    private static final int RLV_VERSION_MAJOR = 1;
-    private static final int RLV_VERSION_MINOR = 10;
-    private static final int RLV_VERSION_PATCH = 1;
-    private static final int RLVa_VERSION_MAJOR = 1;
-    private static final int RLVa_VERSION_MINOR = 10;
-    private static final int RLVa_VERSION_PATCH = 1;
-
-    /* JADX INFO: renamed from: -getcom-lumiyaviewer-lumiya-slproto-modules-rlv-RLVCommandsSwitchesValues, reason: not valid java name */
-    private static /* synthetic */ int[] m242xf254fe0c() {
-        if (f128x22b61868 != null) {
-            return f128x22b61868;
-        }
-        int[] iArr = new int[RLVCommands.valuesCustom().length];
-        try {
-            iArr[RLVCommands.accepttp.ordinal()] = 4;
-        } catch (NoSuchFieldError e) {
-        }
-        try {
-            iArr[RLVCommands.addoutfit.ordinal()] = 5;
-        } catch (NoSuchFieldError e2) {
-        }
-        try {
-            iArr[RLVCommands.clear.ordinal()] = 6;
-        } catch (NoSuchFieldError e3) {
-        }
-        try {
-            iArr[RLVCommands.detach.ordinal()] = 7;
-        } catch (NoSuchFieldError e4) {
-        }
-        try {
-            iArr[RLVCommands.edit.ordinal()] = 8;
-        } catch (NoSuchFieldError e5) {
-        }
-        try {
-            iArr[RLVCommands.getattach.ordinal()] = 9;
-        } catch (NoSuchFieldError e6) {
-        }
-        try {
-            iArr[RLVCommands.getoutfit.ordinal()] = 10;
-        } catch (NoSuchFieldError e7) {
-        }
-        try {
-            iArr[RLVCommands.getstatus.ordinal()] = 11;
-        } catch (NoSuchFieldError e8) {
-        }
-        try {
-            iArr[RLVCommands.recvchat.ordinal()] = 12;
-        } catch (NoSuchFieldError e9) {
-        }
-        try {
-            iArr[RLVCommands.recvim.ordinal()] = 13;
-        } catch (NoSuchFieldError e10) {
-        }
-        try {
-            iArr[RLVCommands.redirchat.ordinal()] = 14;
-        } catch (NoSuchFieldError e11) {
-        }
-        try {
-            iArr[RLVCommands.remoutfit.ordinal()] = 15;
-        } catch (NoSuchFieldError e12) {
-        }
-        try {
-            iArr[RLVCommands.rez.ordinal()] = 16;
-        } catch (NoSuchFieldError e13) {
-        }
-        try {
-            iArr[RLVCommands.sendchannel.ordinal()] = 17;
-        } catch (NoSuchFieldError e14) {
-        }
-        try {
-            iArr[RLVCommands.sendchat.ordinal()] = 18;
-        } catch (NoSuchFieldError e15) {
-        }
-        try {
-            iArr[RLVCommands.sendim.ordinal()] = 19;
-        } catch (NoSuchFieldError e16) {
-        }
-        try {
-            iArr[RLVCommands.showinv.ordinal()] = 20;
-        } catch (NoSuchFieldError e17) {
-        }
-        try {
-            iArr[RLVCommands.sit.ordinal()] = 21;
-        } catch (NoSuchFieldError e18) {
-        }
-        try {
-            iArr[RLVCommands.sittp.ordinal()] = 22;
-        } catch (NoSuchFieldError e19) {
-        }
-        try {
-            iArr[RLVCommands.tplm.ordinal()] = 23;
-        } catch (NoSuchFieldError e20) {
-        }
-        try {
-            iArr[RLVCommands.tploc.ordinal()] = 24;
-        } catch (NoSuchFieldError e21) {
-        }
-        try {
-            iArr[RLVCommands.tplure.ordinal()] = 25;
-        } catch (NoSuchFieldError e22) {
-        }
-        try {
-            iArr[RLVCommands.tpto.ordinal()] = 26;
-        } catch (NoSuchFieldError e23) {
-        }
-        try {
-            iArr[RLVCommands.unsit.ordinal()] = 27;
-        } catch (NoSuchFieldError e24) {
-        }
-        try {
-            iArr[RLVCommands.version.ordinal()] = 1;
-        } catch (NoSuchFieldError e25) {
-        }
-        try {
-            iArr[RLVCommands.versionnew.ordinal()] = 2;
-        } catch (NoSuchFieldError e26) {
-        }
-        try {
-            iArr[RLVCommands.versionnum.ordinal()] = 3;
-        } catch (NoSuchFieldError e27) {
-        }
-        try {
-            iArr[RLVCommands.viewnote.ordinal()] = 28;
-        } catch (NoSuchFieldError e28) {
-        }
-        f128x22b61868 = iArr;
-        return iArr;
-    }
+    private static final int RLV_VERSION_MAJOR = 2;
+    private static final int RLV_VERSION_MINOR = 9;
+    private static final int RLV_VERSION_PATCH = 28;
+    private static final int RLVa_VERSION_MAJOR = 2;
+    private static final int RLVa_VERSION_MINOR = 4;
+    private static final int RLVa_VERSION_PATCH = 2;
 
     public static String getManualVersionReply() {
-        return String.format("RestrainedLove viewer v%d.%d.%d", 1, 10, 1);
+        return String.format("RestrainedLove viewer v%d.%d.%d", Integer.valueOf(RLV_VERSION_MAJOR), Integer.valueOf(RLV_VERSION_MINOR), Integer.valueOf(RLV_VERSION_PATCH));
     }
 
     @Override // com.lumiyaviewer.lumiya.slproto.modules.rlv.RLVCommand
     public void Handle(RLVController rLVController, UUID uuid, RLVCommands rLVCommands, String str, String str2) {
         try {
             int i = Integer.parseInt(str);
-            switch (m242xf254fe0c()[rLVCommands.ordinal()]) {
-                case 1:
-                case 2:
+            switch (rLVCommands) {
+                case version:
+                case versionnew:
                     Object[] objArr = new Object[7];
                     objArr[0] = rLVCommands == RLVCommands.versionnew ? "RestrainedLove" : "RestrainedLife";
-                    objArr[1] = 1;
-                    objArr[2] = 10;
-                    objArr[3] = 1;
-                    objArr[4] = 1;
-                    objArr[5] = 10;
-                    objArr[6] = 1;
+                    objArr[1] = Integer.valueOf(RLV_VERSION_MAJOR);
+                    objArr[2] = Integer.valueOf(RLV_VERSION_MINOR);
+                    objArr[3] = Integer.valueOf(RLV_VERSION_PATCH);
+                    objArr[4] = Integer.valueOf(RLVa_VERSION_MAJOR);
+                    objArr[5] = Integer.valueOf(RLVa_VERSION_MINOR);
+                    objArr[6] = Integer.valueOf(RLVa_VERSION_PATCH);
                     rLVController.sayOnChannel(i, String.format("%s viewer v%d.%d.%d (RLVa %d.%d.%d)", objArr));
                     break;
-                case 3:
-                    rLVController.sayOnChannel(i, String.format("%d%02d%02d%02d", 1, 10, 1, 0));
+                case versionnum:
+                    rLVController.sayOnChannel(i, String.format("%d%02d%02d%02d", Integer.valueOf(RLV_VERSION_MAJOR), Integer.valueOf(RLV_VERSION_MINOR), Integer.valueOf(RLV_VERSION_PATCH), Integer.valueOf(RLV_VERSION_BUILD)));
+                    break;
+                default:
                     break;
             }
         } catch (NumberFormatException e) {
