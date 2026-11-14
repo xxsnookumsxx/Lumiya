@@ -22,7 +22,7 @@ public class AvatarVisualState {
     private volatile AvatarShapeParams avatarShapeParams;
     private final UUID avatarUUID;
     private static final UUID defaultStandingAnimation = UUID.fromString("2408fe9e-df1d-1d7d-f4ff-1384fa7b350f");
-    private static final ImmutableSet<UUID> basicAnimations = new ImmutableSet.Builder().add(UUID.fromString("2408fe9e-df1d-1d7d-f4ff-1384fa7b350f")).add(UUID.fromString("15468e00-3400-bb66-cecc-646d7c14458e")).add(UUID.fromString("370f3a20-6ca6-9971-848c-9a01bc42ae3c")).add(UUID.fromString("42b46214-4b44-79ae-deb8-0df61424ff4b")).add(UUID.fromString("f22fed8b-a5ed-2c93-64d5-bdd8b93c889f")).add(UUID.fromString("201f3fdf-cb1f-dbec-201f-7333e328ae7c")).add(UUID.fromString("47f5f6fb-22e5-ae44-f871-73aaaf4a6022")).add(UUID.fromString("aec4610c-757f-bc4e-c092-c6e9caf18daf")).add(UUID.fromString("2b5a38b2-5e00-3a97-a495-4c826bc443e6")).add(UUID.fromString("4ae8016b-31b9-03bb-c401-b1ea941db41d")).add(UUID.fromString("20f063ea-8306-2562-0b07-5c853b37b31e")).add(UUID.fromString("62c5de58-cb33-5743-3d07-9e4cd4352864")).add(UUID.fromString("05ddbff8-aaa9-92a1-2b74-8fe77a29b445")).add(UUID.fromString("6ed24bd8-91aa-4b12-ccc7-c97c857ab4e0")).add(UUID.fromString("f5fc7433-043d-e819-8298-f519a119b688")).build();
+    private static final ImmutableSet<UUID> basicAnimations = new ImmutableSet.Builder().add(UUID.fromString("2408fe9e-df1d-1d7d-f4ff-1384fa7b350f")).add(UUID.fromString("15468e00-3400-bb66-cecc-646d7c14458e")).add(UUID.fromString("370f3a20-6ca6-9971-848c-9a01bc42ae3c")).add(UUID.fromString("42b46214-4b44-79ae-deb8-0df61424ff4b")).add(UUID.fromString("f22fed8b-a5ed-2c93-64d5-bdd8b93c889f")).add(UUID.fromString("201f3fdf-cb1f-dbec-201f-7333e328ae7c")).add(UUID.fromString("47f5f6fb-22e5-ae44-f871-73aaaf4a6022")).add(UUID.fromString("aec4610c-757f-bc4e-c092-c6e9caf18daf")).add(UUID.fromString("2b5a38b2-5e00-3a97-a495-4c826bc443e6")).add(UUID.fromString("4ae8016b-31b9-03bb-c401-b1ea941db41d")).add(UUID.fromString("20f063ea-8306-2562-0b07-5c853b37b31e")).add(UUID.fromString("62c5de58-cb33-5743-3d07-9e4cd4352864")).add(UUID.fromString("05ddbff8-aaa9-92a1-2b74-8fe77a29b445")).add(UUID.fromString("6ed24bd8-91aa-4b12-ccc7-c97c857ab4e0")).add(UUID.fromString("f5fc7433-043d-e819-8298-f519a119b688")).add(UUID.fromString("1a5fe8ac-a804-8a5d-7cbd-56bd83184568")).add(UUID.fromString("1c7600d6-661f-b87b-efe2-d7421eb93c86")).add(UUID.fromString("b1709c8d-ecd3-54a1-4f28-d55ac0840782")).add(UUID.fromString("42dd95d5-0bc6-6392-f650-777304946c0f")).add(UUID.fromString("c541c47f-e0c0-058b-ad1a-d6ae3a4584d9")).build();
     private final AvatarTextures textures = new AvatarTextures();
     private final Map<UUID, AnimationSequenceInfo> animations = new ConcurrentHashMap();
 
@@ -86,7 +86,8 @@ public class AvatarVisualState {
             hashSet2.remove(uuid);
             startAnimation(uuid, animationList.AnimSequenceID, jCurrentTimeMillis, drawableAvatar);
         }
-        if (Collections.disjoint(hashSet, basicAnimations)) {
+        boolean isSitting = this.avatarObject != null && this.avatarObject.parentID != 0;
+        if (!isSitting && Collections.disjoint(hashSet, basicAnimations)) {
             hashSet2.remove(defaultStandingAnimation);
             startAnimation(defaultStandingAnimation, 1, jCurrentTimeMillis, drawableAvatar);
         }

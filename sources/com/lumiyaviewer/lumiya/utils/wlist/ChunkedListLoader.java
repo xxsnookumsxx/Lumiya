@@ -378,50 +378,58 @@ public class ChunkedListLoader<E extends Identifiable<Long>> extends AbstractLis
                 }
                 return;
             }
+            boolean shouldLoad = false;
             obj = this.lock;
             synchronized (obj) {
                 if (!this.loadBelowWanted && this.loadBelowResult == null) {
                     this.loadBelowLastId = ((Long) this.items.get(this.items.size() - 1).getId()).longValue();
                     this.loadBelowWanted = true;
                     Debug.Printf("ChatView: requesting load below id %d", Long.valueOf(this.loadBelowLastId));
-                    z = true;
+                    shouldLoad = true;
                 }
-                if (z) {
+            }
+            if (shouldLoad) {
+                if (!this.loadRequested.compareAndSet(false, true)) {
+                    Debug.Printf("ChatView: loadMoreData() already requested", new Object[0]);
+                } else {
+                    Debug.Printf("ChatView: requesting loadMoreData ()", new Object[0]);
+                    this.executor.execute(this.loadMoreData);
                 }
             }
         } else {
+            boolean shouldLoad = false;
             if (this.startFromStart) {
                 if (this.hasBelow) {
                     obj = this.lock;
                     synchronized (obj) {
-                        if (this.loadBelowWanted || this.loadBelowResult != null) {
-                            z = false;
-                        } else {
+                        if (!this.loadBelowWanted && this.loadBelowResult == null) {
                             this.loadBelowLastId = 0L;
                             this.loadBelowWanted = true;
                             Debug.Printf("ChatView: requesting load below id %d", Long.valueOf(this.loadBelowLastId));
-                            z = true;
+                            shouldLoad = true;
                         }
                     }
                 }
-                z = false;
             } else {
                 if (this.hasAbove) {
                     obj = this.lock;
                     synchronized (obj) {
-                        if (this.loadAboveWanted || this.loadAboveResult != null) {
-                            z = false;
-                        } else {
+                        if (!this.loadAboveWanted && this.loadAboveResult == null) {
                             this.loadAboveTopmostId = Long.MAX_VALUE;
                             this.loadAboveWanted = true;
                             Debug.Printf("ChatView: requesting load above id %d", Long.valueOf(this.loadAboveTopmostId));
-                            z = true;
+                            shouldLoad = true;
                         }
                     }
                 }
-                z = false;
             }
-            if (z) {
+            if (shouldLoad) {
+                if (!this.loadRequested.compareAndSet(false, true)) {
+                    Debug.Printf("ChatView: loadMoreData() already requested", new Object[0]);
+                } else {
+                    Debug.Printf("ChatView: requesting loadMoreData ()", new Object[0]);
+                    this.executor.execute(this.loadMoreData);
+                }
             }
         }
     }

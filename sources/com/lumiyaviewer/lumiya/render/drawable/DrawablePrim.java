@@ -14,6 +14,7 @@ import com.lumiyaviewer.lumiya.render.shaders.FlexiPrimProgram;
 import com.lumiyaviewer.lumiya.render.shaders.PrimProgram;
 import com.lumiyaviewer.lumiya.render.tex.DrawableTextureParams;
 import com.lumiyaviewer.lumiya.render.tex.TextureClass;
+import com.lumiyaviewer.lumiya.slproto.avatar.AvatarTextureFaceIndex;
 import com.lumiyaviewer.lumiya.slproto.mesh.MeshJointTranslations;
 import com.lumiyaviewer.lumiya.slproto.prims.PrimDrawParams;
 import com.lumiyaviewer.lumiya.slproto.prims.PrimFlexibleInfo;
@@ -67,7 +68,7 @@ public class DrawablePrim {
                 this.singleFaceColor = sLTextureEntryFaceGetFace.getRGBA(sLTextureEntryFaceGetDefaultTexture);
                 UUID textureID = sLTextureEntryFaceGetFace.getTextureID(sLTextureEntryFaceGetDefaultTexture);
                 if (textureID != null) {
-                    this.singleFaceTexture = new DrawableFaceTexture(DrawableTextureParams.create(textureID, TextureClass.Prim));
+                    this.singleFaceTexture = createFaceTexture(primDrawParams, sLTextureEntryFaceGetFace, 0, textureID);
                 } else {
                     this.singleFaceTexture = null;
                 }
@@ -90,18 +91,28 @@ public class DrawablePrim {
         this.FaceUVMatrices = new float[this.FaceCount * 16];
         int i = 0;
         for (int i2 = 0; i2 < this.FaceCount; i2++) {
-            SLTextureEntryFace sLTextureEntryFaceGetFace2 = textures.GetFace(drawableGeometry.getFaceID(i2));
+            int faceID = drawableGeometry.getFaceID(i2);
+            SLTextureEntryFace sLTextureEntryFaceGetFace2 = textures.GetFace(faceID);
             if (sLTextureEntryFaceGetFace2 != null) {
                 this.FaceColorsIDs[i] = sLTextureEntryFaceGetFace2.getRGBA(sLTextureEntryFaceGetDefaultTexture);
                 this.FaceColorsIDs[i + 1] = 0;
                 UUID textureID2 = sLTextureEntryFaceGetFace2.getTextureID(sLTextureEntryFaceGetDefaultTexture);
                 if (textureID2 != null) {
-                    this.FaceTextures[i2] = new DrawableFaceTexture(DrawableTextureParams.create(textureID2, TextureClass.Prim));
+                    this.FaceTextures[i2] = createFaceTexture(primDrawParams, sLTextureEntryFaceGetFace2, faceID, textureID2);
                 }
                 initFaceUVMatrix(sLTextureEntryFaceGetDefaultTexture, sLTextureEntryFaceGetFace2, this.FaceUVMatrices, i2 * 16);
             }
             i += 2;
         }
+    }
+
+    private static DrawableFaceTexture createFaceTexture(PrimDrawParams primDrawParams, SLTextureEntryFace face, int faceIndex, UUID textureID) {
+        UUID bomAvatarUUID = primDrawParams.getBomAvatarUUID();
+        AvatarTextureFaceIndex bomFace = primDrawParams.getBomFace(face, faceIndex);
+        DrawableTextureParams texParams = (bomAvatarUUID != null && bomFace != null)
+                ? DrawableTextureParams.create(textureID, bomFace, bomAvatarUUID)
+                : DrawableTextureParams.create(textureID, TextureClass.Prim);
+        return new DrawableFaceTexture(texParams);
     }
 
     private int DrawFace(RenderContext renderContext, DrawableGeometry drawableGeometry, GLLoadableBuffer gLLoadableBuffer, boolean z, int i, int i2, DrawableFaceTexture drawableFaceTexture, float[] fArr, int i3, int i4) {

@@ -5,6 +5,7 @@ import com.google.common.base.Ascii;
 import com.google.common.logging.nano.Vr;
 import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.render.avatar.AvatarTextures;
+import com.lumiyaviewer.lumiya.slproto.avatar.AvatarTextureFaceIndex;
 import com.lumiyaviewer.lumiya.slproto.avatar.BakedTextureIndex;
 import com.lumiyaviewer.lumiya.utils.InternPool;
 import com.lumiyaviewer.lumiya.utils.UUIDPool;
@@ -12,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /* JADX INFO: loaded from: classes.dex */
 public class SLTextureEntry {
@@ -544,20 +546,38 @@ public class SLTextureEntry {
         return bArr;
     }
 
-    public SLTextureEntry resolveBoMTextures(AvatarTextures avatarTextures) {
+    public static final class ResolvedBoM {
+        @Nullable
+        public final AvatarTextureFaceIndex[] bomFaces;
+        @Nullable
+        public final AvatarTextureFaceIndex defaultBomFace;
+        public final SLTextureEntry textures;
+
+        ResolvedBoM(SLTextureEntry textures, @Nullable AvatarTextureFaceIndex defaultBomFace, @Nullable AvatarTextureFaceIndex[] bomFaces) {
+            this.textures = textures;
+            this.defaultBomFace = defaultBomFace;
+            this.bomFaces = bomFaces;
+        }
+    }
+
+    public ResolvedBoM resolveBoM(AvatarTextures avatarTextures) {
         if (avatarTextures == null || !hasBoMTextures()) {
-            return this;
+            return new ResolvedBoM(this, null, null);
         }
         SLTextureEntryFace sLTextureEntryFaceWithTextureID = this.DefaultTexture;
+        AvatarTextureFaceIndex defaultBomFace = null;
         BakedTextureIndex byBakedUUID = BakedTextureIndex.getByBakedUUID(this.DefaultTexture.textureID());
         if (byBakedUUID != null) {
             UUID texture = avatarTextures.getTexture(byBakedUUID.getFaceIndex());
             if (texture == null || texture.equals(UUIDPool.ZeroUUID)) {
                 texture = AvatarTextures.DEFAULT_AVATAR_TEXTURE;
+            } else if (!texture.equals(AvatarTextures.DEFAULT_AVATAR_TEXTURE)) {
+                defaultBomFace = byBakedUUID.getFaceIndex();
             }
             sLTextureEntryFaceWithTextureID = SLTextureEntryFace.withTextureID(this.DefaultTexture, texture);
         }
         SLTextureEntryFace[] sLTextureEntryFaceArr = new SLTextureEntryFace[this.FaceTextures.length];
+        AvatarTextureFaceIndex[] bomFaces = null;
         for (int i = 0; i < this.FaceTextures.length; i++) {
             SLTextureEntryFace sLTextureEntryFace = this.FaceTextures[i];
             if (sLTextureEntryFace != null && (sLTextureEntryFace.hasAttribute() & 1) != 0) {
@@ -566,12 +586,21 @@ public class SLTextureEntry {
                     UUID texture2 = avatarTextures.getTexture(byBakedUUID2.getFaceIndex());
                     if (texture2 == null || texture2.equals(UUIDPool.ZeroUUID)) {
                         texture2 = AvatarTextures.DEFAULT_AVATAR_TEXTURE;
+                    } else if (!texture2.equals(AvatarTextures.DEFAULT_AVATAR_TEXTURE)) {
+                        if (bomFaces == null) {
+                            bomFaces = new AvatarTextureFaceIndex[this.FaceTextures.length];
+                        }
+                        bomFaces[i] = byBakedUUID2.getFaceIndex();
                     }
                     sLTextureEntryFace = SLTextureEntryFace.withTextureID(sLTextureEntryFace, texture2);
                 }
             }
             sLTextureEntryFaceArr[i] = sLTextureEntryFace;
         }
-        return create(sLTextureEntryFaceWithTextureID, sLTextureEntryFaceArr);
+        return new ResolvedBoM(create(sLTextureEntryFaceWithTextureID, sLTextureEntryFaceArr), defaultBomFace, bomFaces);
+    }
+
+    public SLTextureEntry resolveBoMTextures(AvatarTextures avatarTextures) {
+        return resolveBoM(avatarTextures).textures;
     }
 }

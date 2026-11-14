@@ -38,7 +38,7 @@ public class AssetResponseCacher implements Refreshable<AssetKey> {
             public boolean isRequestComplete(@Nonnull AssetKey assetKey, AssetData assetData) {
                 CachedAsset r0 = AssetResponseCacher.this.cachedAssetDao.load(assetKey.toString());
                 if (r0 != null) {
-                    return !r0.getMustRevalidate();
+                    return !r0.getMustRevalidate() && r0.getStatus() == 1 && r0.getData() != null;
                 }
                 return false;
             }
@@ -52,6 +52,10 @@ public class AssetResponseCacher implements Refreshable<AssetKey> {
                     Debug.Printf("AssetCache: no cached data for key %s", assetKey);
                     return null;
                 }
+                if (cachedAssetLoad.getStatus() != 1 || cachedAssetLoad.getData() == null) {
+                    Debug.Printf("AssetCache: ignoring failed cached response (status %d) for key %s", Integer.valueOf(cachedAssetLoad.getStatus()), assetKey);
+                    return null;
+                }
                 AssetData assetData = new AssetData(cachedAssetLoad.getStatus(), cachedAssetLoad.getData());
                 Debug.Printf("AssetCache: returning cached response for key %s", assetKey);
                 return assetData;
@@ -61,7 +65,7 @@ public class AssetResponseCacher implements Refreshable<AssetKey> {
             @Override // com.lumiyaviewer.lumiya.react.RequestProcessor
             public AssetData processResult(@Nonnull AssetKey assetKey, AssetData assetData) {
                 Debug.Printf("AssetCache: saving cached data for key %s", assetKey.toString());
-                if (assetData != null) {
+                if (assetData != null && assetData.getStatus() == 1 && assetData.getData() != null) {
                     AssetResponseCacher.this.cachedAssetDao.insertOrReplace(new CachedAsset(assetKey.toString(), assetData.getStatus(), assetData.getData(), false));
                 }
                 return assetData;

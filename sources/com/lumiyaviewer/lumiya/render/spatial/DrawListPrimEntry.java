@@ -31,7 +31,7 @@ public class DrawListPrimEntry extends DrawListObjectEntry {
     public DrawableObject getDrawableAttachment(DrawableStore drawableStore, DrawableAvatar drawableAvatar) {
         WeakReference<DrawableObject> weakReference = this.drawableObject;
         DrawableObject drawableObject = weakReference != null ? weakReference.get() : null;
-        if (drawableObject != null) {
+        if (drawableObject != null && drawableObject.getAttachedTo() == drawableAvatar) {
             return drawableObject;
         }
         DrawableObject drawableObject2 = new DrawableObject(drawableStore, this.objectInfo, drawableAvatar);

@@ -44,6 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /* loaded from: classes.dex */
 public class DrawableAvatar extends DrawableAvatarStub implements IntersectPickable, DrawEntryList.EntryRemovalListener {
@@ -496,6 +497,11 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
 
     public AvatarTextures getAvatarTextures() {
         return this.avatarTextures;
+    }
+
+    @Nullable
+    public UUID getAvatarUUID() {
+        return this.avatarObject != null ? this.avatarObject.getId() : null;
     }
 
     public DrawableHUD getDrawableHUD() {

@@ -283,8 +283,16 @@ public class DrawableObject implements IntersectPickable, ResourceConsumer {
         if (avatarTextures == null) {
             return primDrawParams;
         }
-        SLTextureEntry sLTextureEntryResolveBoMTextures = textures.resolveBoMTextures(avatarTextures);
-        return sLTextureEntryResolveBoMTextures != textures ? new PrimDrawParams(primDrawParams.getVolumeParams(), sLTextureEntryResolveBoMTextures) : primDrawParams;
+        SLTextureEntry.ResolvedBoM resolvedBoM = textures.resolveBoM(avatarTextures);
+        if (resolvedBoM.textures == textures && resolvedBoM.defaultBomFace == null && resolvedBoM.bomFaces == null) {
+            return primDrawParams;
+        }
+        return new PrimDrawParams(primDrawParams.getVolumeParams(), resolvedBoM.textures, this.attachedTo.getAvatarUUID(), resolvedBoM.defaultBomFace, resolvedBoM.bomFaces);
+    }
+
+    @Nullable
+    public DrawableAvatar getAttachedTo() {
+        return this.attachedTo;
     }
 
     public void collectBoMBakes(Set<BakedTextureIndex> set) {
