@@ -77,8 +77,8 @@ public class ImprovedInstantMessage extends SLMessage {
         this.MessageBlock_Field.ParentEstateID = unpackInt(byteBuffer);
         this.MessageBlock_Field.RegionID = unpackUUID(byteBuffer);
         this.MessageBlock_Field.Position = unpackLLVector3(byteBuffer);
-        this.MessageBlock_Field.Offline = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-        this.MessageBlock_Field.Dialog = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.MessageBlock_Field.Offline = unpackByte(byteBuffer) & 255;
+        this.MessageBlock_Field.Dialog = unpackByte(byteBuffer) & 255;
         this.MessageBlock_Field.ID = unpackUUID(byteBuffer);
         this.MessageBlock_Field.Timestamp = unpackInt(byteBuffer);
         this.MessageBlock_Field.FromAgentName = unpackVariable(byteBuffer, 1);

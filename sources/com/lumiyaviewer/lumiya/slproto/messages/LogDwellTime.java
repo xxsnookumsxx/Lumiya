@@ -59,7 +59,7 @@ public class LogDwellTime extends SLMessage {
         this.DwellInfo_Field.SimName = unpackVariable(byteBuffer, 1);
         this.DwellInfo_Field.RegionX = unpackInt(byteBuffer);
         this.DwellInfo_Field.RegionY = unpackInt(byteBuffer);
-        this.DwellInfo_Field.AvgAgentsInView = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-        this.DwellInfo_Field.AvgViewerFPS = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.DwellInfo_Field.AvgAgentsInView = unpackByte(byteBuffer) & 255;
+        this.DwellInfo_Field.AvgViewerFPS = unpackByte(byteBuffer) & 255;
     }
 }

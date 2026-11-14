@@ -56,7 +56,7 @@ public class LLVector3 {
     }
 
     public static LLVector3 parseU8Vec(ByteBuffer byteBuffer, float f, float f2, float f3, float f4) {
-        return new LLVector3(LLTersePacking.U8_to_float(byteBuffer.get() & UnsignedBytes.MAX_VALUE, f, f2), LLTersePacking.U8_to_float(byteBuffer.get() & UnsignedBytes.MAX_VALUE, f, f2), LLTersePacking.U8_to_float(byteBuffer.get() & UnsignedBytes.MAX_VALUE, f3, f4));
+        return new LLVector3(LLTersePacking.U8_to_float(byteBuffer.get() & 255, f, f2), LLTersePacking.U8_to_float(byteBuffer.get() & 255, f, f2), LLTersePacking.U8_to_float(byteBuffer.get() & 255, f3, f4));
     }
 
     public static LLVector3 scaleFromMatrix(float[] fArr) {

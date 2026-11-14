@@ -57,7 +57,7 @@ public class TransferInventory extends SLMessage {
         this.InfoBlock_Field.SourceID = unpackUUID(byteBuffer);
         this.InfoBlock_Field.DestID = unpackUUID(byteBuffer);
         this.InfoBlock_Field.TransactionID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             InventoryBlock inventoryBlock = new InventoryBlock();
             inventoryBlock.InventoryID = unpackUUID(byteBuffer);

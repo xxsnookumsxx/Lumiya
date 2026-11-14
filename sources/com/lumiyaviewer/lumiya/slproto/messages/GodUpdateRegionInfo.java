@@ -83,7 +83,7 @@ public class GodUpdateRegionInfo extends SLMessage {
         this.RegionInfo_Field.PricePerMeter = unpackInt(byteBuffer);
         this.RegionInfo_Field.RedirectGridX = unpackInt(byteBuffer);
         this.RegionInfo_Field.RedirectGridY = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             RegionInfo2 regionInfo2 = new RegionInfo2();
             regionInfo2.RegionFlagsExtended = unpackLong(byteBuffer);

@@ -109,7 +109,7 @@ public class SLCircuit extends SLMessageHandler {
         StringBuilder sb = new StringBuilder();
         sb.append(str).append(": ");
         for (int i = 0; i < byteBuffer.limit(); i++) {
-            sb.append(Integer.toHexString(byteBuffer.get(i) & UnsignedBytes.MAX_VALUE));
+            sb.append(Integer.toHexString(byteBuffer.get(i) & 255));
         }
         Debug.Log(sb.toString());
     }

@@ -59,12 +59,12 @@ public class SimulatorLoad extends SLMessage {
         this.SimulatorLoadData_Field.TimeDilation = unpackFloat(byteBuffer);
         this.SimulatorLoadData_Field.AgentCount = unpackInt(byteBuffer);
         this.SimulatorLoadData_Field.CanAcceptAgents = unpackBoolean(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             AgentList agentList = new AgentList();
             agentList.CircuitCode = unpackInt(byteBuffer);
-            agentList.X = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-            agentList.Y = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            agentList.X = unpackByte(byteBuffer) & 255;
+            agentList.Y = unpackByte(byteBuffer) & 255;
             this.AgentList_Fields.add(agentList);
         }
     }

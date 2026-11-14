@@ -50,6 +50,6 @@ public class AttachedSound extends SLMessage {
         this.DataBlock_Field.ObjectID = unpackUUID(byteBuffer);
         this.DataBlock_Field.OwnerID = unpackUUID(byteBuffer);
         this.DataBlock_Field.Gain = unpackFloat(byteBuffer);
-        this.DataBlock_Field.Flags = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.DataBlock_Field.Flags = unpackByte(byteBuffer) & 255;
     }
 }

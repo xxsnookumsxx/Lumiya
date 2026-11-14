@@ -60,7 +60,7 @@ public class AlertMessage extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AlertData_Field.Message = unpackVariable(byteBuffer, 1);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             AlertInfo alertInfo = new AlertInfo();
             alertInfo.Message = unpackVariable(byteBuffer, 1);

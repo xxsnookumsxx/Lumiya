@@ -77,7 +77,7 @@ public class ObjectPropertiesFamily extends SLMessage {
         this.ObjectData_Field.EveryoneMask = unpackInt(byteBuffer);
         this.ObjectData_Field.NextOwnerMask = unpackInt(byteBuffer);
         this.ObjectData_Field.OwnershipCost = unpackInt(byteBuffer);
-        this.ObjectData_Field.SaleType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.ObjectData_Field.SaleType = unpackByte(byteBuffer) & 255;
         this.ObjectData_Field.SalePrice = unpackInt(byteBuffer);
         this.ObjectData_Field.Category = unpackInt(byteBuffer);
         this.ObjectData_Field.LastOwnerID = unpackUUID(byteBuffer);

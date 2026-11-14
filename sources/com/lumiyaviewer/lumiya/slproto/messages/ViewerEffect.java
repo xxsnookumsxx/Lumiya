@@ -70,12 +70,12 @@ public class ViewerEffect extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             Effect effect = new Effect();
             effect.ID = unpackUUID(byteBuffer);
             effect.AgentID = unpackUUID(byteBuffer);
-            effect.Type = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            effect.Type = unpackByte(byteBuffer) & 255;
             effect.Duration = unpackFloat(byteBuffer);
             effect.Color = unpackFixed(byteBuffer, 4);
             effect.TypeData = unpackVariable(byteBuffer, 1);

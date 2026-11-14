@@ -79,7 +79,7 @@ public class AvatarGroupsReply extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.AvatarID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             GroupData groupData = new GroupData();
             groupData.GroupPowers = unpackLong(byteBuffer);

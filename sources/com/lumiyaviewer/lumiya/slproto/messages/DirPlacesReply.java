@@ -86,13 +86,13 @@ public class DirPlacesReply extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             QueryData queryData = new QueryData();
             queryData.QueryID = unpackUUID(byteBuffer);
             this.QueryData_Fields.add(queryData);
         }
-        int i3 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBuffer.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             QueryReplies queryReplies = new QueryReplies();
             queryReplies.ParcelID = unpackUUID(byteBuffer);
@@ -102,7 +102,7 @@ public class DirPlacesReply extends SLMessage {
             queryReplies.Dwell = unpackFloat(byteBuffer);
             this.QueryReplies_Fields.add(queryReplies);
         }
-        int i5 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i5 = byteBuffer.get() & 255;
         for (int i6 = 0; i6 < i5; i6++) {
             StatusData statusData = new StatusData();
             statusData.Status = unpackInt(byteBuffer);

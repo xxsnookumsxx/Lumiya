@@ -130,7 +130,7 @@ public class BulkUpdateInventory extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.TransactionID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             FolderData folderData = new FolderData();
             folderData.FolderID = unpackUUID(byteBuffer);
@@ -139,7 +139,7 @@ public class BulkUpdateInventory extends SLMessage {
             folderData.Name = unpackVariable(byteBuffer, 1);
             this.FolderData_Fields.add(folderData);
         }
-        int i3 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBuffer.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             ItemData itemData = new ItemData();
             itemData.ItemID = unpackUUID(byteBuffer);
@@ -158,7 +158,7 @@ public class BulkUpdateInventory extends SLMessage {
             itemData.Type = unpackByte(byteBuffer);
             itemData.InvType = unpackByte(byteBuffer);
             itemData.Flags = unpackInt(byteBuffer);
-            itemData.SaleType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            itemData.SaleType = unpackByte(byteBuffer) & 255;
             itemData.SalePrice = unpackInt(byteBuffer);
             itemData.Name = unpackVariable(byteBuffer, 1);
             itemData.Description = unpackVariable(byteBuffer, 1);

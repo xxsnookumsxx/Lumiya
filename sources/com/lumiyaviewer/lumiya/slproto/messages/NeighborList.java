@@ -64,7 +64,7 @@ public class NeighborList extends SLMessage {
             this.NeighborBlock_Fields[i].PublicPort = unpackShort(byteBuffer) & 65535;
             this.NeighborBlock_Fields[i].RegionID = unpackUUID(byteBuffer);
             this.NeighborBlock_Fields[i].Name = unpackVariable(byteBuffer, 1);
-            this.NeighborBlock_Fields[i].SimAccess = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            this.NeighborBlock_Fields[i].SimAccess = unpackByte(byteBuffer) & 255;
         }
     }
 }

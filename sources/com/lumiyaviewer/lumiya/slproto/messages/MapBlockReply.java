@@ -86,20 +86,20 @@ public class MapBlockReply extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.Flags = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             Data data = new Data();
             data.X = unpackShort(byteBuffer) & 65535;
             data.Y = unpackShort(byteBuffer) & 65535;
             data.Name = unpackVariable(byteBuffer, 1);
-            data.Access = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            data.Access = unpackByte(byteBuffer) & 255;
             data.RegionFlags = unpackInt(byteBuffer);
-            data.WaterHeight = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-            data.Agents = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            data.WaterHeight = unpackByte(byteBuffer) & 255;
+            data.Agents = unpackByte(byteBuffer) & 255;
             data.MapImageID = unpackUUID(byteBuffer);
             this.Data_Fields.add(data);
         }
-        int i3 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBuffer.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             Size size = new Size();
             size.SizeX = unpackShort(byteBuffer) & 65535;

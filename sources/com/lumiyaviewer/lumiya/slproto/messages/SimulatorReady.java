@@ -59,7 +59,7 @@ public class SimulatorReady extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.SimulatorBlock_Field.SimName = unpackVariable(byteBuffer, 1);
-        this.SimulatorBlock_Field.SimAccess = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.SimulatorBlock_Field.SimAccess = unpackByte(byteBuffer) & 255;
         this.SimulatorBlock_Field.RegionFlags = unpackInt(byteBuffer);
         this.SimulatorBlock_Field.RegionID = unpackUUID(byteBuffer);
         this.SimulatorBlock_Field.EstateID = unpackInt(byteBuffer);

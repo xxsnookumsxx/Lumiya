@@ -40,8 +40,8 @@ public class EdgeDataPacket extends SLMessage {
 
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
-        this.EdgeData_Field.LayerType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-        this.EdgeData_Field.Direction = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.EdgeData_Field.LayerType = unpackByte(byteBuffer) & 255;
+        this.EdgeData_Field.Direction = unpackByte(byteBuffer) & 255;
         this.EdgeData_Field.LayerData = unpackVariable(byteBuffer, 2);
     }
 }

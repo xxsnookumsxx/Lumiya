@@ -79,18 +79,18 @@ public class AgentSetAppearance extends SLMessage {
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.AgentData_Field.SerialNum = unpackInt(byteBuffer);
         this.AgentData_Field.Size = unpackLLVector3(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             WearableData wearableData = new WearableData();
             wearableData.CacheID = unpackUUID(byteBuffer);
-            wearableData.TextureIndex = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            wearableData.TextureIndex = unpackByte(byteBuffer) & 255;
             this.WearableData_Fields.add(wearableData);
         }
         this.ObjectData_Field.TextureEntry = unpackVariable(byteBuffer, 2);
-        int i3 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBuffer.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             VisualParam visualParam = new VisualParam();
-            visualParam.ParamValue = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            visualParam.ParamValue = unpackByte(byteBuffer) & 255;
             this.VisualParam_Fields.add(visualParam);
         }
     }

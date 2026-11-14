@@ -51,7 +51,7 @@ public class ChangeUserRights extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             Rights rights = new Rights();
             rights.AgentRelated = unpackUUID(byteBuffer);

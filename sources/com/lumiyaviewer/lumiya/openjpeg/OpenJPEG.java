@@ -388,10 +388,10 @@ public class OpenJPEG implements GLTexture {
         for (int i2 = 0; i2 < this.height; i2++) {
             for (int i3 = 0; i3 < this.width; i3++) {
                 if (this.num_components == 1) {
-                    int i4 = getByte(((this.width * i2) + i3) * this.num_components) & UnsignedBytes.MAX_VALUE;
+                    int i4 = getByte(((this.width * i2) + i3) * this.num_components) & 255;
                     i = i4 | (i4 << 16) | ViewCompat.MEASURED_STATE_MASK | (i4 << 8);
                 } else {
-                    i = ((this.num_components >= 4 ? getByte((((this.width * i2) + i3) * this.num_components) + 3) & UnsignedBytes.MAX_VALUE : 255) << 24) | ((getByte((((this.width * i2) + i3) * this.num_components) + 0) & UnsignedBytes.MAX_VALUE) << 16) | ((getByte((((this.width * i2) + i3) * this.num_components) + 1) & UnsignedBytes.MAX_VALUE) << 8) | (getByte((((this.width * i2) + i3) * this.num_components) + 2) & UnsignedBytes.MAX_VALUE);
+                    i = ((this.num_components >= 4 ? getByte((((this.width * i2) + i3) * this.num_components) + 3) & 255 : 255) << 24) | ((getByte((((this.width * i2) + i3) * this.num_components) + 0) & 255) << 16) | ((getByte((((this.width * i2) + i3) * this.num_components) + 1) & 255) << 8) | (getByte((((this.width * i2) + i3) * this.num_components) + 2) & 255);
                 }
                 bitmapCreateBitmap.setPixel(i3, (this.height - 1) - i2, i);
             }
@@ -413,7 +413,7 @@ public class OpenJPEG implements GLTexture {
         for (int i2 = 0; i2 < this.height; i2++) {
             for (int i3 = 0; i3 < this.width; i3++) {
                 if (this.num_extra_components == 1) {
-                    int i4 = getByte((this.width * this.height * this.num_components) + (this.width * i2) + i3) & UnsignedBytes.MAX_VALUE;
+                    int i4 = getByte((this.width * this.height * this.num_components) + (this.width * i2) + i3) & 255;
                     i = i4 | (i4 << 16) | ViewCompat.MEASURED_STATE_MASK | (i4 << 8);
                 } else {
                     i = 0;
@@ -457,7 +457,7 @@ public class OpenJPEG implements GLTexture {
     @Override // com.lumiyaviewer.lumiya.render.GLTexture
     public int getRGB(int i) {
         if (this.rawBuffer != null) {
-            return ((this.rawBuffer.get(i) << 16) & 16711680) | ((this.rawBuffer.get(i + 1) << 8) & MotionEventCompat.ACTION_POINTER_INDEX_MASK) | (this.rawBuffer.get(i + 2) & UnsignedBytes.MAX_VALUE);
+            return ((this.rawBuffer.get(i) << 16) & 16711680) | ((this.rawBuffer.get(i + 1) << 8) & MotionEventCompat.ACTION_POINTER_INDEX_MASK) | (this.rawBuffer.get(i + 2) & 255);
         }
         return 0;
     }

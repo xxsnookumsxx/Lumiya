@@ -97,7 +97,7 @@ public class RezObjectFromNotecard extends SLMessage {
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.AgentData_Field.GroupID = unpackUUID(byteBuffer);
         this.RezData_Field.FromTaskID = unpackUUID(byteBuffer);
-        this.RezData_Field.BypassRaycast = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.RezData_Field.BypassRaycast = unpackByte(byteBuffer) & 255;
         this.RezData_Field.RayStart = unpackLLVector3(byteBuffer);
         this.RezData_Field.RayEnd = unpackLLVector3(byteBuffer);
         this.RezData_Field.RayTargetID = unpackUUID(byteBuffer);
@@ -110,7 +110,7 @@ public class RezObjectFromNotecard extends SLMessage {
         this.RezData_Field.NextOwnerMask = unpackInt(byteBuffer);
         this.NotecardData_Field.NotecardItemID = unpackUUID(byteBuffer);
         this.NotecardData_Field.ObjectID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             InventoryData inventoryData = new InventoryData();
             inventoryData.ItemID = unpackUUID(byteBuffer);

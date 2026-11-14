@@ -46,7 +46,7 @@ public class AvatarPropertiesRequestBackend extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.AvatarID = unpackUUID(byteBuffer);
-        this.AgentData_Field.GodLevel = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.AgentData_Field.GodLevel = unpackByte(byteBuffer) & 255;
         this.AgentData_Field.WebProfilesDisabled = unpackBoolean(byteBuffer);
     }
 }

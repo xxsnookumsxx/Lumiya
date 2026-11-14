@@ -100,7 +100,7 @@ public class FetchInventoryReply extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             InventoryData inventoryData = new InventoryData();
             inventoryData.ItemID = unpackUUID(byteBuffer);
@@ -118,7 +118,7 @@ public class FetchInventoryReply extends SLMessage {
             inventoryData.Type = unpackByte(byteBuffer);
             inventoryData.InvType = unpackByte(byteBuffer);
             inventoryData.Flags = unpackInt(byteBuffer);
-            inventoryData.SaleType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            inventoryData.SaleType = unpackByte(byteBuffer) & 255;
             inventoryData.SalePrice = unpackInt(byteBuffer);
             inventoryData.Name = unpackVariable(byteBuffer, 1);
             inventoryData.Description = unpackVariable(byteBuffer, 1);

@@ -80,7 +80,7 @@ public class ObjectGrabUpdate extends SLMessage {
         this.ObjectData_Field.GrabOffsetInitial = unpackLLVector3(byteBuffer);
         this.ObjectData_Field.GrabPosition = unpackLLVector3(byteBuffer);
         this.ObjectData_Field.TimeSinceLast = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             SurfaceInfo surfaceInfo = new SurfaceInfo();
             surfaceInfo.UVCoord = unpackLLVector3(byteBuffer);

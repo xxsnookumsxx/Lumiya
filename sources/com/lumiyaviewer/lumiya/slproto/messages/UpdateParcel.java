@@ -83,7 +83,7 @@ public class UpdateParcel extends SLMessage {
         this.ParcelData_Field.RegionHandle = unpackLong(byteBuffer);
         this.ParcelData_Field.OwnerID = unpackUUID(byteBuffer);
         this.ParcelData_Field.GroupOwned = unpackBoolean(byteBuffer);
-        this.ParcelData_Field.Status = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.ParcelData_Field.Status = unpackByte(byteBuffer) & 255;
         this.ParcelData_Field.Name = unpackVariable(byteBuffer, 1);
         this.ParcelData_Field.Description = unpackVariable(byteBuffer, 1);
         this.ParcelData_Field.MusicURL = unpackVariable(byteBuffer, 1);
@@ -93,7 +93,7 @@ public class UpdateParcel extends SLMessage {
         this.ParcelData_Field.BillableArea = unpackInt(byteBuffer);
         this.ParcelData_Field.ShowDir = unpackBoolean(byteBuffer);
         this.ParcelData_Field.IsForSale = unpackBoolean(byteBuffer);
-        this.ParcelData_Field.Category = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.ParcelData_Field.Category = unpackByte(byteBuffer) & 255;
         this.ParcelData_Field.SnapshotID = unpackUUID(byteBuffer);
         this.ParcelData_Field.UserLocation = unpackLLVector3(byteBuffer);
         this.ParcelData_Field.SalePrice = unpackInt(byteBuffer);

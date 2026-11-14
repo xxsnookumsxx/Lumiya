@@ -75,10 +75,10 @@ public class ObjectFlagUpdate extends SLMessage {
         this.AgentData_Field.IsTemporary = unpackBoolean(byteBuffer);
         this.AgentData_Field.IsPhantom = unpackBoolean(byteBuffer);
         this.AgentData_Field.CastsShadows = unpackBoolean(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ExtraPhysics extraPhysics = new ExtraPhysics();
-            extraPhysics.PhysicsShapeType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            extraPhysics.PhysicsShapeType = unpackByte(byteBuffer) & 255;
             extraPhysics.Density = unpackFloat(byteBuffer);
             extraPhysics.Friction = unpackFloat(byteBuffer);
             extraPhysics.Restitution = unpackFloat(byteBuffer);

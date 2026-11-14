@@ -80,7 +80,7 @@ public class GroupAccountDetailsReply extends SLMessage {
         this.MoneyData_Field.IntervalDays = unpackInt(byteBuffer);
         this.MoneyData_Field.CurrentInterval = unpackInt(byteBuffer);
         this.MoneyData_Field.StartDate = unpackVariable(byteBuffer, 1);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             HistoryData historyData = new HistoryData();
             historyData.Description = unpackVariable(byteBuffer, 1);

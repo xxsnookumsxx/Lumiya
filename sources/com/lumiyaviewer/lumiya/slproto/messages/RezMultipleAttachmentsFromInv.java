@@ -90,14 +90,14 @@ public class RezMultipleAttachmentsFromInv extends SLMessage {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.HeaderData_Field.CompoundMsgID = unpackUUID(byteBuffer);
-        this.HeaderData_Field.TotalObjects = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.HeaderData_Field.TotalObjects = unpackByte(byteBuffer) & 255;
         this.HeaderData_Field.FirstDetachAll = unpackBoolean(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ObjectData objectData = new ObjectData();
             objectData.ItemID = unpackUUID(byteBuffer);
             objectData.OwnerID = unpackUUID(byteBuffer);
-            objectData.AttachmentPt = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            objectData.AttachmentPt = unpackByte(byteBuffer) & 255;
             objectData.ItemFlags = unpackInt(byteBuffer);
             objectData.GroupMask = unpackInt(byteBuffer);
             objectData.EveryoneMask = unpackInt(byteBuffer);

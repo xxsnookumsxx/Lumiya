@@ -43,7 +43,7 @@ public class LayerData extends SLMessage {
 
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
-        this.LayerID_Field.Type = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.LayerID_Field.Type = unpackByte(byteBuffer) & 255;
         this.LayerDataData_Field.Data = unpackVariable(byteBuffer, 2);
     }
 }

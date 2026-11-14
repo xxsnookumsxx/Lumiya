@@ -58,7 +58,7 @@ public class FindAgent extends SLMessage {
         this.AgentBlock_Field.Hunter = unpackUUID(byteBuffer);
         this.AgentBlock_Field.Prey = unpackUUID(byteBuffer);
         this.AgentBlock_Field.SpaceIP = unpackIPAddress(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             LocationBlock locationBlock = new LocationBlock();
             locationBlock.GlobalX = unpackDouble(byteBuffer);

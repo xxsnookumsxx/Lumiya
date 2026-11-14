@@ -64,7 +64,7 @@ public class TeleportFailed extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.Info_Field.AgentID = unpackUUID(byteBuffer);
         this.Info_Field.Reason = unpackVariable(byteBuffer, 1);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             AlertInfo alertInfo = new AlertInfo();
             alertInfo.Message = unpackVariable(byteBuffer, 1);

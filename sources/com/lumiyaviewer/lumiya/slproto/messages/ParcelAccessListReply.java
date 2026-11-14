@@ -62,7 +62,7 @@ public class ParcelAccessListReply extends SLMessage {
         this.Data_Field.SequenceID = unpackInt(byteBuffer);
         this.Data_Field.Flags = unpackInt(byteBuffer);
         this.Data_Field.LocalID = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             List list = new List();
             list.ID = unpackUUID(byteBuffer);

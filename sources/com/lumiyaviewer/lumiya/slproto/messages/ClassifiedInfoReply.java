@@ -88,7 +88,7 @@ public class ClassifiedInfoReply extends SLMessage {
         this.Data_Field.SimName = unpackVariable(byteBuffer, 1);
         this.Data_Field.PosGlobal = unpackLLVector3d(byteBuffer);
         this.Data_Field.ParcelName = unpackVariable(byteBuffer, 1);
-        this.Data_Field.ClassifiedFlags = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.Data_Field.ClassifiedFlags = unpackByte(byteBuffer) & 255;
         this.Data_Field.PriceForListing = unpackInt(byteBuffer);
     }
 }

@@ -65,13 +65,13 @@ public class RemoveInventoryObjects extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             FolderData folderData = new FolderData();
             folderData.FolderID = unpackUUID(byteBuffer);
             this.FolderData_Fields.add(folderData);
         }
-        int i3 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBuffer.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             ItemData itemData = new ItemData();
             itemData.ItemID = unpackUUID(byteBuffer);

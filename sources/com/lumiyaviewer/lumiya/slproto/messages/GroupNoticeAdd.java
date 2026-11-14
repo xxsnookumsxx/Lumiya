@@ -58,7 +58,7 @@ public class GroupNoticeAdd extends SLMessage {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.MessageBlock_Field.ToGroupID = unpackUUID(byteBuffer);
         this.MessageBlock_Field.ID = unpackUUID(byteBuffer);
-        this.MessageBlock_Field.Dialog = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.MessageBlock_Field.Dialog = unpackByte(byteBuffer) & 255;
         this.MessageBlock_Field.FromAgentName = unpackVariable(byteBuffer, 1);
         this.MessageBlock_Field.Message = unpackVariable(byteBuffer, 2);
         this.MessageBlock_Field.BinaryBucket = unpackVariable(byteBuffer, 2);

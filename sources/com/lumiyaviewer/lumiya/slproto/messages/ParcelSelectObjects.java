@@ -65,7 +65,7 @@ public class ParcelSelectObjects extends SLMessage {
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.ParcelData_Field.LocalID = unpackInt(byteBuffer);
         this.ParcelData_Field.ReturnType = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ReturnIDs returnIDs = new ReturnIDs();
             returnIDs.ReturnID = unpackUUID(byteBuffer);

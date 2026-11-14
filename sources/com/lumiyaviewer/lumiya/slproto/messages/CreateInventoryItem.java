@@ -71,7 +71,7 @@ public class CreateInventoryItem extends SLMessage {
         this.InventoryBlock_Field.NextOwnerMask = unpackInt(byteBuffer);
         this.InventoryBlock_Field.Type = unpackByte(byteBuffer);
         this.InventoryBlock_Field.InvType = unpackByte(byteBuffer);
-        this.InventoryBlock_Field.WearableType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.InventoryBlock_Field.WearableType = unpackByte(byteBuffer) & 255;
         this.InventoryBlock_Field.Name = unpackVariable(byteBuffer, 1);
         this.InventoryBlock_Field.Description = unpackVariable(byteBuffer, 1);
     }

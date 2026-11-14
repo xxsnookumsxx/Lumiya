@@ -71,14 +71,14 @@ public class AgentAnimation extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             AnimationList animationList = new AnimationList();
             animationList.AnimID = unpackUUID(byteBuffer);
             animationList.StartAnim = unpackBoolean(byteBuffer);
             this.AnimationList_Fields.add(animationList);
         }
-        int i3 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBuffer.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             PhysicalAvatarEventList physicalAvatarEventList = new PhysicalAvatarEventList();
             physicalAvatarEventList.TypeData = unpackVariable(byteBuffer, 1);

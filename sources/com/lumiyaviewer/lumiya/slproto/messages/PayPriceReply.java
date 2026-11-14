@@ -54,7 +54,7 @@ public class PayPriceReply extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.ObjectData_Field.ObjectID = unpackUUID(byteBuffer);
         this.ObjectData_Field.DefaultPayPrice = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ButtonData buttonData = new ButtonData();
             buttonData.PayButton = unpackInt(byteBuffer);

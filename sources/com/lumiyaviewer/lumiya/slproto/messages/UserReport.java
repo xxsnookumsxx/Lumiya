@@ -72,10 +72,10 @@ public class UserReport extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
-        this.ReportData_Field.ReportType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-        this.ReportData_Field.Category = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.ReportData_Field.ReportType = unpackByte(byteBuffer) & 255;
+        this.ReportData_Field.Category = unpackByte(byteBuffer) & 255;
         this.ReportData_Field.Position = unpackLLVector3(byteBuffer);
-        this.ReportData_Field.CheckFlags = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.ReportData_Field.CheckFlags = unpackByte(byteBuffer) & 255;
         this.ReportData_Field.ScreenshotID = unpackUUID(byteBuffer);
         this.ReportData_Field.ObjectID = unpackUUID(byteBuffer);
         this.ReportData_Field.AbuserID = unpackUUID(byteBuffer);

@@ -288,7 +288,7 @@ public abstract class SLObjectInfo implements Identifiable<UUID> {
         }
         this.objectCoords.set(1, objectData.Scale);
         String strStringFromVariableOEM = SLMessage.stringFromVariableOEM(objectData.Text);
-        applyHoverText(Strings.isNullOrEmpty(strStringFromVariableOEM) ? null : HoverText.create(strStringFromVariableOEM, objectData.TextColor.length >= 4 ? (objectData.TextColor[0] & UnsignedBytes.MAX_VALUE) | ((objectData.TextColor[1] << 8) & MotionEventCompat.ACTION_POINTER_INDEX_MASK) | ((objectData.TextColor[2] << 16) & 16711680) | ((objectData.TextColor[3] << Ascii.CAN) & ViewCompat.MEASURED_STATE_MASK) : 0));
+        applyHoverText(Strings.isNullOrEmpty(strStringFromVariableOEM) ? null : HoverText.create(strStringFromVariableOEM, objectData.TextColor.length >= 4 ? (objectData.TextColor[0] & 255) | ((objectData.TextColor[1] << 8) & MotionEventCompat.ACTION_POINTER_INDEX_MASK) | ((objectData.TextColor[2] << 16) & 16711680) | ((objectData.TextColor[3] << Ascii.CAN) & ViewCompat.MEASURED_STATE_MASK) : 0));
         PrimVolumeParams primVolumeParamsCreateFromObjectUpdate = PrimVolumeParams.createFromObjectUpdate(objectData);
         if (primVolumeParamsCreateFromObjectUpdate != null && objectData.ExtraParams != null) {
             primVolumeParamsCreateFromObjectUpdate.unpackExtraParams(ByteBuffer.wrap(objectData.ExtraParams).order(ByteOrder.LITTLE_ENDIAN));
@@ -375,7 +375,7 @@ public abstract class SLObjectInfo implements Identifiable<UUID> {
             byteBufferWrap.position(byteBufferWrap.position() + 86);
         }
         int iPosition2 = byteBufferWrap.position();
-        int i3 = byteBufferWrap.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBufferWrap.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             byteBufferWrap.getShort();
             byteBufferWrap.position(byteBufferWrap.getInt() + byteBufferWrap.position());

@@ -37,6 +37,6 @@ public class SetCPURatio extends SLMessage {
 
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
-        this.Data_Field.Ratio = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.Data_Field.Ratio = unpackByte(byteBuffer) & 255;
     }
 }

@@ -73,7 +73,7 @@ public class LittleEndianDataInputStream implements DataInput {
         if (this.inputStream.read(this.buf, 0, 4) != 4) {
             throw new EOFException("End of stream");
         }
-        return (this.buf[3] << Ascii.CAN) | ((this.buf[2] & UnsignedBytes.MAX_VALUE) << 16) | ((this.buf[1] & UnsignedBytes.MAX_VALUE) << 8) | (this.buf[0] & UnsignedBytes.MAX_VALUE);
+        return (this.buf[3] << Ascii.CAN) | ((this.buf[2] & 255) << 16) | ((this.buf[1] & 255) << 8) | (this.buf[0] & 255);
     }
 
     @Override // java.io.DataInput
@@ -94,7 +94,7 @@ public class LittleEndianDataInputStream implements DataInput {
         if (this.inputStream.read(this.buf, 0, 8) != 8) {
             throw new EOFException("End of stream");
         }
-        return (((long) this.buf[7]) << 56) | (((long) (this.buf[6] & UnsignedBytes.MAX_VALUE)) << 48) | (((long) (this.buf[5] & UnsignedBytes.MAX_VALUE)) << 40) | (((long) (this.buf[4] & UnsignedBytes.MAX_VALUE)) << 32) | (((long) (this.buf[3] & UnsignedBytes.MAX_VALUE)) << 24) | (((long) (this.buf[2] & UnsignedBytes.MAX_VALUE)) << 16) | (((long) (this.buf[1] & UnsignedBytes.MAX_VALUE)) << 8) | ((long) (this.buf[0] & UnsignedBytes.MAX_VALUE));
+        return (((long) this.buf[7]) << 56) | (((long) (this.buf[6] & 255)) << 48) | (((long) (this.buf[5] & 255)) << 40) | (((long) (this.buf[4] & 255)) << 32) | (((long) (this.buf[3] & 255)) << 24) | (((long) (this.buf[2] & 255)) << 16) | (((long) (this.buf[1] & 255)) << 8) | ((long) (this.buf[0] & 255));
     }
 
     @Override // java.io.DataInput
@@ -102,7 +102,7 @@ public class LittleEndianDataInputStream implements DataInput {
         if (this.inputStream.read(this.buf, 0, 2) != 2) {
             throw new EOFException("End of stream");
         }
-        return (short) (((this.buf[1] & UnsignedBytes.MAX_VALUE) << 8) | (this.buf[0] & UnsignedBytes.MAX_VALUE));
+        return (short) (((this.buf[1] & 255) << 8) | (this.buf[0] & 255));
     }
 
     @Override // java.io.DataInput
@@ -124,7 +124,7 @@ public class LittleEndianDataInputStream implements DataInput {
         if (this.inputStream.read(this.buf, 0, 2) != 2) {
             throw new EOFException("End of stream");
         }
-        return ((this.buf[1] & UnsignedBytes.MAX_VALUE) << 8) | (this.buf[0] & UnsignedBytes.MAX_VALUE);
+        return ((this.buf[1] & 255) << 8) | (this.buf[0] & 255);
     }
 
     public LLVector3 readVector3() throws IOException {

@@ -102,7 +102,7 @@ public class ObjectProperties extends SLMessage {
 
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ObjectData objectData = new ObjectData();
             objectData.ObjectID = unpackUUID(byteBuffer);
@@ -116,11 +116,11 @@ public class ObjectProperties extends SLMessage {
             objectData.EveryoneMask = unpackInt(byteBuffer);
             objectData.NextOwnerMask = unpackInt(byteBuffer);
             objectData.OwnershipCost = unpackInt(byteBuffer);
-            objectData.SaleType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            objectData.SaleType = unpackByte(byteBuffer) & 255;
             objectData.SalePrice = unpackInt(byteBuffer);
-            objectData.AggregatePerms = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-            objectData.AggregatePermTextures = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-            objectData.AggregatePermTexturesOwner = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            objectData.AggregatePerms = unpackByte(byteBuffer) & 255;
+            objectData.AggregatePermTextures = unpackByte(byteBuffer) & 255;
+            objectData.AggregatePermTexturesOwner = unpackByte(byteBuffer) & 255;
             objectData.Category = unpackInt(byteBuffer);
             objectData.InventorySerial = unpackShort(byteBuffer);
             objectData.ItemID = unpackUUID(byteBuffer);

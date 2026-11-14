@@ -75,16 +75,16 @@ public class AvatarAppearance extends SLMessage {
         this.Sender_Field.ID = unpackUUID(byteBuffer);
         this.Sender_Field.IsTrial = unpackBoolean(byteBuffer);
         this.ObjectData_Field.TextureEntry = unpackVariable(byteBuffer, 2);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             VisualParam visualParam = new VisualParam();
-            visualParam.ParamValue = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            visualParam.ParamValue = unpackByte(byteBuffer) & 255;
             this.VisualParam_Fields.add(visualParam);
         }
-        int i3 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBuffer.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             AppearanceData appearanceData = new AppearanceData();
-            appearanceData.AppearanceVersion = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            appearanceData.AppearanceVersion = unpackByte(byteBuffer) & 255;
             appearanceData.CofVersion = unpackInt(byteBuffer);
             appearanceData.Flags = unpackInt(byteBuffer);
             this.AppearanceData_Fields.add(appearanceData);

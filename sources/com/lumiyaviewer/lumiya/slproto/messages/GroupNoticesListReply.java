@@ -72,7 +72,7 @@ public class GroupNoticesListReply extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.GroupID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             Data data = new Data();
             data.NoticeID = unpackUUID(byteBuffer);
@@ -80,7 +80,7 @@ public class GroupNoticesListReply extends SLMessage {
             data.FromName = unpackVariable(byteBuffer, 2);
             data.Subject = unpackVariable(byteBuffer, 2);
             data.HasAttachment = unpackBoolean(byteBuffer);
-            data.AssetType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            data.AssetType = unpackByte(byteBuffer) & 255;
             this.Data_Fields.add(data);
         }
     }

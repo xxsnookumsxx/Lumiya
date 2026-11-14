@@ -62,10 +62,10 @@ public class ChatPass extends SLMessage {
         this.ChatData_Field.ID = unpackUUID(byteBuffer);
         this.ChatData_Field.OwnerID = unpackUUID(byteBuffer);
         this.ChatData_Field.Name = unpackVariable(byteBuffer, 1);
-        this.ChatData_Field.SourceType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-        this.ChatData_Field.Type = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.ChatData_Field.SourceType = unpackByte(byteBuffer) & 255;
+        this.ChatData_Field.Type = unpackByte(byteBuffer) & 255;
         this.ChatData_Field.Radius = unpackFloat(byteBuffer);
-        this.ChatData_Field.SimAccess = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.ChatData_Field.SimAccess = unpackByte(byteBuffer) & 255;
         this.ChatData_Field.Message = unpackVariable(byteBuffer, 2);
     }
 }

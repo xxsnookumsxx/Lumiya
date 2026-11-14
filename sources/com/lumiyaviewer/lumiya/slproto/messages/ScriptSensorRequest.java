@@ -70,6 +70,6 @@ public class ScriptSensorRequest extends SLMessage {
         this.Requester_Field.Range = unpackFloat(byteBuffer);
         this.Requester_Field.Arc = unpackFloat(byteBuffer);
         this.Requester_Field.RegionHandle = unpackLong(byteBuffer);
-        this.Requester_Field.SearchRegions = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.Requester_Field.SearchRegions = unpackByte(byteBuffer) & 255;
     }
 }

@@ -118,7 +118,7 @@ public class RezScript extends SLMessage {
         this.InventoryBlock_Field.Type = unpackByte(byteBuffer);
         this.InventoryBlock_Field.InvType = unpackByte(byteBuffer);
         this.InventoryBlock_Field.Flags = unpackInt(byteBuffer);
-        this.InventoryBlock_Field.SaleType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.InventoryBlock_Field.SaleType = unpackByte(byteBuffer) & 255;
         this.InventoryBlock_Field.SalePrice = unpackInt(byteBuffer);
         this.InventoryBlock_Field.Name = unpackVariable(byteBuffer, 1);
         this.InventoryBlock_Field.Description = unpackVariable(byteBuffer, 1);

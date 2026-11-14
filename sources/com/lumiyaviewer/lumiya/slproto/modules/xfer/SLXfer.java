@@ -66,7 +66,7 @@ public class SLXfer {
                 if (sendXferPacket.DataPacket_Field.Data.length < 4) {
                     return;
                 }
-                this.expectedDataLen = (sendXferPacket.DataPacket_Field.Data[0] & UnsignedBytes.MAX_VALUE) | ((sendXferPacket.DataPacket_Field.Data[1] << 8) & MotionEventCompat.ACTION_POINTER_INDEX_MASK) | ((sendXferPacket.DataPacket_Field.Data[2] << 16) & 16711680) | ((sendXferPacket.DataPacket_Field.Data[3] << Ascii.CAN) & ViewCompat.MEASURED_STATE_MASK);
+                this.expectedDataLen = (sendXferPacket.DataPacket_Field.Data[0] & 255) | ((sendXferPacket.DataPacket_Field.Data[1] << 8) & MotionEventCompat.ACTION_POINTER_INDEX_MASK) | ((sendXferPacket.DataPacket_Field.Data[2] << 16) & 16711680) | ((sendXferPacket.DataPacket_Field.Data[3] << Ascii.CAN) & ViewCompat.MEASURED_STATE_MASK);
                 Debug.Printf("XferPacket: expected data len = %d (0x%x)", Integer.valueOf(this.expectedDataLen), Integer.valueOf(this.expectedDataLen));
                 this.receivedData = new byte[this.expectedDataLen];
                 length = sendXferPacket.DataPacket_Field.Data.length - 4;

@@ -75,13 +75,13 @@ public class ParcelDisableObjects extends SLMessage {
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.ParcelData_Field.LocalID = unpackInt(byteBuffer);
         this.ParcelData_Field.ReturnType = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             TaskIDs taskIDs = new TaskIDs();
             taskIDs.TaskID = unpackUUID(byteBuffer);
             this.TaskIDs_Fields.add(taskIDs);
         }
-        int i3 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBuffer.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             OwnerIDs ownerIDs = new OwnerIDs();
             ownerIDs.OwnerID = unpackUUID(byteBuffer);

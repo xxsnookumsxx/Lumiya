@@ -87,7 +87,7 @@ public class DirEventsReply extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.QueryData_Field.QueryID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             QueryReplies queryReplies = new QueryReplies();
             queryReplies.OwnerID = unpackUUID(byteBuffer);
@@ -98,7 +98,7 @@ public class DirEventsReply extends SLMessage {
             queryReplies.EventFlags = unpackInt(byteBuffer);
             this.QueryReplies_Fields.add(queryReplies);
         }
-        int i3 = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i3 = byteBuffer.get() & 255;
         for (int i4 = 0; i4 < i3; i4++) {
             StatusData statusData = new StatusData();
             statusData.Status = unpackInt(byteBuffer);

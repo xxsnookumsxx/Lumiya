@@ -76,7 +76,7 @@ public class ClassifiedInfoUpdate extends SLMessage {
         this.Data_Field.ParentEstate = unpackInt(byteBuffer);
         this.Data_Field.SnapshotID = unpackUUID(byteBuffer);
         this.Data_Field.PosGlobal = unpackLLVector3d(byteBuffer);
-        this.Data_Field.ClassifiedFlags = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.Data_Field.ClassifiedFlags = unpackByte(byteBuffer) & 255;
         this.Data_Field.PriceForListing = unpackInt(byteBuffer);
     }
 }

@@ -69,7 +69,7 @@ public class ObjectDuplicate extends SLMessage {
         this.AgentData_Field.GroupID = unpackUUID(byteBuffer);
         this.SharedData_Field.Offset = unpackLLVector3(byteBuffer);
         this.SharedData_Field.DuplicateFlags = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ObjectData objectData = new ObjectData();
             objectData.ObjectLocalID = unpackInt(byteBuffer);

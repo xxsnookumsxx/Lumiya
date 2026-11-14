@@ -51,7 +51,7 @@ public class RemoveAttachment extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
-        this.AttachmentBlock_Field.AttachmentPoint = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.AttachmentBlock_Field.AttachmentPoint = unpackByte(byteBuffer) & 255;
         this.AttachmentBlock_Field.ItemID = unpackUUID(byteBuffer);
     }
 }

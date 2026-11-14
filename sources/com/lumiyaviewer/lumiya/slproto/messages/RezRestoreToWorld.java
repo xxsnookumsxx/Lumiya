@@ -104,7 +104,7 @@ public class RezRestoreToWorld extends SLMessage {
         this.InventoryData_Field.Type = unpackByte(byteBuffer);
         this.InventoryData_Field.InvType = unpackByte(byteBuffer);
         this.InventoryData_Field.Flags = unpackInt(byteBuffer);
-        this.InventoryData_Field.SaleType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.InventoryData_Field.SaleType = unpackByte(byteBuffer) & 255;
         this.InventoryData_Field.SalePrice = unpackInt(byteBuffer);
         this.InventoryData_Field.Name = unpackVariable(byteBuffer, 1);
         this.InventoryData_Field.Description = unpackVariable(byteBuffer, 1);

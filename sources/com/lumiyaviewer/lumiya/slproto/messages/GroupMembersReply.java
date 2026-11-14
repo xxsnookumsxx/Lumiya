@@ -83,7 +83,7 @@ public class GroupMembersReply extends SLMessage {
         this.GroupData_Field.GroupID = unpackUUID(byteBuffer);
         this.GroupData_Field.RequestID = unpackUUID(byteBuffer);
         this.GroupData_Field.MemberCount = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             MemberData memberData = new MemberData();
             memberData.AgentID = unpackUUID(byteBuffer);

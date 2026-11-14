@@ -72,12 +72,12 @@ public class DeRezObject extends SLMessage {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.AgentBlock_Field.GroupID = unpackUUID(byteBuffer);
-        this.AgentBlock_Field.Destination = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.AgentBlock_Field.Destination = unpackByte(byteBuffer) & 255;
         this.AgentBlock_Field.DestinationID = unpackUUID(byteBuffer);
         this.AgentBlock_Field.TransactionID = unpackUUID(byteBuffer);
-        this.AgentBlock_Field.PacketCount = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-        this.AgentBlock_Field.PacketNumber = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        this.AgentBlock_Field.PacketCount = unpackByte(byteBuffer) & 255;
+        this.AgentBlock_Field.PacketNumber = unpackByte(byteBuffer) & 255;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ObjectData objectData = new ObjectData();
             objectData.ObjectLocalID = unpackInt(byteBuffer);

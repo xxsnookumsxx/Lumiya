@@ -53,7 +53,7 @@ public class BitBuffer {
             }
             i5 = i2;
         }
-        return (this.output[0] & UnsignedBytes.MAX_VALUE) | ((this.output[1] << 8) & MotionEventCompat.ACTION_POINTER_INDEX_MASK) | ((this.output[2] << 16) & 16711680) | ((this.output[3] << Ascii.CAN) & ViewCompat.MEASURED_STATE_MASK);
+        return (this.output[0] & 255) | ((this.output[1] << 8) & MotionEventCompat.ACTION_POINTER_INDEX_MASK) | ((this.output[2] << 16) & 16711680) | ((this.output[3] << Ascii.CAN) & ViewCompat.MEASURED_STATE_MASK);
     }
 
     public float getFloat() {

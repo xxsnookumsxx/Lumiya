@@ -62,11 +62,11 @@ public class ObjectBuy extends SLMessage {
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.AgentData_Field.GroupID = unpackUUID(byteBuffer);
         this.AgentData_Field.CategoryID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ObjectData objectData = new ObjectData();
             objectData.ObjectLocalID = unpackInt(byteBuffer);
-            objectData.SaleType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+            objectData.SaleType = unpackByte(byteBuffer) & 255;
             objectData.SalePrice = unpackInt(byteBuffer);
             this.ObjectData_Fields.add(objectData);
         }

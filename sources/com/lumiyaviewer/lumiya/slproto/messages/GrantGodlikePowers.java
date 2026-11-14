@@ -51,7 +51,7 @@ public class GrantGodlikePowers extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
-        this.GrantData_Field.GodLevel = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.GrantData_Field.GodLevel = unpackByte(byteBuffer) & 255;
         this.GrantData_Field.Token = unpackUUID(byteBuffer);
     }
 }

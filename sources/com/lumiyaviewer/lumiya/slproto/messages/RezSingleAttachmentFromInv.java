@@ -67,7 +67,7 @@ public class RezSingleAttachmentFromInv extends SLMessage {
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.ObjectData_Field.ItemID = unpackUUID(byteBuffer);
         this.ObjectData_Field.OwnerID = unpackUUID(byteBuffer);
-        this.ObjectData_Field.AttachmentPt = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.ObjectData_Field.AttachmentPt = unpackByte(byteBuffer) & 255;
         this.ObjectData_Field.ItemFlags = unpackInt(byteBuffer);
         this.ObjectData_Field.GroupMask = unpackInt(byteBuffer);
         this.ObjectData_Field.EveryoneMask = unpackInt(byteBuffer);

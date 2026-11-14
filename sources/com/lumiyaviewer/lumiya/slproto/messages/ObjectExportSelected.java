@@ -57,7 +57,7 @@ public class ObjectExportSelected extends SLMessage {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.RequestID = unpackUUID(byteBuffer);
         this.AgentData_Field.VolumeDetail = unpackShort(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ObjectData objectData = new ObjectData();
             objectData.ObjectID = unpackUUID(byteBuffer);

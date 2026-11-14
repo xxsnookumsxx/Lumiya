@@ -35,6 +35,6 @@ public class CompletePingCheck extends SLMessage {
 
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
-        this.PingID_Field.PingID = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.PingID_Field.PingID = unpackByte(byteBuffer) & 255;
     }
 }

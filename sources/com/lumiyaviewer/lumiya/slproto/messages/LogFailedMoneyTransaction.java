@@ -65,11 +65,11 @@ public class LogFailedMoneyTransaction extends SLMessage {
         this.TransactionData_Field.TransactionType = unpackInt(byteBuffer);
         this.TransactionData_Field.SourceID = unpackUUID(byteBuffer);
         this.TransactionData_Field.DestID = unpackUUID(byteBuffer);
-        this.TransactionData_Field.Flags = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.TransactionData_Field.Flags = unpackByte(byteBuffer) & 255;
         this.TransactionData_Field.Amount = unpackInt(byteBuffer);
         this.TransactionData_Field.SimulatorIP = unpackIPAddress(byteBuffer);
         this.TransactionData_Field.GridX = unpackInt(byteBuffer);
         this.TransactionData_Field.GridY = unpackInt(byteBuffer);
-        this.TransactionData_Field.FailureType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.TransactionData_Field.FailureType = unpackByte(byteBuffer) & 255;
     }
 }

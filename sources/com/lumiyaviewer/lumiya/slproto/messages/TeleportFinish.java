@@ -59,7 +59,7 @@ public class TeleportFinish extends SLMessage {
         this.Info_Field.SimPort = unpackShort(byteBuffer) & 65535;
         this.Info_Field.RegionHandle = unpackLong(byteBuffer);
         this.Info_Field.SeedCapability = unpackVariable(byteBuffer, 2);
-        this.Info_Field.SimAccess = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.Info_Field.SimAccess = unpackByte(byteBuffer) & 255;
         this.Info_Field.TeleportFlags = unpackInt(byteBuffer);
     }
 }

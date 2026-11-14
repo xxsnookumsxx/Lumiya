@@ -83,7 +83,7 @@ public class GroupRoleDataReply extends SLMessage {
         this.GroupData_Field.GroupID = unpackUUID(byteBuffer);
         this.GroupData_Field.RequestID = unpackUUID(byteBuffer);
         this.GroupData_Field.RoleCount = unpackInt(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             RoleData roleData = new RoleData();
             roleData.RoleID = unpackUUID(byteBuffer);

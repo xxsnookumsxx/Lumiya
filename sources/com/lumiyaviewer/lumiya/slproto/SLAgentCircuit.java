@@ -591,7 +591,7 @@ public class SLAgentCircuit extends SLThreadingCircuit implements SLCapEventQueu
             LLSDNode lLSDNodeByIndex = lLSDNode.byKey("Info").byIndex(0);
             String strAsString = lLSDNodeByIndex.byKey("SeedCapability").asString();
             byte[] bArrAsBinary = lLSDNodeByIndex.byKey("SimIP").asBinary();
-            SLAuthReply sLAuthReply = new SLAuthReply(this.authReply, true, false, this.authReply.agentID, String.format("%d.%d.%d.%d", Integer.valueOf(bArrAsBinary[0] & UnsignedBytes.MAX_VALUE), Integer.valueOf(bArrAsBinary[1] & UnsignedBytes.MAX_VALUE), Integer.valueOf(bArrAsBinary[2] & UnsignedBytes.MAX_VALUE), Integer.valueOf(bArrAsBinary[3] & UnsignedBytes.MAX_VALUE)), lLSDNodeByIndex.byKey("SimPort").asInt(), strAsString);
+            SLAuthReply sLAuthReply = new SLAuthReply(this.authReply, true, false, this.authReply.agentID, String.format("%d.%d.%d.%d", Integer.valueOf(bArrAsBinary[0] & 255), Integer.valueOf(bArrAsBinary[1] & 255), Integer.valueOf(bArrAsBinary[2] & 255), Integer.valueOf(bArrAsBinary[3] & 255)), lLSDNodeByIndex.byKey("SimPort").asInt(), strAsString);
             Debug.Printf("new sim address: %s", sLAuthReply.simAddress);
             this.modules.avatarControl.setEnableAgentUpdates(false);
             this.gridConn.HandleTeleportFinish(sLAuthReply);

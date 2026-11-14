@@ -65,10 +65,10 @@ public class MoneyTransferRequest extends SLMessage {
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.MoneyData_Field.SourceID = unpackUUID(byteBuffer);
         this.MoneyData_Field.DestID = unpackUUID(byteBuffer);
-        this.MoneyData_Field.Flags = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.MoneyData_Field.Flags = unpackByte(byteBuffer) & 255;
         this.MoneyData_Field.Amount = unpackInt(byteBuffer);
-        this.MoneyData_Field.AggregatePermNextOwner = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
-        this.MoneyData_Field.AggregatePermInventory = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.MoneyData_Field.AggregatePermNextOwner = unpackByte(byteBuffer) & 255;
+        this.MoneyData_Field.AggregatePermInventory = unpackByte(byteBuffer) & 255;
         this.MoneyData_Field.TransactionType = unpackInt(byteBuffer);
         this.MoneyData_Field.Description = unpackVariable(byteBuffer, 1);
     }

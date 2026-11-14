@@ -105,7 +105,7 @@ public class UpdateAttachment extends SLMessage {
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
-        this.AttachmentBlock_Field.AttachmentPoint = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.AttachmentBlock_Field.AttachmentPoint = unpackByte(byteBuffer) & 255;
         this.OperationData_Field.AddItem = unpackBoolean(byteBuffer);
         this.OperationData_Field.UseExistingAsset = unpackBoolean(byteBuffer);
         this.InventoryData_Field.ItemID = unpackUUID(byteBuffer);
@@ -123,7 +123,7 @@ public class UpdateAttachment extends SLMessage {
         this.InventoryData_Field.Type = unpackByte(byteBuffer);
         this.InventoryData_Field.InvType = unpackByte(byteBuffer);
         this.InventoryData_Field.Flags = unpackInt(byteBuffer);
-        this.InventoryData_Field.SaleType = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.InventoryData_Field.SaleType = unpackByte(byteBuffer) & 255;
         this.InventoryData_Field.SalePrice = unpackInt(byteBuffer);
         this.InventoryData_Field.Name = unpackVariable(byteBuffer, 1);
         this.InventoryData_Field.Description = unpackVariable(byteBuffer, 1);

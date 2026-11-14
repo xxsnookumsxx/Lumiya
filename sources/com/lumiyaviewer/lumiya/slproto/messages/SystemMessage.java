@@ -65,7 +65,7 @@ public class SystemMessage extends SLMessage {
         this.MethodData_Field.Method = unpackVariable(byteBuffer, 1);
         this.MethodData_Field.Invoice = unpackUUID(byteBuffer);
         this.MethodData_Field.Digest = unpackFixed(byteBuffer, 32);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             ParamList paramList = new ParamList();
             paramList.Parameter = unpackVariable(byteBuffer, 1);

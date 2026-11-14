@@ -62,7 +62,7 @@ public class AcceptFriendship extends SLMessage {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.TransactionBlock_Field.TransactionID = unpackUUID(byteBuffer);
-        int i = byteBuffer.get() & UnsignedBytes.MAX_VALUE;
+        int i = byteBuffer.get() & 255;
         for (int i2 = 0; i2 < i; i2++) {
             FolderData folderData = new FolderData();
             folderData.FolderID = unpackUUID(byteBuffer);

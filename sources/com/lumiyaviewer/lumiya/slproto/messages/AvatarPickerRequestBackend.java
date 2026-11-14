@@ -55,7 +55,7 @@ public class AvatarPickerRequestBackend extends SLMessage {
         this.AgentData_Field.AgentID = unpackUUID(byteBuffer);
         this.AgentData_Field.SessionID = unpackUUID(byteBuffer);
         this.AgentData_Field.QueryID = unpackUUID(byteBuffer);
-        this.AgentData_Field.GodLevel = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.AgentData_Field.GodLevel = unpackByte(byteBuffer) & 255;
         this.Data_Field.Name = unpackVariable(byteBuffer, 1);
     }
 }

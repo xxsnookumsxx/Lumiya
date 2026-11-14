@@ -50,7 +50,7 @@ public class ImageData extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public void UnpackPayload(ByteBuffer byteBuffer) {
         this.ImageID_Field.ID = unpackUUID(byteBuffer);
-        this.ImageID_Field.Codec = unpackByte(byteBuffer) & UnsignedBytes.MAX_VALUE;
+        this.ImageID_Field.Codec = unpackByte(byteBuffer) & 255;
         this.ImageID_Field.Size = unpackInt(byteBuffer);
         this.ImageID_Field.Packets = unpackShort(byteBuffer) & 65535;
         this.ImageDataData_Field.Data = unpackVariable(byteBuffer, 2);
