@@ -34,15 +34,17 @@ public class PrimComputeExecutor extends WeakExecutor {
     protected void beforeExecute(Thread thread, Runnable runnable) {
         super.beforeExecute(thread, runnable);
         this.pauseLock.lock();
-        while (this.isPaused) {
-            try {
-                this.unpaused.await();
-            } catch (InterruptedException e) {
-                thread.interrupt();
-                return;
-            } finally {
-                this.pauseLock.unlock();
+        try {
+            while (this.isPaused) {
+                try {
+                    this.unpaused.await();
+                } catch (InterruptedException e) {
+                    thread.interrupt();
+                    return;
+                }
             }
+        } finally {
+            this.pauseLock.unlock();
         }
     }
 

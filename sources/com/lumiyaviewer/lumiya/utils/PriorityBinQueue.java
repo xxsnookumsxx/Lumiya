@@ -315,21 +315,21 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         Iterator<T> it;
         T next;
         this.lock.lock();
-        while (true) {
-            for (int i = 0; i < this.numBins; i++) {
-                try {
+        try {
+            while (true) {
+                for (int i = 0; i < this.numBins; i++) {
                     if (!this.queues[i].isEmpty() && (next = (it = this.queues[i].iterator()).next()) != null) {
                         it.remove();
                         this.allItems.remove(next);
                         Debug.Printf("Thread %s got item with priority %d", Thread.currentThread().getName(), Integer.valueOf(i));
                         return next;
                     }
-                } finally {
-                    this.lock.unlock();
                 }
+                Debug.Printf("Thread %s waiting on the queue", Thread.currentThread().getName());
+                this.notEmpty.await();
             }
-            Debug.Printf("Thread %s waiting on the queue", Thread.currentThread().getName());
-            this.notEmpty.await();
+        } finally {
+            this.lock.unlock();
         }
     }
 

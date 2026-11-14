@@ -278,17 +278,17 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
     @Override // java.util.concurrent.BlockingQueue
     public T poll(long j, TimeUnit timeUnit) throws InterruptedException {
         this.lock.lock();
-        do {
-            try {
+        try {
+            do {
                 T tPoll = poll();
                 if (tPoll != null) {
                     return tPoll;
                 }
-            } finally {
-                this.lock.unlock();
-            }
-        } while (this.notEmpty.await(j, timeUnit));
-        return null;
+            } while (this.notEmpty.await(j, timeUnit));
+            return null;
+        } finally {
+            this.lock.unlock();
+        }
     }
 
     @Override // java.util.concurrent.BlockingQueue
@@ -380,16 +380,16 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
     @Override // java.util.concurrent.BlockingQueue
     public T take() throws InterruptedException {
         this.lock.lock();
-        while (true) {
-            try {
+        try {
+            while (true) {
                 T tPoll = poll();
                 if (tPoll != null) {
                     return tPoll;
                 }
                 this.notEmpty.await();
-            } finally {
-                this.lock.unlock();
             }
+        } finally {
+            this.lock.unlock();
         }
     }
 
