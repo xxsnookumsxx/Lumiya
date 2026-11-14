@@ -167,7 +167,7 @@ public class TerrainData {
         while (true) {
             int i7 = i6;
             if (i7 >= 17) {
-                return new TerrainPatchInfo(new TerrainPatchHeightMap(this.waterHeight, fArr, fArr2, 17, 17), this.terrainTextures, i / 16.0f, i / 16.0f, 0.0625f, 0.0625f);
+                return new TerrainPatchInfo(new TerrainPatchHeightMap(this.waterHeight, fArr, fArr2, 17, 17), this.terrainTextures, i / 16.0f, i2 / 16.0f, 0.0625f, 0.0625f);
             }
             int i8 = ((i2 * 16) + i7) * InputDeviceCompat.SOURCE_KEYBOARD;
             for (int i9 = 0; i9 < 17; i9++) {

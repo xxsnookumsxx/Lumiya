@@ -75,9 +75,9 @@ public class TerrainTextures {
     public float[] getTextureHeightMap(float[] fArr, int i, int i2, float f, float f2, float f3, float f4) {
         float[] fArr2 = new float[i * i2];
         for (int i3 = 0; i3 < i2; i3++) {
-            float f5 = i3 / (i2 - 1);
+            float f5 = i2 > 1 ? ((float) i3) / ((float) (i2 - 1)) : 0.0f;
             for (int i4 = 0; i4 < i; i4++) {
-                float f6 = i4 / (i - 1);
+                float f6 = i > 1 ? ((float) i4) / ((float) (i - 1)) : 0.0f;
                 fArr2[(i3 * i) + i4] = Math.min(3.0f, Math.max(0.0f, ((fArr[(i3 * i) + i4] - bilinearCorners(this.terrainStartHeight, (f6 * f3) + f, (f5 * f4) + f2)) * 4.0f) / bilinearCorners(this.terrainHeightRange, (f6 * f3) + f, (f5 * f4) + f2)));
             }
         }

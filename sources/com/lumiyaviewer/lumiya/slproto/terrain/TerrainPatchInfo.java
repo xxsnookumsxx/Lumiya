@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 /* JADX INFO: loaded from: classes.dex */
 public class TerrainPatchInfo {
-    private final int hashCode = getHashCode();
+    private final int hashCode;
     private final TerrainPatchHeightMap heightMap;
     private final int layerMask;
     private final float[] textureHeightMap;
@@ -15,6 +15,7 @@ public class TerrainPatchInfo {
         this.textures = terrainTextures;
         this.textureHeightMap = terrainTextures.getTextureHeightMap(terrainPatchHeightMap.getHeightArray(), terrainPatchHeightMap.getMapWidth(), terrainPatchHeightMap.getMapHeight(), f, f2, f3, f4);
         this.layerMask = terrainTextures.getNeededLayerMask(this.textureHeightMap);
+        this.hashCode = getHashCode();
     }
 
     private int getHashCode() {

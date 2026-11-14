@@ -33,7 +33,7 @@ public class PrimPathParams {
     public final float TaperY;
     public final float TwistBegin;
     public final float TwistEnd;
-    private final int hashValue = getHashValue();
+    private final int hashValue;
 
     public PrimPathParams(byte b, float f, float f2, float f3, float f4, float f5, float f6, float f7, float f8, float f9, float f10, float f11, float f12, float f13) {
         this.CurveType = b;
@@ -50,6 +50,7 @@ public class PrimPathParams {
         this.TaperY = f11;
         this.Revolutions = f12;
         this.Skew = f13;
+        this.hashValue = getHashValue();
     }
 
     public PrimPathParams(ObjectUpdate.ObjectData objectData) {
@@ -67,6 +68,7 @@ public class PrimPathParams {
         this.TaperY = LLTersePacking.getSignedByte(objectData.PathTaperY) * 0.01f;
         this.Revolutions = ((objectData.PathRevolutions & 255) * 0.015f) + 1.0f;
         this.Skew = LLTersePacking.getSignedByte(objectData.PathSkew) * 0.01f;
+        this.hashValue = getHashValue();
     }
 
     public PrimPathParams(ByteBuffer byteBuffer) {
@@ -84,6 +86,7 @@ public class PrimPathParams {
         this.TaperY = LLTersePacking.getSignedByte(byteBuffer.get()) * 0.01f;
         this.Revolutions = ((byteBuffer.get() & UnsignedBytes.MAX_VALUE) * 0.015f) + 1.0f;
         this.Skew = LLTersePacking.getSignedByte(byteBuffer.get()) * 0.01f;
+        this.hashValue = getHashValue();
     }
 
     private int getHashValue() {

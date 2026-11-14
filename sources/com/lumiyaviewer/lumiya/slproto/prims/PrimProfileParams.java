@@ -24,13 +24,14 @@ public class PrimProfileParams {
     public final byte CurveType;
     public final float End;
     public final float Hollow;
-    private final int hashValue = getHashValue();
+    private final int hashValue;
 
     public PrimProfileParams(byte b, float f, float f2, float f3) {
         this.CurveType = b;
         this.Begin = f;
         this.End = f2;
         this.Hollow = f3;
+        this.hashValue = getHashValue();
     }
 
     public static PrimProfileParams createFromObjectUpdate(ObjectUpdate.ObjectData objectData) {

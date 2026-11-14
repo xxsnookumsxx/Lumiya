@@ -24,12 +24,13 @@ public class MeshRiggingData {
     private float[] mappedJointMatrices;
     private float[] mappedJointVectors;
     private GLLoadableBuffer glRiggingDataBuffer = null;
-    private final int hashCode = calcHashCode();
+    private final int hashCode;
 
     private MeshRiggingData(@Nonnull int[] iArr, @Nonnull float[] fArr, boolean z) {
         this.joints = iArr;
         this.jointMatrices = fArr;
         this.hasExtendedBones = z;
+        this.hashCode = calcHashCode();
     }
 
     private DirectByteBuffer PrepareRiggingUniformBuffer(RenderContext renderContext) {
