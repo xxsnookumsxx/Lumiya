@@ -29,6 +29,8 @@ public enum SLAssetType {
     AT_LINK_FOLDER(25, "link_f", SLInventoryType.IT_UNKNOWN, 6, R.drawable.inv_link, R.string.asset_type_link, -1),
     AT_MESH(49, "mesh", SLInventoryType.IT_MESH, 6, R.drawable.inv_object, R.string.asset_type_object, -1),
     AT_WIDGET(40, "widget", SLInventoryType.IT_WIDGET, 6, R.drawable.inv_object, R.string.asset_type_object, -1),
+    AT_SETTINGS(56, "settings", SLInventoryType.IT_SETTINGS, 56, R.drawable.inv_folder, R.string.asset_type_object, -1),
+    AT_MATERIAL(57, "material", SLInventoryType.IT_MATERIAL, 57, R.drawable.inv_image, R.string.asset_type_texture, -1),
     AT_UNKNOWN(-1, EnvironmentCompat.MEDIA_UNKNOWN, SLInventoryType.IT_UNKNOWN, -1, -1, -1, -1);
 
     private static final ImmutableMap<String, SLAssetType> tagMap;

@@ -84,10 +84,19 @@ Both the compiled native libraries (`lib/arm64-v8a/`) and the Java/JNI layer are
 2. ✅ Extracted all 5,258 third-party library bytecode classes from `base.apk` into `libs/bundled-3p-libs.jar`, removed the 1,704 decompiled third-party source files from `sources/`, and restored properly decoded resources and 9-patch drawables in `res/` via Apktool (`stable-ids.txt` + `attrs.xml` `<declare-styleable>`).
 3. ✅ Reconstructed all 36 un-decompiled files (41 methods) in `sources/com/lumiyaviewer/` from `base.apk` (`classes.dex`) using Vineflower/CFR + bytecode recovery, and fixed all JADX decompilation syntax/type/exception artifacts across all 1,292 Lumiya classes (`0` compilation errors). Both `.\gradlew.bat assembleDebug` and `.\gradlew.bat assembleRelease` now build clean 64-bit `arm64-v8a` APKs.
 
-### Phase 2: Fix Broken Second Life Protocol & Capabilities
-1. **Mesh Loading**: Add `GetMesh2` capability support in `SLCaps.java` and eliminate the infinite wait deadlock in `MeshCache.java`.
-2. **Inventory & COF Loading**: Update `SLInventory.java` and `SLInventoryHTTPFetchRequest.java` to support modern Second Life inventory capabilities (`FetchInventoryDescendents2` / `InventoryAPIv3` AISv3) so inventory and the Current Outfit Folder (`cofReady`) load reliably.
-3. **Networking & HTTPS**: Remove the dead `216.82.57.58` IP fallback and outdated `sim*.agni.lindenlab.com` URL rewriting in `SLHTTPSConnection.java` and `SLCaps.java`, and ensure reliable HTTP `GetTexture` CDN fetching.
+### Phase 2: Fix Broken Second Life Protocol & Capabilities (✅ Completed)
+1. ✅ **Mesh Loading (`SLCaps.java`, `MeshCache.java`, `WorldViewRenderer.java`)**:
+   - Added `GetMesh2` and `ViewerAsset` capabilities to `SLCaps.java` with fallback resolution (`GetMesh2` -> `GetMesh` -> `ViewerAsset`).
+   - Updated `WorldViewRenderer.java` to set the mesh capability URL on `RenderContext` both on `onAgentCircuit` and when the OpenGL surface is created/recreated in `onSurfaceCreated`.
+   - Fixed `MeshCache.java` infinite wait deadlock on `capURLlock.wait()` and added the missing `return;` after `completeRequest(new MeshData(this.outputFile))` so downloaded meshes are not overwritten with `completeRequest(null)`.
+2. ✅ **Inventory & COF Loading (`SLInventory.java`, `SLInventoryHTTPFetchRequest.java`, `SLAssetType.java`, `SLInventoryType.java`)**:
+   - Fixed two critical JADX boolean inversions in `SLInventoryHTTPFetchRequest.java` (`DatabaseCommitThread.run()` skipping `retainChildren()` when `z == true`, and `SLInventoryHTTPFetchRequest$1.run()` passing `isCancelled = true` to `completeFetch()` on every non-interrupted run).
+   - Fixed `FolderEntryContentHandler` and `ItemEntryContentHandler` fallback `parentUUID` (`folderUUID` instead of `folderEntry.parentUUID`), added handling for `preferred_type` (`case 6`) and special folder type strings (`"current"` -> `FT_CURRENT_OUTFIT = 46`, `"outfit"`, `"my_outfits"`, etc.), and added `AT_SETTINGS` (`56`) and `AT_MATERIAL` (`57`) asset/inventory types.
+   - Updated `SLInventory.java` so `rootFolderFetchNeeded` is triggered on every new session and `onRootFolderFetched` waits for the active `sessionID` before unsubscribing, ensuring the root folder and Current Outfit Folder (`cofReady`) load reliably on login.
+3. ✅ **Networking, DNS & HTTP Texture Fetching (`SLHTTPSConnection.java`, `SLCaps.java`, `SLTextureFetcher.java`, `TextureCompressedCache.java`)**:
+   - Fixed `SLHTTPSConnection.SLDNS.tryResolveOverHTTP` failing on CNAME chains over Google DoH, added `8.8.8.8`/`8.8.4.4` to `DNSforDNS`, and removed the dead `216.82.57.58` fallback IP for `login.agni.lindenlab.com`.
+   - Updated `SLCaps.java` to recognize `.secondlife.io` AWS simulator hosts and retry seed capability requests up to 3 times.
+   - Updated `SLTextureFetcher.java` and `TextureCompressedCache.java` to support `GetTexture` and `ViewerAsset` HTTP CDN fetching, including automatic fallback to `GetTexture`/`ViewerAsset` for baked avatar textures.
 
 ### Phase 3: Add Bakes on Mesh (BoM) & Modern Avatar Support
 1. Extend `BakedTextureIndex.java` and `AvatarTextureFaceIndex.java` with the 5 BoM channels (`LeftArm`, `LeftLeg`, `Aux1`, `Aux2`, `Aux3`) and Universal wearable types (`SLWearableType.java`).

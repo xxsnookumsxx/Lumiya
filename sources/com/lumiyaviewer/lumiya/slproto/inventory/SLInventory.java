@@ -226,6 +226,8 @@ public class SLInventory extends SLModule {
                     this.rootFolder.agentUUID = sLAgentCircuit.circuitInfo.agentID;
                     this.db.saveEntry(this.rootFolder);
                     this.rootFolderFetchNeeded = true;
+                } else if (!Objects.equal(this.rootFolder.sessionID, sLAgentCircuit.getAuthReply().sessionID)) {
+                    this.rootFolderFetchNeeded = true;
                 }
             }
             Debug.Printf("Inventory: ready.", new Object[0]);
@@ -535,6 +537,9 @@ public class SLInventory extends SLModule {
     /* JADX INFO: Access modifiers changed from: private */
     /* JADX INFO: renamed from: onRootFolderFetched, reason: merged with bridge method [inline-methods] */
     public void m186com_lumiyaviewer_lumiya_slproto_inventory_SLInventorymthref2(SLInventoryEntry sLInventoryEntry) {
+        if (sLInventoryEntry == null || !Objects.equal(sLInventoryEntry.sessionID, this.circuitInfo.sessionID)) {
+            return;
+        }
         this.rootFolderFetchNeeded = false;
         if (this.rootFolderSubscription != null) {
             this.rootFolderSubscription.unsubscribe();

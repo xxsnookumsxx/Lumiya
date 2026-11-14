@@ -28,12 +28,16 @@ public class SLCaps {
         GetTexture,
         UploadBakedTexture,
         FetchInventoryDescendents2,
+        FetchInventory2,
+        InventoryAPIv3,
         GetDisplayNames,
         UpdateNotecardAgentInventory,
         NewFileAgentInventory,
         CopyInventoryFromNotecard,
         UpdateAvatarAppearance,
         GetMesh,
+        GetMesh2,
+        ViewerAsset,
         UpdateNotecardTaskInventory,
         UpdateScriptTask,
         UpdateScriptAgent,
@@ -52,7 +56,8 @@ public class SLCaps {
     private void GetCapabilitesOnce(String str, String str2) throws IOException, LLSDException {
         boolean z;
         try {
-            z = new URL(str).getHost().equals("login.agni.lindenlab.com");
+            String host = new URL(str).getHost();
+            z = host.equals("login.agni.lindenlab.com") || host.endsWith(".lindenlab.com") || host.endsWith(".secondlife.io");
         } catch (Exception e) {
             Debug.Warning(e);
             z = false;
@@ -95,7 +100,8 @@ public class SLCaps {
 
     public static String repairURL(String str, String str2) {
         try {
-            return new URL(str).getHost().endsWith(".lindenlab.com") ? repairCapabilityURL(true, str2) : str2;
+            String host = new URL(str).getHost();
+            return (host.endsWith(".lindenlab.com") || host.endsWith(".secondlife.io")) ? repairCapabilityURL(true, str2) : str2;
         } catch (Exception e) {
             Debug.Warning(e);
             return str2;
@@ -103,18 +109,37 @@ public class SLCaps {
     }
 
     public void GetCapabilites(String str, String str2) {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 3; i++) {
             try {
                 GetCapabilitesOnce(str, str2);
                 return;
             } catch (Exception e) {
-                e.printStackTrace();
+                Debug.Warning(e);
             }
         }
     }
 
     public String getCapability(SLCapability sLCapability) {
         return this.caps.get(sLCapability);
+    }
+
+    public String getMeshCapURL() {
+        String str = this.caps.get(SLCapability.GetMesh2);
+        if (str == null) {
+            str = this.caps.get(SLCapability.GetMesh);
+        }
+        if (str == null) {
+            str = this.caps.get(SLCapability.ViewerAsset);
+        }
+        return str;
+    }
+
+    public String getTextureCapURL() {
+        String str = this.caps.get(SLCapability.GetTexture);
+        if (str == null) {
+            str = this.caps.get(SLCapability.ViewerAsset);
+        }
+        return str;
     }
 
     public String getCapabilityOrThrow(SLCapability sLCapability) throws NoSuchCapabilityException {

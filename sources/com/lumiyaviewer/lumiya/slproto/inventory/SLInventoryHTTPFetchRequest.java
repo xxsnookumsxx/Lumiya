@@ -59,11 +59,9 @@ class SLInventoryHTTPFetchRequest extends SLInventoryFetchRequest {
         /* JADX WARN: Removed duplicated region for block: B:42:0x0079  */
         /* JADX WARN: Removed duplicated region for block: B:48:? A[ADDED_TO_REGION, RETURN, SYNTHETIC] */
         @Override // java.lang.Thread, java.lang.Runnable
-        /*
-            Code decompiled incorrectly, please refer to instructions dump.
-        */
         public void run() {
-            boolean z;
+            boolean z = false;
+            boolean z3 = false;
             SLInventoryEntry sLInventoryEntry;
             int i;
             SQLiteStatement sQLiteStatement;
@@ -116,12 +114,18 @@ class SLInventoryHTTPFetchRequest extends SLInventoryFetchRequest {
                     sQLiteStatement3 = sQLiteStatement3;
                     sQLiteStatement2 = sQLiteStatement;
                 } catch (DBObject.DatabaseBindingException e3) {
-                    Exception e = e3;
+                    Debug.Warning(e3);
+                    z3 = true;
+                    break;
                 } catch (InterruptedException e4) {
-                    Exception e = e4;
+                    Debug.Warning(e4);
+                    z3 = true;
+                    break;
                 }
             }
-            z = !Thread.interrupted();
+            if (!z3) {
+                z = !Thread.interrupted();
+            }
             if (z2) {
                 Object[] objArr = new Object[2];
                 objArr[0] = z ? "true" : "false";
@@ -136,11 +140,10 @@ class SLInventoryHTTPFetchRequest extends SLInventoryFetchRequest {
             if (sQLiteStatement2 != null) {
                 sQLiteStatement2.close();
             }
-            if (z || !(!this.aborted)) {
-                return;
+            if (z && !this.aborted) {
+                Debug.Printf("InvFetch: commit thread successful, calling retainChildren.", new Object[0]);
+                SLInventoryHTTPFetchRequest.this.db.retainChildren(SLInventoryHTTPFetchRequest.this.folderId, hashSet);
             }
-            Debug.Printf("InvFetch: commit thread successful, calling retainChildren.", new Object[0]);
-            SLInventoryHTTPFetchRequest.this.db.retainChildren(SLInventoryHTTPFetchRequest.this.folderId, hashSet);
         }
 
         void stopAndWait(boolean z) throws InterruptedException {
@@ -261,13 +264,49 @@ class SLInventoryHTTPFetchRequest extends SLInventoryFetchRequest {
         @Override // com.lumiyaviewer.lumiya.slproto.llsd.LLSDStreamingParser.LLSDDefaultContentHandler, com.lumiyaviewer.lumiya.slproto.llsd.LLSDStreamingParser.LLSDContentHandler
         public void onMapEnd(String str) throws LLSDXMLException, InterruptedException {
             if (this.entry.parentUUID == null) {
-                this.entry.parentUUID = SLInventoryHTTPFetchRequest.this.folderEntry.parentUUID;
+                this.entry.parentUUID = SLInventoryHTTPFetchRequest.this.folderUUID;
                 this.entry.parent_id = SLInventoryHTTPFetchRequest.this.folderEntry.getId();
             }
             if (this.entry.agentUUID == null) {
                 this.entry.agentUUID = SLInventoryHTTPFetchRequest.this.folderEntry.agentUUID;
             }
             this.commitThread.addEntry(this.entry);
+        }
+
+        private int parseFolderType(LLSDNode lLSDNode) throws LLSDValueTypeException {
+            if (lLSDNode.isInt()) {
+                return lLSDNode.asInt();
+            }
+            String strAsString = lLSDNode.asString();
+            if ("current".equals(strAsString)) {
+                return SLInventoryEntry.FT_CURRENT_OUTFIT;
+            }
+            if ("outfit".equals(strAsString)) {
+                return SLInventoryEntry.FT_OUTFIT;
+            }
+            if ("my_outfits".equals(strAsString)) {
+                return SLInventoryEntry.FT_MY_OUTFITS;
+            }
+            if ("favorite".equals(strAsString)) {
+                return SLInventoryEntry.FT_FAVORITE;
+            }
+            if ("inbox".equals(strAsString)) {
+                return SLInventoryEntry.FT_INBOX;
+            }
+            if ("outbox".equals(strAsString)) {
+                return SLInventoryEntry.FT_OUTBOX;
+            }
+            if ("basic_root".equals(strAsString)) {
+                return SLInventoryEntry.FT_BASIC_ROOT;
+            }
+            if ("lstndfnd".equals(strAsString)) {
+                return SLInventoryEntry.FT_LOST_AND_FOUND;
+            }
+            SLAssetType byString = SLAssetType.getByString(strAsString);
+            if (byString != SLAssetType.AT_UNKNOWN) {
+                return byString.getSpecialFolderType() >= 0 ? byString.getSpecialFolderType() : byString.getInventoryType().getTypeCode();
+            }
+            return SLInventoryType.getByString(strAsString).getTypeCode();
         }
 
         @Override // com.lumiyaviewer.lumiya.slproto.llsd.LLSDStreamingParser.LLSDDefaultContentHandler, com.lumiyaviewer.lumiya.slproto.llsd.LLSDStreamingParser.LLSDContentHandler
@@ -305,22 +344,13 @@ class SLInventoryHTTPFetchRequest extends SLInventoryFetchRequest {
                         this.entry.parent_id = SLInventoryHTTPFetchRequest.this.folderEntry.getId();
                         break;
                     }
+                case 6:
                 case 7:
-                    if (!lLSDNode.isInt()) {
-                        SLAssetType byString = SLAssetType.getByString(lLSDNode.asString());
-                        if (byString == SLAssetType.AT_UNKNOWN) {
-                            this.entry.typeDefault = SLInventoryType.getByString(lLSDNode.asString()).getTypeCode();
-                            break;
-                        } else {
-                            this.entry.typeDefault = byString.getInventoryType().getTypeCode();
-                            break;
-                        }
-                    } else {
-                        this.entry.typeDefault = lLSDNode.asInt();
-                        break;
-                    }
                 case 8:
-                    this.entry.typeDefault = lLSDNode.asInt();
+                    int iParseFolderType = parseFolderType(lLSDNode);
+                    if (iParseFolderType >= 0 || this.entry.typeDefault == 0) {
+                        this.entry.typeDefault = iParseFolderType;
+                    }
                     break;
                 case 9:
                     this.entry.version = lLSDNode.asInt();
@@ -542,7 +572,7 @@ class SLInventoryHTTPFetchRequest extends SLInventoryFetchRequest {
         @Override // com.lumiyaviewer.lumiya.slproto.llsd.LLSDStreamingParser.LLSDDefaultContentHandler, com.lumiyaviewer.lumiya.slproto.llsd.LLSDStreamingParser.LLSDContentHandler
         public void onMapEnd(String str) throws LLSDXMLException, InterruptedException {
             if (this.entry.parentUUID == null) {
-                this.entry.parentUUID = SLInventoryHTTPFetchRequest.this.folderEntry.parentUUID;
+                this.entry.parentUUID = SLInventoryHTTPFetchRequest.this.folderUUID;
                 this.entry.parent_id = SLInventoryHTTPFetchRequest.this.folderEntry.getId();
             }
             if (this.entry.agentUUID == null) {
@@ -708,16 +738,9 @@ class SLInventoryHTTPFetchRequest extends SLInventoryFetchRequest {
         this.streamingXmlReqRef = new AtomicReference<>(null);
         this.isCancelled = new AtomicBoolean(false);
         this.httpRequest = new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.inventory.SLInventoryHTTPFetchRequest.1
-            /* JADX WARN: Removed duplicated region for block: B:21:0x00f9  */
-            /* JADX WARN: Removed duplicated region for block: B:24:0x0114  */
-            /* JADX WARN: Removed duplicated region for block: B:28:0x0172  */
-            /* JADX WARN: Removed duplicated region for block: B:29:0x0170  */
             @Override // java.lang.Runnable
-            /*
-                Code decompiled incorrectly, please refer to instructions dump.
-            */
             public void run() {
-                boolean z;
+                boolean z = false;
                 try {
                     long currentTimeMillis = System.currentTimeMillis();
                     Debug.Printf("InventoryFetcher: Going to fetch folder: %s", SLInventoryHTTPFetchRequest.this.folderUUID);
@@ -726,56 +749,42 @@ class SLInventoryHTTPFetchRequest extends SLInventoryFetchRequest {
                     lLSDArray.add(new LLSDMap(new LLSDMap.LLSDMapEntry("folder_id", new LLSDUUID(SLInventoryHTTPFetchRequest.this.folderUUID)), new LLSDMap.LLSDMapEntry("fetch_folders", new LLSDBoolean(true)), new LLSDMap.LLSDMapEntry("fetch_items", new LLSDBoolean(true))));
                     LLSDMap lLSDMap = new LLSDMap(new LLSDMap.LLSDMapEntry("folders", lLSDArray));
                     SLInventoryHTTPFetchRequest.this.streamingXmlReqRef.set(lLSDStreamingXMLRequest);
-                    z = false;
                     for (int i = 0; i < 3; i++) {
+                        DatabaseCommitThread databaseCommitThread = new DatabaseCommitThread(SLInventoryHTTPFetchRequest.this, null);
                         try {
-                            DatabaseCommitThread databaseCommitThread = new DatabaseCommitThread(SLInventoryHTTPFetchRequest.this, null);
+                            databaseCommitThread.start();
+                            Debug.Printf("InventoryFetcher: Starting HTTP request for folder: %s", SLInventoryHTTPFetchRequest.this.folderUUID);
+                            lLSDStreamingXMLRequest.PerformRequest(SLInventoryHTTPFetchRequest.this.capURL, lLSDMap, new RootContentHandler(SLInventoryHTTPFetchRequest.this, databaseCommitThread, null));
+                            Debug.Printf("InvFetch: done parsing,  waiting for commit thread", new Object[0]);
+                            databaseCommitThread.stopAndWait(true);
+                            Debug.Printf("InvFetch: commit thread finished", new Object[0]);
+                            z = true;
+                        } catch (LLSDXMLException e) {
+                            e.printStackTrace();
                             try {
-                                databaseCommitThread.start();
-                                Debug.Printf("InventoryFetcher: Starting HTTP request for folder: %s", SLInventoryHTTPFetchRequest.this.folderUUID);
-                                lLSDStreamingXMLRequest.PerformRequest(SLInventoryHTTPFetchRequest.this.capURL, lLSDMap, new RootContentHandler(SLInventoryHTTPFetchRequest.this, databaseCommitThread, null));
-                                Debug.Printf("InvFetch: done parsing,  waiting for commit thread", new Object[0]);
-                                databaseCommitThread.stopAndWait(true);
-                                Debug.Printf("InvFetch: commit thread finished", new Object[0]);
-                                z = true;
-                            } catch (LLSDXMLException e) {
-                                e.printStackTrace();
-                                try {
-                                    Debug.Log("InventoryFetcher: malformed xml after req = " + lLSDMap.serializeToXML());
-                                } catch (Exception e2) {
-                                }
-                            } catch (IOException e3) {
-                                e3.printStackTrace();
+                                Debug.Log("InventoryFetcher: malformed xml after req = " + lLSDMap.serializeToXML());
+                            } catch (Exception e2) {
                             }
-                            if (z) {
-                                break;
-                            }
-                            databaseCommitThread.interrupt();
-                            if (Thread.interrupted() || SLInventoryHTTPFetchRequest.this.isCancelled.get()) {
-                                break;
-                            }
-                        } catch (Exception e4) {
-                            Exception e = e4;
-                            Debug.Warning(e);
-                            boolean r0 = Thread.interrupted() ? SLInventoryHTTPFetchRequest.this.isCancelled.get() : true;
-                            Object[] objArr = new Object[3];
-                            objArr[0] = SLInventoryHTTPFetchRequest.this.folderUUID.toString();
-                            objArr[1] = !z ? "true" : "false";
-                            objArr[2] = Boolean.valueOf(r0);
-                            Debug.Printf("InventoryFetcher: done processing folder %s: success %s cancelled %b", objArr);
-                            SLInventoryHTTPFetchRequest.this.completeFetch(z, r0);
+                        } catch (IOException e3) {
+                            e3.printStackTrace();
+                        }
+                        if (z) {
+                            break;
+                        }
+                        databaseCommitThread.interrupt();
+                        if (Thread.interrupted() || SLInventoryHTTPFetchRequest.this.isCancelled.get()) {
+                            break;
                         }
                     }
                     Debug.Printf("InventoryFetcher: Fetched folder: %s (fetch time = %d)", SLInventoryHTTPFetchRequest.this.folderUUID.toString(), Long.valueOf(System.currentTimeMillis() - currentTimeMillis));
                     SLInventoryHTTPFetchRequest.this.streamingXmlReqRef.set(null);
                 } catch (Exception e5) {
-                    Exception e = e5;
-                    z = false;
+                    Debug.Warning(e5);
                 }
-                boolean z2 = Thread.interrupted() ? SLInventoryHTTPFetchRequest.this.isCancelled.get() : true;
+                boolean z2 = Thread.interrupted() ? true : SLInventoryHTTPFetchRequest.this.isCancelled.get();
                 Object[] objArr2 = new Object[3];
                 objArr2[0] = SLInventoryHTTPFetchRequest.this.folderUUID.toString();
-                objArr2[1] = !z ? "true" : "false";
+                objArr2[1] = z ? "true" : "false";
                 objArr2[2] = Boolean.valueOf(z2);
                 Debug.Printf("InventoryFetcher: done processing folder %s: success %s cancelled %b", objArr2);
                 SLInventoryHTTPFetchRequest.this.completeFetch(z, z2);

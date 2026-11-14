@@ -97,6 +97,8 @@ public class SLHTTPSConnection {
                 }
                 Debug.Printf("DNS: Falling back to static IP addresses for %s", str);
                 ArrayList arrayList = new ArrayList();
+                arrayList.add(InetAddress.getByName("8.8.8.8"));
+                arrayList.add(InetAddress.getByName("8.8.4.4"));
                 arrayList.add(InetAddress.getByName("64.233.164.101"));
                 arrayList.add(InetAddress.getByName("64.233.164.113"));
                 arrayList.add(InetAddress.getByName("64.233.164.139"));
@@ -122,34 +124,39 @@ public class SLHTTPSConnection {
                 if (responseExecute == null) {
                     throw new UnknownHostException(str);
                 }
-                if (!responseExecute.isSuccessful()) {
-                    Debug.Printf("DNS: Failed to resolve over HTTPS: error code %d, error message %s", Integer.valueOf(responseExecute.code()), responseExecute.message());
-                    throw new UnknownHostException(str);
-                }
-                JsonObject asJsonObject = new JsonParser().parse(responseExecute.body().string()).getAsJsonObject();
-                ArrayList arrayList = new ArrayList();
-                for (JsonElement jsonElement : asJsonObject.getAsJsonArray("Answer")) {
-                    if (jsonElement.isJsonObject()) {
-                        JsonObject asJsonObject2 = jsonElement.getAsJsonObject();
-                        if (asJsonObject2.has("name") && asJsonObject2.has("type") && asJsonObject2.has("data")) {
-                            String asString = asJsonObject2.get("name").getAsString();
-                            int asInt = asJsonObject2.get("type").getAsInt();
-                            String asString2 = asJsonObject2.get("data").getAsString();
-                            if (asString.equalsIgnoreCase(str + ".") && asInt == 1 && asString2 != null && (!asString2.isEmpty())) {
-                                Debug.Printf("DNS: Resolving '%s': found good result '%s'", str, asString2);
-                                InetAddress byName = InetAddress.getByName(asString2);
-                                if (byName != null) {
-                                    arrayList.add(byName);
+                try {
+                    if (!responseExecute.isSuccessful()) {
+                        Debug.Printf("DNS: Failed to resolve over HTTPS: error code %d, error message %s", Integer.valueOf(responseExecute.code()), responseExecute.message());
+                        throw new UnknownHostException(str);
+                    }
+                    JsonObject asJsonObject = new JsonParser().parse(responseExecute.body().string()).getAsJsonObject();
+                    ArrayList arrayList = new ArrayList();
+                    if (asJsonObject.has("Answer") && asJsonObject.get("Answer").isJsonArray()) {
+                        for (JsonElement jsonElement : asJsonObject.getAsJsonArray("Answer")) {
+                            if (jsonElement.isJsonObject()) {
+                                JsonObject asJsonObject2 = jsonElement.getAsJsonObject();
+                                if (asJsonObject2.has("name") && asJsonObject2.has("type") && asJsonObject2.has("data")) {
+                                    int asInt = asJsonObject2.get("type").getAsInt();
+                                    String asString2 = asJsonObject2.get("data").getAsString();
+                                    if (asInt == 1 && asString2 != null && (!asString2.isEmpty())) {
+                                        Debug.Printf("DNS: Resolving '%s': found good result '%s'", str, asString2);
+                                        InetAddress byName = InetAddress.getByName(asString2);
+                                        if (byName != null) {
+                                            arrayList.add(byName);
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+                    if (!arrayList.isEmpty()) {
+                        return arrayList;
+                    }
+                    Debug.Printf("DNS: Failed to resolve over HTTPS: hostname = %s, no valid answers", str);
+                    throw new UnknownHostException(str);
+                } finally {
+                    responseExecute.close();
                 }
-                if (!arrayList.isEmpty()) {
-                    return arrayList;
-                }
-                Debug.Printf("DNS: Failed to resolve over HTTPS: hostname = %s, no valid answers", str);
-                throw new UnknownHostException(str);
             } catch (Exception e) {
                 Debug.Printf("DNS: Failed to resolve over HTTPS: hostname = %s, error = %s", str, e.getMessage());
                 throw new UnknownHostException(str);
@@ -168,24 +175,11 @@ public class SLHTTPSConnection {
                 }
                 return listLookup;
             } catch (UnknownHostException e) {
-                try {
-                    List<InetAddress> listTryResolveOverHTTP = tryResolveOverHTTP(str);
-                    if (listTryResolveOverHTTP == null) {
-                        throw new UnknownHostException(str);
-                    }
-                    if (listTryResolveOverHTTP.isEmpty()) {
-                        throw new UnknownHostException(str);
-                    }
-                    return listTryResolveOverHTTP;
-                } catch (UnknownHostException e2) {
-                    if (!str.equalsIgnoreCase("login.agni.lindenlab.com")) {
-                        throw e2;
-                    }
-                    Debug.Printf("DNS: Falling back to static address for %s", str);
-                    ArrayList arrayList = new ArrayList();
-                    arrayList.add(InetAddress.getByName("216.82.57.58"));
-                    return arrayList;
+                List<InetAddress> listTryResolveOverHTTP = tryResolveOverHTTP(str);
+                if (listTryResolveOverHTTP == null || listTryResolveOverHTTP.isEmpty()) {
+                    throw new UnknownHostException(str);
                 }
+                return listTryResolveOverHTTP;
             }
         }
     }

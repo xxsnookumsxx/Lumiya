@@ -130,12 +130,7 @@ public class TextureCompressedCache extends ResourceManager<DrawableTextureParam
             }
         }
 
-        /* JADX WARN: Removed duplicated region for block: B:38:0x01d2 A[LOOP:0: B:17:0x00bc->B:38:0x01d2, LOOP_END] */
-        /* JADX WARN: Removed duplicated region for block: B:39:0x00fc A[SYNTHETIC] */
         @Override // java.lang.Runnable
-        /*
-            Code decompiled incorrectly, please refer to instructions dump.
-        */
         public void run() {
             URL url;
             boolean z;
@@ -147,11 +142,24 @@ public class TextureCompressedCache extends ResourceManager<DrawableTextureParam
             String capURL = this.fetcher.getCapURL();
             String agentAppearanceService = this.fetcher.getAgentAppearanceService();
             DrawableTextureParams params = getParams();
+            if (capURL == null && agentAppearanceService == null) {
+                TextureCompressedCache.this.downloadExecutor.queueRequest(this);
+                return;
+            }
             try {
                 UUID avatarUUID = params.avatarUUID();
                 AvatarTextureFaceIndex avatarFaceIndex = params.avatarFaceIndex();
+                URL fallbackUrl = null;
+                if (capURL != null) {
+                    String separator = capURL.contains("?") ? "&" : (capURL.endsWith("/") ? "?" : "/?");
+                    fallbackUrl = new URL(capURL + separator + "texture_id=" + params.uuid().toString());
+                }
                 if (agentAppearanceService == null || avatarUUID == null || avatarFaceIndex == null) {
-                    url = new URL(capURL + "/?texture_id=" + params.uuid().toString());
+                    if (fallbackUrl == null) {
+                        TextureCompressedCache.this.downloadExecutor.queueRequest(this);
+                        return;
+                    }
+                    url = fallbackUrl;
                 } else {
                     if (!agentAppearanceService.endsWith("/")) {
                         agentAppearanceService = agentAppearanceService + "/";
@@ -161,12 +169,15 @@ public class TextureCompressedCache extends ResourceManager<DrawableTextureParam
                 Debug.Log("TextureFetchRequest: Fetching texture " + params.uuid().toString() + ", url = " + url);
                 File file = new File(this.compressedFile.getAbsolutePath() + ".part");
                 File parentFile = file.getParentFile();
-                Debug.Printf("TextureFetchRequest: tempOutputDir = %s, createResult = %b, exists = %b", parentFile, Boolean.valueOf(parentFile.mkdirs()), Boolean.valueOf(parentFile.exists()));
+                if (parentFile != null) {
+                    Debug.Printf("TextureFetchRequest: tempOutputDir = %s, createResult = %b, exists = %b", parentFile, Boolean.valueOf(parentFile.mkdirs()), Boolean.valueOf(parentFile.exists()));
+                }
                 for (int i = 0; i < 2; i++) {
+                    URL attemptUrl = (i > 0 && fallbackUrl != null) ? fallbackUrl : url;
                     z = false;
                     try {
                         Debug.Printf("TextureFetchRequest: getting connection", new Object[0]);
-                        execute = SLHTTPSConnection.getOkHttpClient().newCall(new Request.Builder().url(url).header(HttpHeaders.ACCEPT, "image/x-j2c").build()).execute();
+                        execute = SLHTTPSConnection.getOkHttpClient().newCall(new Request.Builder().url(attemptUrl).header(HttpHeaders.ACCEPT, "image/x-j2c").build()).execute();
                         if (execute == null) {
                             throw new IOException("Null response");
                         }
@@ -196,7 +207,7 @@ public class TextureCompressedCache extends ResourceManager<DrawableTextureParam
                         return;
                     }
                 }
-                if (this.fetchTask.isCancelled()) {
+                if (this.fetchTask != null && this.fetchTask.isCancelled()) {
                     return;
                 }
                 Debug.Log("TextureFetchRequest: HTTP fetch unsuccessful. Trying UDP.");

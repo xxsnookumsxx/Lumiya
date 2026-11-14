@@ -192,7 +192,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
         this.initialUpdateDone = false;
         RenderContext renderContext = this.renderContext.get();
         if (renderContext != null) {
-            renderContext.setMeshCapURL(sLAgentCircuit.getCaps().getCapability(SLCaps.SLCapability.GetMesh));
+            renderContext.setMeshCapURL(sLAgentCircuit.getCaps().getMeshCapURL());
             if (this.parcelInfo != null) {
                 PrimComputeExecutor.getInstance().execute(this.initSpatialIndexRunnable);
             }
@@ -929,6 +929,10 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
             GLES10.glClearColor(0.1f, 0.1f, 0.5f, 1.0f);
         }
         this.renderContext.set(renderContext);
+        SLAgentCircuit sLAgentCircuit = this.agentCircuit.getData();
+        if (sLAgentCircuit != null) {
+            renderContext.setMeshCapURL(sLAgentCircuit.getCaps().getMeshCapURL());
+        }
         this.hoverTextEnableHUDs = GlobalOptions.getInstance().getHoverTextEnableHUDs();
         this.hoverTextEnableObjects = GlobalOptions.getInstance().getHoverTextEnableObjects();
         if (this.stateHandler != null) {

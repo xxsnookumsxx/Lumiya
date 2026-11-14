@@ -53,23 +53,22 @@ public class MeshCache extends ResourceFileCache<UUID, MeshData> {
         public void run() {
             String str;
             synchronized (MeshCache.this.capURLlock) {
-                str = null;
-                while (str == null) {
-                    str = MeshCache.this.capURL;
-                    if (str == null) {
-                        try {
-                            MeshCache.this.capURLlock.wait();
-                        } catch (InterruptedException e) {
-                        }
+                str = MeshCache.this.capURL;
+                if (str == null) {
+                    try {
+                        MeshCache.this.capURLlock.wait(15000L);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
+                    str = MeshCache.this.capURL;
                 }
             }
-            if (str == null) {
+            if (str == null || (this.downloadTask != null && this.downloadTask.isCancelled())) {
                 completeRequest(null);
                 return;
             }
             File file = new File(this.outputFile.getAbsolutePath() + ".tmp");
-            String str2 = str + "/?mesh_id=" + getParams().toString();
+            String str2 = str + (str.contains("?") ? "&" : (str.endsWith("/") ? "?" : "/?")) + "mesh_id=" + getParams().toString();
             Debug.Printf("Fetching mesh: %s", str2);
             for (int i = 0; i < 2; i++) {
                 try {
@@ -96,6 +95,7 @@ public class MeshCache extends ResourceFileCache<UUID, MeshData> {
                         file.renameTo(this.outputFile);
                         Debug.Printf("MeshFetch: Saved %d bytes to %s", Long.valueOf(jCopy), this.outputFile.toString());
                         completeRequest(new MeshData(this.outputFile));
+                        return;
                     } finally {
                         responseExecute.close();
                     }
@@ -103,7 +103,7 @@ public class MeshCache extends ResourceFileCache<UUID, MeshData> {
                     Debug.Warning(e2);
                 }
             }
-            if (this.downloadTask.isCancelled()) {
+            if (this.downloadTask != null && this.downloadTask.isCancelled()) {
                 return;
             }
             completeRequest(null);
