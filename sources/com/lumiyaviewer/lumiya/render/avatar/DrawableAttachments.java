@@ -8,9 +8,11 @@ import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.render.DrawableObject;
 import com.lumiyaviewer.lumiya.render.RenderContext;
 import com.lumiyaviewer.lumiya.render.glres.buffers.GLLoadableBuffer;
+import com.lumiyaviewer.lumiya.slproto.avatar.BakedTextureIndex;
 import com.lumiyaviewer.lumiya.slproto.avatar.SLSkeletonBoneID;
 import com.lumiyaviewer.rawbuffers.DirectByteBuffer;
 import java.util.Iterator;
+import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -129,5 +131,16 @@ class DrawableAttachments {
             z3 = z3;
         }
         return z3;
+    }
+
+    void updateBoMTextures(Set<BakedTextureIndex> set) {
+        for (DrawableObject drawableObject : this.rigged) {
+            drawableObject.updateBoMTextures();
+            drawableObject.collectBoMBakes(set);
+        }
+        for (DrawableObject drawableObject2 : this.nonRigged.values()) {
+            drawableObject2.updateBoMTextures();
+            drawableObject2.collectBoMBakes(set);
+        }
     }
 }

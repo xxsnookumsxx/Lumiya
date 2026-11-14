@@ -27,6 +27,10 @@ public abstract class SLTextureEntryFace {
         return pool.intern(new AutoValue_SLTextureEntryFace(mutableSLTextureEntryFace.textureID, mutableSLTextureEntryFace.rgba, mutableSLTextureEntryFace.repeatU, mutableSLTextureEntryFace.repeatV, mutableSLTextureEntryFace.offsetU, mutableSLTextureEntryFace.offsetV, mutableSLTextureEntryFace.rotation, mutableSLTextureEntryFace.glow, mutableSLTextureEntryFace.materialb, mutableSLTextureEntryFace.mediab, mutableSLTextureEntryFace.hasAttribute));
     }
 
+    public static SLTextureEntryFace withTextureID(@Nonnull SLTextureEntryFace sLTextureEntryFace, @Nullable UUID uuid) {
+        return pool.intern(new AutoValue_SLTextureEntryFace(uuid, sLTextureEntryFace.rgba(), sLTextureEntryFace.repeatU(), sLTextureEntryFace.repeatV(), sLTextureEntryFace.offsetU(), sLTextureEntryFace.offsetV(), sLTextureEntryFace.rotation(), sLTextureEntryFace.glow(), sLTextureEntryFace.materialb(), sLTextureEntryFace.mediab(), sLTextureEntryFace.hasAttribute() | AttributeTextureID));
+    }
+
     public final float getGlow(@Nonnull SLTextureEntryFace sLTextureEntryFace) {
         return (hasAttribute() & 512) != 0 ? glow() : sLTextureEntryFace.glow();
     }

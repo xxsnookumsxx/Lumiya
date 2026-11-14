@@ -248,7 +248,7 @@ public class BakeLayer {
             openJPEG2.setComponent(3, (byte) -1);
         }
         openJPEG2.blendAlpha(openJPEG3, false);
-        if (z6) {
+        if (!z6) {
             if (this.isRenderPassBump) {
                 openJPEG.drawBump(openJPEG2, netColor, this.writeAllChannels, z8);
             } else {

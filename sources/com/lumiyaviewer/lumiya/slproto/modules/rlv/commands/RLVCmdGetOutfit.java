@@ -16,7 +16,7 @@ public class RLVCmdGetOutfit implements RLVCommand {
             int i = Integer.parseInt(str);
             SLAvatarAppearance sLAvatarAppearance = rLVController.getModules().avatarAppearance;
             String str3 = "";
-            for (SLWearableType sLWearableType : new SLWearableType[]{SLWearableType.WT_GLOVES, SLWearableType.WT_JACKET, SLWearableType.WT_PANTS, SLWearableType.WT_SHIRT, SLWearableType.WT_SHOES, SLWearableType.WT_SKIRT, SLWearableType.WT_SOCKS, SLWearableType.WT_UNDERPANTS, SLWearableType.WT_UNDERSHIRT, SLWearableType.WT_SKIN, SLWearableType.WT_EYES, SLWearableType.WT_HAIR, SLWearableType.WT_SHAPE, SLWearableType.WT_ALPHA, SLWearableType.WT_TATTOO}) {
+            for (SLWearableType sLWearableType : new SLWearableType[]{SLWearableType.WT_GLOVES, SLWearableType.WT_JACKET, SLWearableType.WT_PANTS, SLWearableType.WT_SHIRT, SLWearableType.WT_SHOES, SLWearableType.WT_SKIRT, SLWearableType.WT_SOCKS, SLWearableType.WT_UNDERPANTS, SLWearableType.WT_UNDERSHIRT, SLWearableType.WT_SKIN, SLWearableType.WT_EYES, SLWearableType.WT_HAIR, SLWearableType.WT_SHAPE, SLWearableType.WT_ALPHA, SLWearableType.WT_TATTOO, SLWearableType.WT_PHYSICS, SLWearableType.WT_UNIVERSAL}) {
                 if (!sLWearableType.isBodyPart()) {
                     String name = sLWearableType.getName();
                     if (str2.equals("") || name.equalsIgnoreCase(str2)) {

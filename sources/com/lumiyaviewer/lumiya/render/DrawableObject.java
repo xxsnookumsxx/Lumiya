@@ -7,6 +7,7 @@ import com.google.common.base.Objects;
 import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.openjpeg.OpenJPEG;
 import com.lumiyaviewer.lumiya.render.avatar.AvatarSkeleton;
+import com.lumiyaviewer.lumiya.render.avatar.AvatarTextures;
 import com.lumiyaviewer.lumiya.render.avatar.DrawableAvatar;
 import com.lumiyaviewer.lumiya.render.avatar.DrawableHoverText;
 import com.lumiyaviewer.lumiya.render.drawable.DrawablePrim;
@@ -17,12 +18,15 @@ import com.lumiyaviewer.lumiya.render.picking.IntersectInfo;
 import com.lumiyaviewer.lumiya.render.picking.IntersectPickable;
 import com.lumiyaviewer.lumiya.render.picking.ObjectIntersectInfo;
 import com.lumiyaviewer.lumiya.res.ResourceConsumer;
+import com.lumiyaviewer.lumiya.slproto.avatar.BakedTextureIndex;
 import com.lumiyaviewer.lumiya.slproto.mesh.MeshJointTranslations;
 import com.lumiyaviewer.lumiya.slproto.objects.HoverText;
 import com.lumiyaviewer.lumiya.slproto.objects.SLObjectInfo;
 import com.lumiyaviewer.lumiya.slproto.prims.PrimDrawParams;
 import com.lumiyaviewer.lumiya.slproto.prims.PrimFlexibleInfo;
+import com.lumiyaviewer.lumiya.slproto.textures.SLTextureEntry;
 import com.lumiyaviewer.lumiya.slproto.types.LLVector3;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /* JADX INFO: loaded from: classes.dex */
@@ -38,6 +42,7 @@ public class DrawableObject implements IntersectPickable, ResourceConsumer {
     private final float[] objCoordsData;
     private final int objCoordsScale;
     private final SLObjectInfo objInfo;
+    private volatile PrimDrawParams rawPrimDrawParams;
     private GLQuery occlusionQuery = null;
     private boolean isInvisible = false;
     private int invisibleCount = 0;
@@ -266,8 +271,37 @@ public class DrawableObject implements IntersectPickable, ResourceConsumer {
         }
     }
 
+    private PrimDrawParams resolveBoMDrawParams(PrimDrawParams primDrawParams) {
+        if (this.attachedTo == null || primDrawParams == null) {
+            return primDrawParams;
+        }
+        SLTextureEntry textures = primDrawParams.getTextures();
+        if (textures == null || !textures.hasBoMTextures()) {
+            return primDrawParams;
+        }
+        AvatarTextures avatarTextures = this.attachedTo.getAvatarTextures();
+        if (avatarTextures == null) {
+            return primDrawParams;
+        }
+        SLTextureEntry sLTextureEntryResolveBoMTextures = textures.resolveBoMTextures(avatarTextures);
+        return sLTextureEntryResolveBoMTextures != textures ? new PrimDrawParams(primDrawParams.getVolumeParams(), sLTextureEntryResolveBoMTextures) : primDrawParams;
+    }
+
+    public void collectBoMBakes(Set<BakedTextureIndex> set) {
+        PrimDrawParams primDrawParams = this.rawPrimDrawParams;
+        if (primDrawParams == null || primDrawParams.getTextures() == null) {
+            return;
+        }
+        primDrawParams.getTextures().collectBoMBakes(set);
+    }
+
     public SLObjectInfo getObjectInfo() {
         return this.objInfo;
+    }
+
+    public boolean hasBoMTextures() {
+        PrimDrawParams primDrawParams = this.rawPrimDrawParams;
+        return (primDrawParams == null || primDrawParams.getTextures() == null || !primDrawParams.getTextures().hasBoMTextures()) ? false : true;
     }
 
     public final boolean hasExtendedBones() {
@@ -299,11 +333,23 @@ public class DrawableObject implements IntersectPickable, ResourceConsumer {
     }
 
     public void setPrimDrawParams(PrimDrawParams primDrawParams) {
-        this.drawableStore.primCache.RequestResource(primDrawParams, this);
+        this.rawPrimDrawParams = primDrawParams;
+        this.drawableStore.primCache.RequestResource(resolveBoMDrawParams(primDrawParams), this);
         if (primDrawParams.getVolumeParams().isFlexible()) {
             this.flexibleInfo = new PrimFlexibleInfo();
         } else {
             this.flexibleInfo = null;
         }
+        if (this.attachedTo != null && hasBoMTextures()) {
+            this.attachedTo.onAttachmentBoMChanged();
+        }
+    }
+
+    public void updateBoMTextures() {
+        PrimDrawParams primDrawParams = this.rawPrimDrawParams;
+        if (this.attachedTo == null || primDrawParams == null || primDrawParams.getTextures() == null || !primDrawParams.getTextures().hasBoMTextures()) {
+            return;
+        }
+        this.drawableStore.primCache.RequestResource(resolveBoMDrawParams(primDrawParams), this);
     }
 }

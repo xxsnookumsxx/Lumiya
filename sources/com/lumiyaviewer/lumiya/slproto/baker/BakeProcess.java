@@ -132,7 +132,7 @@ public class BakeProcess implements SLTextureUploadRequest.TextureUploadComplete
     private SLTextureEntry PrepareAvatarTextureEntry() {
         UUID uploadedID;
         SLTextureEntryFace sLTextureEntryFaceCreate = SLTextureEntryFace.create(new MutableSLTextureEntryFace(-1));
-        SLTextureEntryFace[] sLTextureEntryFaceArr = new SLTextureEntryFace[32];
+        SLTextureEntryFace[] sLTextureEntryFaceArr = new SLTextureEntryFace[SLTextureEntry.MAX_FACES];
         for (BakedTextureIndex bakedTextureIndex : BakedTextureIndex.valuesCustom()) {
             int iOrdinal = bakedTextureIndex.getFaceIndex().ordinal();
             BakedImage bakedImage = this.bakedImages.get(bakedTextureIndex);
@@ -143,6 +143,14 @@ public class BakeProcess implements SLTextureUploadRequest.TextureUploadComplete
             }
         }
         return SLTextureEntry.create(sLTextureEntryFaceCreate, sLTextureEntryFaceArr);
+    }
+
+    private static boolean isUniversalOnlyBake(BakedTextureIndex bakedTextureIndex) {
+        return bakedTextureIndex == BakedTextureIndex.BAKED_LEFT_ARM || bakedTextureIndex == BakedTextureIndex.BAKED_LEFT_LEG || bakedTextureIndex == BakedTextureIndex.BAKED_AUX1 || bakedTextureIndex == BakedTextureIndex.BAKED_AUX2 || bakedTextureIndex == BakedTextureIndex.BAKED_AUX3;
+    }
+
+    private boolean isWearingUniversal() {
+        return !this.wornWearables.row(SLWearableType.WT_UNIVERSAL).isEmpty();
     }
 
     /* JADX INFO: Access modifiers changed from: private */
@@ -171,6 +179,7 @@ public class BakeProcess implements SLTextureUploadRequest.TextureUploadComplete
         this.paramValues = calcAllParamValues(this.wornWearables);
         Debug.Log("Baking: baking...");
         boolean zIsWearingSkirt = isWearingSkirt();
+        boolean zIsWearingUniversal = isWearingUniversal();
         File cacheDir = GlobalOptions.getInstance().getCacheDir("baker");
         cacheDir.mkdirs();
         for (BakedTextureIndex bakedTextureIndex : BakedTextureIndex.valuesCustom()) {
@@ -180,7 +189,7 @@ public class BakeProcess implements SLTextureUploadRequest.TextureUploadComplete
                 finishBaking(null);
                 return;
             }
-            if (bakedTextureIndex != BakedTextureIndex.BAKED_SKIRT || !(!zIsWearingSkirt)) {
+            if ((bakedTextureIndex != BakedTextureIndex.BAKED_SKIRT || zIsWearingSkirt) && (!isUniversalOnlyBake(bakedTextureIndex) || zIsWearingUniversal)) {
                 Debug.Log("Baking: Baking layer " + bakedTextureIndex);
                 BakedImage bakedImage = new BakedImage(BakeLayers.layerSets.get(bakedTextureIndex));
                 this.bakedImages.put(bakedTextureIndex, bakedImage);
@@ -278,6 +287,7 @@ public class BakeProcess implements SLTextureUploadRequest.TextureUploadComplete
             bakedImageUploadRequest.bakedImage.setUploadedID(bakedImageUploadRequest.getTextureID());
             this.bakedImages.put(bakedImageUploadRequest.bakedIndex, bakedImageUploadRequest.bakedImage);
             boolean zIsWearingSkirt = isWearingSkirt();
+            boolean zIsWearingUniversal = isWearingUniversal();
             BakedTextureIndex[] bakedTextureIndexArrValuesCustom = BakedTextureIndex.valuesCustom();
             int length = bakedTextureIndexArrValuesCustom.length;
             int i3 = 0;
@@ -286,7 +296,7 @@ public class BakeProcess implements SLTextureUploadRequest.TextureUploadComplete
             int i5 = 0;
             while (i3 < length) {
                 BakedTextureIndex bakedTextureIndex = bakedTextureIndexArrValuesCustom[i3];
-                if (bakedTextureIndex == BakedTextureIndex.BAKED_SKIRT && (!zIsWearingSkirt)) {
+                if ((bakedTextureIndex == BakedTextureIndex.BAKED_SKIRT && (!zIsWearingSkirt)) || (isUniversalOnlyBake(bakedTextureIndex) && (!zIsWearingUniversal))) {
                     boolean z3 = z2;
                     i = i4;
                     i2 = i5;

@@ -19,6 +19,7 @@ import com.lumiyaviewer.lumiya.render.spatial.DrawListEntry;
 import com.lumiyaviewer.lumiya.render.spatial.DrawListObjectEntry;
 import com.lumiyaviewer.lumiya.render.spatial.DrawListPrimEntry;
 import com.lumiyaviewer.lumiya.res.executors.PrimComputeExecutor;
+import com.lumiyaviewer.lumiya.slproto.avatar.BakedTextureIndex;
 import com.lumiyaviewer.lumiya.slproto.avatar.MeshIndex;
 import com.lumiyaviewer.lumiya.slproto.avatar.SLAttachmentPoint;
 import com.lumiyaviewer.lumiya.slproto.avatar.SLBaseAvatar;
@@ -32,6 +33,7 @@ import com.lumiyaviewer.lumiya.utils.IdentityMatrix;
 import com.lumiyaviewer.lumiya.utils.LinkedTreeNode;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -45,10 +47,12 @@ import javax.annotation.Nonnull;
 
 /* loaded from: classes.dex */
 public class DrawableAvatar extends DrawableAvatarStub implements IntersectPickable, DrawEntryList.EntryRemovalListener {
+    private volatile Set<BakedTextureIndex> activeBoMBakes;
     private final Object animationLock;
     private final AnimationSkeletonData animationSkeletonData;
     private final Map<UUID, AvatarAnimationState> animations;
     private volatile boolean animationsInitialized;
+    private volatile AvatarTextures avatarTextures;
     private final Set<DrawListEntry> deadAttachmentsList;
     private final Object deadAttachmentsLock;
     private final AtomicInteger displayedHUDid;
@@ -81,6 +85,8 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
         this.animations = new HashMap();
         this.runningAnimations = null;
         this.animationsInitialized = false;
+        this.avatarTextures = null;
+        this.activeBoMBakes = Collections.emptySet();
         this.drawableAttachmentList = new DrawableAttachments();
         this.displayedHUDid = new AtomicInteger();
         this.drawableAttachments = new DrawEntryList(this);
@@ -141,10 +147,14 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
         renderContext.glObjWorldTranslatef(this.pelvisTranslateX, this.pelvisTranslateY, this.pelvisTranslateZ);
         renderContext.objWorldMatrix.getMatrix(this.localAviWorldMatrix, 0);
         GLPrepare(renderContext, avatarSkeleton.jointMatrix);
+        Set<BakedTextureIndex> set = this.activeBoMBakes;
         MeshIndex[] meshIndexArr = MeshIndex.VALUES;
         int length = meshIndexArr.length;
         for (int i = 0; i < length; i++) {
             MeshIndex meshIndex = meshIndexArr[i];
+            if (isMeshHiddenByBoM(meshIndex, set)) {
+                continue;
+            }
             DrawableAvatarPart drawableAvatarPart = this.parts.get(meshIndex);
             SLSkeletonBone sLSkeletonBone = meshIndex == MeshIndex.MESH_ID_EYEBALL_LEFT ? avatarSkeleton.bones.get(SLSkeletonBoneID.mEyeLeft) : meshIndex == MeshIndex.MESH_ID_EYEBALL_RIGHT ? avatarSkeleton.bones.get(SLSkeletonBoneID.mEyeRight) : null;
             if (sLSkeletonBone != null) {
@@ -296,9 +306,40 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
         }
         this.drawableHUD = drawableHUD2;
         this.drawableAttachmentList = new DrawableAttachments(create);
+        updateBoMAttachments();
         if (z2) {
             updateRiggedMeshes();
         }
+    }
+
+    private static boolean isMeshHiddenByBoM(MeshIndex meshIndex, Set<BakedTextureIndex> set) {
+        if (set == null || set.isEmpty()) {
+            return false;
+        }
+        switch (meshIndex) {
+            case MESH_ID_HAIR:
+                return set.contains(BakedTextureIndex.BAKED_HAIR);
+            case MESH_ID_HEAD:
+            case MESH_ID_EYELASH:
+                return set.contains(BakedTextureIndex.BAKED_HEAD);
+            case MESH_ID_UPPER_BODY:
+                return set.contains(BakedTextureIndex.BAKED_UPPER);
+            case MESH_ID_LOWER_BODY:
+                return set.contains(BakedTextureIndex.BAKED_LOWER);
+            case MESH_ID_EYEBALL_LEFT:
+            case MESH_ID_EYEBALL_RIGHT:
+                return set.contains(BakedTextureIndex.BAKED_EYES);
+            case MESH_ID_SKIRT:
+                return set.contains(BakedTextureIndex.BAKED_SKIRT);
+            default:
+                return false;
+        }
+    }
+
+    private void updateBoMAttachments() {
+        EnumSet<BakedTextureIndex> enumSetNoneOf = EnumSet.noneOf(BakedTextureIndex.class);
+        this.drawableAttachmentList.updateBoMTextures(enumSetNoneOf);
+        this.activeBoMBakes = enumSetNoneOf.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(enumSetNoneOf);
     }
 
     private void updateAttachmentParts(SLObjectInfo sLObjectInfo, Multimap<Integer, DrawableObject> multimap, int i) {
@@ -451,11 +492,17 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
     }
 
     void UpdateTextures(AvatarTextures avatarTextures) {
+        this.avatarTextures = avatarTextures;
         Iterator it = this.parts.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             ((DrawableAvatarPart) entry.getValue()).setTexture(this.drawableStore.glTextureCache, avatarTextures.getTexture(((DrawableAvatarPart) entry.getValue()).getFaceIndex()));
         }
+        updateBoMAttachments();
+    }
+
+    public AvatarTextures getAvatarTextures() {
+        return this.avatarTextures;
     }
 
     public DrawableHUD getDrawableHUD() {
@@ -496,6 +543,10 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
             this.deadAttachmentsList.add(drawListEntry);
         }
         updateAttachments();
+    }
+
+    public void onAttachmentBoMChanged() {
+        updateBoMAttachments();
     }
 
     public void onRiggedMeshReady(DrawableObject drawableObject) {

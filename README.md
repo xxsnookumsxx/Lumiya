@@ -77,7 +77,7 @@ Both the compiled native libraries (`lib/arm64-v8a/`) and the Java/JNI layer are
 
 ---
 
-## 4. Four-Phase Modernization Roadmap
+## 4. Five-Phase Modernization Roadmap
 
 ### Phase 1: Clean Gradle Build (`minSdk 26`, `arm64-v8a`) & Recover 36 Decompilation Errors (✅ Completed)
 1. ✅ Configured the Android Gradle build system (`settings.gradle`, `build.gradle`, `gradle.properties`, `gradlew`, `stable-ids.txt`) for `minSdkVersion 26`, `targetSdkVersion 26`, and `abiFilters 'arm64-v8a'`.
@@ -98,11 +98,26 @@ Both the compiled native libraries (`lib/arm64-v8a/`) and the Java/JNI layer are
    - Updated `SLCaps.java` to recognize `.secondlife.io` AWS simulator hosts and retry seed capability requests up to 3 times.
    - Updated `SLTextureFetcher.java` and `TextureCompressedCache.java` to support `GetTexture` and `ViewerAsset` HTTP CDN fetching, including automatic fallback to `GetTexture`/`ViewerAsset` for baked avatar textures.
 
-### Phase 3: Add Bakes on Mesh (BoM) & Modern Avatar Support
-1. Extend `BakedTextureIndex.java` and `AvatarTextureFaceIndex.java` with the 5 BoM channels (`LeftArm`, `LeftLeg`, `Aux1`, `Aux2`, `Aux3`) and Universal wearable types (`SLWearableType.java`).
-2. Map BoM magic bake texture UUIDs onto mesh attachments so mesh bodies and heads display baked skin, tattoo, and clothing layers properly.
+### Phase 3: Add Bakes on Mesh (BoM) & Modern Avatar Support (✅ Completed)
+1. ✅ **Universal Wearable & BoM Texture Channels (`SLWearableType.java`, `AvatarTextureFaceIndex.java`, `BakedTextureIndex.java`)**:
+   - Added `WT_UNIVERSAL` (`typeCode = 16`) to `SLWearableType.java` (and updated `RLVCmdGetOutfit.java`).
+   - Extended `AvatarTextureFaceIndex.java` with all 16 official Second Life Bakes on Mesh `ETextureIndex` constants (`TEX_HEAD_UNIVERSAL_TATTOO` = 29 through `TEX_AUX3_BAKED` = 44).
+   - Extended `BakedTextureIndex.java` with the 5 BoM channels (`BAKED_LEFT_ARM`, `BAKED_LEFT_LEG`, `BAKED_AUX1`, `BAKED_AUX2`, `BAKED_AUX3`) and mapped all 11 baked channels to their official Second Life `IMG_USE_BAKED_*` magic UUIDs.
+2. ✅ **64-Bit `TextureEntry` Face Bitfields (`SLTextureEntry.java`, `SLTextureEntryFace.java`)**:
+   - Fixed a critical 32-bit `int` bitfield overflow in `SLTextureEntry.ReadFaceBitfield` and `WriteFaceBitfield` when parsing `AvatarAppearance` packets with BoM baked texture indices `40..44` by upgrading `SLTextureEntry` to 64-bit `long` face bitfields (`MAX_FACES = 64`).
+3. ✅ **Local Baker Fix & Universal Layer Support (`BakeLayer.java`, `BakeLayers.java`, `BakeProcess.java`)**:
+   - Fixed a critical JADX boolean inversion in `BakeLayer.Bake()` (`if (!z6)`) that previously skipped drawing valid local and base layers during local baking.
+   - Added Universal tattoo layers (`head_universal_tattoo`, `upper_universal_tattoo`, `lower_universal_tattoo`, `skirt_tattoo`, `hair_tattoo`, `eyes_tattoo`) and `BAKED_LEFT_ARM`..`BAKED_AUX3` layer sets to `BakeLayers.java` and `BakeProcess.java`.
+4. ✅ **BoM Attachment Texture Resolution & Base System Mesh Hiding (`DrawableObject.java`, `DrawableAttachments.java`, `DrawableAvatar.java`)**:
+   - Resolved `IMG_USE_BAKED_*` magic UUIDs on attached mesh faces to the avatar's active baked texture UUIDs (`AvatarTextures`), automatically refreshing when avatar bakes update.
+   - Implemented automatic hiding of underlying classic system avatar meshes (`MESH_ID_HAIR`, `MESH_ID_HEAD` + `MESH_ID_EYELASH`, `MESH_ID_UPPER_BODY`, `MESH_ID_LOWER_BODY`, `MESH_ID_EYEBALL_LEFT` + `MESH_ID_EYEBALL_RIGHT`, `MESH_ID_SKIRT`) when an attachment uses the corresponding `IMG_USE_BAKED_*` channel (`LLVOAvatar::updateMeshVisibility`).
 
 ### Phase 4: Android OS Modernization
 1. Update `AndroidManifest.xml` (`android:exported`, `foregroundServiceType`, `usesCleartextTraffic="true"` for HTTP OpenSim grids, `POST_NOTIFICATIONS`).
 2. Add `FLAG_IMMUTABLE` to `PendingIntent` calls and modernize cache directory selection in `GlobalOptions.java`.
 3. Update the predefined grids list in `res/values/arrays.xml`.
+
+### Phase 5: Full RLV / Restrained Love Viewer (RLVa) Modernization
+1. Update RLV protocol version reporting (`RLVCmdVersion.java`, `RLVController.java`) and support `@versionnum`, `@versionnew`, and modern RLV/RLVa version handshakes.
+2. Update RLV attachment and wearable commands (`@getattach`, `@getoutfit`, `@remattach`, `@detach`, `@remoutfit`, `@attach`, `@attachover`, `@attachall`, `@attachallover`, `@detachall`, `@detachallthis`, `@getinv`, `@getinvworn`, `@findfolder`, `@findfolders`, `@getpath`, `@getpathnew`) to support all 55 Bento/modern attachment points (`RLVCmdGetAttach.java` currently caps at `40` instead of `SLAttachmentPoint.NUM_POINTS = 56`) and `WT_PHYSICS` / `WT_UNIVERSAL` wearable types.
+3. Expand RLV restrictions and command coverage (`@unsit`, `@sit`, `@sittp`, `@standtp`, `@tpto`, `@tploc`, `@tplure`, `@tpv`, `@accepttp`, `@acceptpermission`, `@edit`, `@rez`, `@Touch`/`@touchall`/`@touchworld`/`@touchthis`/`@touchfar`, `@fartouch`, `@shownames`, `@NAMETAGS`, `@camdistmax`/`@camdistmin`, `@setgroup`, `@getgroup`, `@ clear` and exception handling) and verify full RLVa/#RLV shared folder compliance.
