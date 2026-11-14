@@ -45,19 +45,19 @@ public class AudioManagerWrapper implements InvocationHandler {
                     i++;
                 }
             }
+            if (cls == null) {
+                throw new Exception("Failed to get OnAudioFocusChangeListener interface");
+            }
+            mRequestAudioFocus = AudioManager.class.getMethod("requestAudioFocus", cls, Integer.TYPE, Integer.TYPE);
+            mAbandonAudioFocus = AudioManager.class.getMethod("abandonAudioFocus", cls);
+            this.audioFocusHandler = Proxy.newProxyInstance(cls.getClassLoader(), new Class[]{cls}, this);
+            this.hasAudioFocusAPI = true;
+            Debug.Log("AudioManagerWrapper: has audio focus api = " + this.hasAudioFocusAPI);
         } catch (Exception e) {
             this.hasAudioFocusAPI = false;
             Debug.Log("AudioManagerWrapper: audio focus api not found");
             e.printStackTrace();
         }
-        if (cls == null) {
-            throw new Exception("Failed to get OnAudioFocusChangeListener interface");
-        }
-        mRequestAudioFocus = AudioManager.class.getMethod("requestAudioFocus", cls, Integer.TYPE, Integer.TYPE);
-        mAbandonAudioFocus = AudioManager.class.getMethod("abandonAudioFocus", cls);
-        this.audioFocusHandler = Proxy.newProxyInstance(cls.getClassLoader(), new Class[]{cls}, this);
-        this.hasAudioFocusAPI = true;
-        Debug.Log("AudioManagerWrapper: has audio focus api = " + this.hasAudioFocusAPI);
     }
 
     private void onAudioFocusChange(int i) {

@@ -4,16 +4,33 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import com.google.common.net.HttpHeaders;
+import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.R;
+import com.lumiyaviewer.lumiya.openjpeg.OpenJPEG;
 import com.lumiyaviewer.lumiya.slproto.SLAgentCircuit;
+import com.lumiyaviewer.lumiya.slproto.caps.SLCaps;
+import com.lumiyaviewer.lumiya.slproto.https.LLSDXMLRequest;
+import com.lumiyaviewer.lumiya.slproto.https.SLHTTPSConnection;
+import com.lumiyaviewer.lumiya.slproto.llsd.LLSDException;
+import com.lumiyaviewer.lumiya.slproto.llsd.LLSDNode;
+import com.lumiyaviewer.lumiya.slproto.llsd.types.LLSDMap;
+import com.lumiyaviewer.lumiya.slproto.llsd.types.LLSDString;
+import com.lumiyaviewer.lumiya.slproto.llsd.types.LLSDUUID;
 import com.lumiyaviewer.lumiya.slproto.users.manager.UserManager;
+import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
-/* JADX INFO: loaded from: classes.dex */
-public class UploadImageAsyncTask extends AsyncTask<UploadImageParams, Void, UploadImageResult> {
+/* loaded from: classes.dex */
+public class UploadImageAsyncTask extends AsyncTask<UploadImageParams, Void, UploadImageAsyncTask.UploadImageResult> {
     private static final MediaType MEDIA_TYPE_JP2 = MediaType.parse("image/jp2");
     private final UUID agentUUID;
     private final Context context;
@@ -41,36 +58,126 @@ public class UploadImageAsyncTask extends AsyncTask<UploadImageParams, Void, Upl
     }
 
     /* JADX INFO: Access modifiers changed from: protected */
-    /* JADX WARN: Removed duplicated region for block: B:83:0x0253  */
     @Override // android.os.AsyncTask
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
-    public com.lumiyaviewer.lumiya.ui.inventory.UploadImageAsyncTask.UploadImageResult doInBackground(com.lumiyaviewer.lumiya.ui.inventory.UploadImageParams... r19) throws java.lang.Throwable {
-        /*
-            Method dump skipped, instruction units count: 598
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.ui.inventory.UploadImageAsyncTask.doInBackground(com.lumiyaviewer.lumiya.ui.inventory.UploadImageParams[]):com.lumiyaviewer.lumiya.ui.inventory.UploadImageAsyncTask$UploadImageResult");
+    public UploadImageResult doInBackground(UploadImageParams... uploadImageParamsArr) {
+        Bitmap createScaledBitmap;
+        boolean z;
+        String str;
+        boolean z2 = true;
+        String str2 = null;
+        int length = uploadImageParamsArr.length;
+        int i = 0;
+        while (i < length) {
+            UploadImageParams uploadImageParams = uploadImageParamsArr[i];
+            Bitmap bitmap = uploadImageParams.bitmap;
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            int highestOneBit = Integer.highestOneBit(width);
+            int highestOneBit2 = Integer.highestOneBit(height);
+            if (highestOneBit != width) {
+                highestOneBit *= 2;
+            }
+            if (highestOneBit2 != height) {
+                highestOneBit2 *= 2;
+            }
+            while (true) {
+                if (highestOneBit <= 1024 && highestOneBit2 <= 1024) {
+                    break;
+                }
+                highestOneBit /= 2;
+                highestOneBit2 /= 2;
+            }
+            if (highestOneBit == bitmap.getWidth() && highestOneBit2 == bitmap.getHeight()) {
+                createScaledBitmap = bitmap;
+            } else {
+                Debug.Printf("UploadImage: scaled bitmap from %d x %d to %d x %d", Integer.valueOf(bitmap.getWidth()), Integer.valueOf(bitmap.getHeight()), Integer.valueOf(highestOneBit), Integer.valueOf(highestOneBit2));
+                createScaledBitmap = Bitmap.createScaledBitmap(bitmap, highestOneBit, highestOneBit2, true);
+            }
+            int width2 = createScaledBitmap.getWidth();
+            int height2 = createScaledBitmap.getHeight();
+            int i2 = createScaledBitmap.hasAlpha() ? 4 : 3;
+            OpenJPEG openJPEG = new OpenJPEG(width2, height2, i2, i2, 0, 0);
+            int[] iArr = new int[width2];
+            for (int i3 = 0; i3 < height2; i3++) {
+                createScaledBitmap.getPixels(iArr, 0, width2, 0, i3, width2, 1);
+                openJPEG.putPixelRow((height2 - 1) - i3, iArr, width2);
+            }
+            try {
+                File createTempFile = File.createTempFile("uploadtex", "j2k", this.context.getCacheDir());
+                openJPEG.SaveJPEG2K(createTempFile);
+                UserManager userManager = UserManager.getUserManager(uploadImageParams.agentUUID);
+                SLAgentCircuit activeAgentCircuit = userManager != null ? userManager.getActiveAgentCircuit() : null;
+                if (activeAgentCircuit != null) {
+                    String capability = activeAgentCircuit.getCaps().getCapability(SLCaps.SLCapability.NewFileAgentInventory);
+                    if (capability != null) {
+                        LLSDNode PerformRequest = new LLSDXMLRequest().PerformRequest(capability, new LLSDMap(new LLSDMap.LLSDMapEntry("asset_type", new LLSDString("texture")), new LLSDMap.LLSDMapEntry("description", new LLSDString("(No description)")), new LLSDMap.LLSDMapEntry("folder_id", new LLSDUUID(uploadImageParams.folderID)), new LLSDMap.LLSDMapEntry("inventory_type", new LLSDString("texture")), new LLSDMap.LLSDMapEntry("name", new LLSDString(uploadImageParams.name))));
+                        if (PerformRequest == null) {
+                            throw new IOException("Upload request refused");
+                        }
+                        Response execute = SLHTTPSConnection.getOkHttpClient().newCall(new Request.Builder().url(PerformRequest.byKey("uploader").asString()).header(HttpHeaders.ACCEPT, "application/llsd+xml").post(RequestBody.create(MEDIA_TYPE_JP2, createTempFile)).build()).execute();
+                        if (execute == null) {
+                            throw new IOException("Null response");
+                        }
+                        try {
+                            if (!execute.isSuccessful()) {
+                                throw new IOException("Invalid HTTP response");
+                            }
+                            LLSDNode parseXML = LLSDNode.parseXML(execute.body().byteStream(), null);
+                            Debug.Log("upload reply: " + parseXML.serializeToXML());
+                            try {
+                                if (parseXML.keyExists("error")) {
+                                    LLSDNode byKey = parseXML.byKey("error");
+                                    if (byKey.keyExists("message") && (!byKey.keyExists("success") || !byKey.byKey("success").asBoolean())) {
+                                        str2 = byKey.byKey("message").asString();
+                                        z2 = false;
+                                    }
+                                }
+                                userManager.getInventoryManager().requestFolderUpdate(uploadImageParams.folderID);
+                            } finally {
+                                execute.close();
+                            }
+                        } catch (LLSDException e) {
+                            Debug.Warning(e);
+                            z2 = false;
+                        } catch (IOException e2) {
+                            Debug.Warning(e2);
+                            z2 = false;
+                        }
+                    } else {
+                        z2 = false;
+                    }
+                } else {
+                    z2 = false;
+                }
+                createTempFile.delete();
+            } catch (LLSDException e3) {
+                Debug.Warning(e3);
+                z2 = false;
+            } catch (IOException e4) {
+                Debug.Warning(e4);
+                z2 = false;
+            }
+            i++;
+        }
+        return new UploadImageResult(z2, str2, null);
     }
 
     /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.os.AsyncTask
     public void onPostExecute(UploadImageResult uploadImageResult) {
-        UUID uuidFindSpecialFolder;
+        UUID findSpecialFolder;
         super.onPostExecute(uploadImageResult);
         if (this.progressDialog != null) {
             this.progressDialog.cancel();
             this.progressDialog = null;
         }
         if (!(uploadImageResult != null ? uploadImageResult.success : false)) {
-            String string = uploadImageResult != null ? uploadImageResult.errorMessage : null;
+            String str = uploadImageResult != null ? uploadImageResult.errorMessage : null;
             AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
-            if (string == null) {
-                string = this.context.getString(R.string.failed_to_upload_picture);
+            if (str == null) {
+                str = this.context.getString(R.string.failed_to_upload_picture);
             }
-            builder.setMessage(string).setCancelable(true).setNegativeButton("Dismiss", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.inventory.-$Lambda$zdXuDSYysFkzF70MB3S4I5y4LlM
+            builder.setMessage(str).setCancelable(true).setNegativeButton("Dismiss", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.inventory.-$Lambda$zdXuDSYysFkzF70MB3S4I5y4LlM
                 private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
                     dialogInterface.cancel();
                 }
@@ -84,10 +191,10 @@ public class UploadImageAsyncTask extends AsyncTask<UploadImageParams, Void, Upl
         }
         UserManager userManager = UserManager.getUserManager(this.agentUUID);
         SLAgentCircuit activeAgentCircuit = userManager != null ? userManager.getActiveAgentCircuit() : null;
-        if (activeAgentCircuit == null || (uuidFindSpecialFolder = activeAgentCircuit.getModules().inventory.findSpecialFolder(0)) == null) {
+        if (activeAgentCircuit == null || (findSpecialFolder = activeAgentCircuit.getModules().inventory.findSpecialFolder(0)) == null) {
             return;
         }
-        userManager.getInventoryManager().requestFolderUpdate(uuidFindSpecialFolder);
+        userManager.getInventoryManager().requestFolderUpdate(findSpecialFolder);
     }
 
     @Override // android.os.AsyncTask

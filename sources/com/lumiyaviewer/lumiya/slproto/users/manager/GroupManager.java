@@ -99,7 +99,7 @@ public class GroupManager {
         this.groupRoleMemberListDao = daoSession.getGroupRoleMemberListDao();
         this.subscription = userManager.getAvatarGroupLists().getPool().subscribe(userManager.getUserID(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$u_XXTkSOKCgaVXhhU-plrxzPP28.2
             private final /* synthetic */ void $m$0(Object obj) {
-                ((GroupManager) this).m324x1ac41d9e((AvatarGroupList) obj);
+                GroupManager.this.m324x1ac41d9e((AvatarGroupList) obj);
             }
 
             @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -130,7 +130,8 @@ public class GroupManager {
             /* JADX INFO: Access modifiers changed from: protected */
             @Override // com.lumiyaviewer.lumiya.react.RequestProcessor
             public boolean isRequestComplete(@Nonnull UUID uuid, UUID uuid2) {
-                if (GroupManager.this.groupRoleMemberListDao.load(uuid) != null) {
+                GroupRoleMemberList r0 = GroupManager.this.groupRoleMemberListDao.load(uuid);
+                if (r0 != null) {
                     return !r0.getMustRevalidate();
                 }
                 return false;
@@ -258,7 +259,7 @@ public class GroupManager {
     public void requestGroupRoleMembersRefresh(final UUID uuid) {
         this.userManager.getDatabaseExecutor().execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$u_XXTkSOKCgaVXhhU-plrxzPP28.3
             private final /* synthetic */ void $m$0() {
-                ((GroupManager) this).m325xee8105e0((UUID) uuid);
+                GroupManager.this.m325xee8105e0((UUID) uuid);
             }
 
             @Override // java.lang.Runnable

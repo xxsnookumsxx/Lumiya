@@ -164,7 +164,7 @@ public class LLSDMap extends LLSDNode {
             return tNewInstance;
         } catch (IllegalAccessException e) {
             throw new LLSDException(e.getMessage());
-        } catch (InstantiationException e2) {
+        } catch (java.lang.InstantiationException e2) {
             throw new LLSDException(e2.getMessage());
         }
     }

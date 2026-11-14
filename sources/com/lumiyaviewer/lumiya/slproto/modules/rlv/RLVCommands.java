@@ -84,7 +84,7 @@ public enum RLVCommands {
             return null;
         } catch (IllegalArgumentException e2) {
             return null;
-        } catch (InstantiationException e3) {
+        } catch (java.lang.InstantiationException e3) {
             return null;
         }
     }

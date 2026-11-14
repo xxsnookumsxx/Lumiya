@@ -1,5 +1,6 @@
 package com.lumiyaviewer.lumiya.slproto.baker;
 
+import android.support.v4.view.ViewCompat;
 import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.LumiyaApp;
 import com.lumiyaviewer.lumiya.openjpeg.OpenJPEG;
@@ -10,11 +11,11 @@ import com.lumiyaviewer.lumiya.slproto.baker.BakeProcess;
 import java.io.InputStream;
 import java.util.List;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class BakeLayer {
 
-    /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-slproto-avatar-SLAvatarParamColor$ColorOperationSwitchesValues, reason: not valid java name */
-    private static final /* synthetic */ int[] f64x335e3db9 = null;
+    /* renamed from: -com-lumiyaviewer-lumiya-slproto-avatar-SLAvatarParamColor$ColorOperationSwitchesValues, reason: not valid java name */
+    private static /* synthetic */ int[] f64x335e3db9 = null;
     public int fixedColor;
     public SLAvatarGlobalColor globalColor;
     public boolean hasFixedColor;
@@ -28,7 +29,7 @@ public class BakeLayer {
     public boolean visibilityMask;
     public boolean writeAllChannels;
 
-    /* JADX INFO: renamed from: -getcom-lumiyaviewer-lumiya-slproto-avatar-SLAvatarParamColor$ColorOperationSwitchesValues, reason: not valid java name */
+    /* renamed from: -getcom-lumiyaviewer-lumiya-slproto-avatar-SLAvatarParamColor$ColorOperationSwitchesValues, reason: not valid java name */
     private static /* synthetic */ int[] m148x403ad495() {
         if (f64x335e3db9 != null) {
             return f64x335e3db9;
@@ -68,7 +69,7 @@ public class BakeLayer {
     private int getColorByParamList(BakeProcess bakeProcess, int[] iArr, int i, int i2) {
         SLAvatarParams.AvatarParam avatarParam;
         SLAvatarParamColor sLAvatarParamColor;
-        int iColorAdd;
+        int colorAdd;
         boolean z = false;
         if (this.layerName.equals("lipstick")) {
             Debug.Log(String.format("Baking: lipstick start color %08x default %08x", Integer.valueOf(i), Integer.valueOf(i2)));
@@ -88,23 +89,23 @@ public class BakeLayer {
                 }
                 switch (m148x403ad495()[sLAvatarParamColor.colorOperation.ordinal()]) {
                     case 1:
-                        iColorAdd = SLAvatarParamColor.colorLerp(i4, color, paramWeight);
+                        colorAdd = SLAvatarParamColor.colorLerp(i4, color, paramWeight);
                         break;
                     case 2:
-                        iColorAdd = SLAvatarParamColor.colorAdd(i4, color);
+                        colorAdd = SLAvatarParamColor.colorAdd(i4, color);
                         break;
                     case 3:
-                        iColorAdd = SLAvatarParamColor.colorMult(i4, color);
+                        colorAdd = SLAvatarParamColor.colorMult(i4, color);
                         break;
                     default:
-                        iColorAdd = i4;
+                        colorAdd = i4;
                         break;
                 }
                 if (this.layerName.equals("lipstick")) {
-                    Debug.Log(String.format("Baking: after op, lipstick color result %08x", Integer.valueOf(iColorAdd)));
-                    i4 = iColorAdd;
+                    Debug.Log(String.format("Baking: after op, lipstick color result %08x", Integer.valueOf(colorAdd)));
+                    i4 = colorAdd;
                 } else {
-                    i4 = iColorAdd;
+                    i4 = colorAdd;
                 }
             }
             i3++;
@@ -143,17 +144,117 @@ public class BakeLayer {
         return -1;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:62:0x028c  */
+    /* JADX WARN: Removed duplicated region for block: B:41:0x0229  */
+    /* JADX WARN: Removed duplicated region for block: B:44:0x0243  */
+    /* JADX WARN: Removed duplicated region for block: B:51:? A[RETURN, SYNTHETIC] */
+    /* JADX WARN: Removed duplicated region for block: B:52:0x01a8 A[EXC_TOP_SPLITTER, SYNTHETIC] */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
-    public void Bake(com.lumiyaviewer.lumiya.openjpeg.OpenJPEG r21, com.lumiyaviewer.lumiya.slproto.baker.BakeProcess r22) {
-        /*
-            Method dump skipped, instruction units count: 655
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.slproto.baker.BakeLayer.Bake(com.lumiyaviewer.lumiya.openjpeg.OpenJPEG, com.lumiyaviewer.lumiya.slproto.baker.BakeProcess):void");
+    public void Bake(OpenJPEG openJPEG, BakeProcess bakeProcess) {
+        boolean z;
+        boolean z2;
+        boolean z3;
+        boolean z4;
+        boolean z5;
+        boolean z6 = false;
+        int netColor = getNetColor(bakeProcess);
+        OpenJPEG openJPEG2 = new OpenJPEG(openJPEG.width, openJPEG.height, 4, 4, 0, 0);
+        OpenJPEG openJPEG3 = new OpenJPEG(openJPEG.width, openJPEG.height, 4, 4, 0, ViewCompat.MEASURED_STATE_MASK);
+        Debug.Log(String.format("Baking: layer %s net_color 0x%08x.", this.layerName, Integer.valueOf(netColor)));
+        boolean z7 = true;
+        boolean z8 = false;
+        int[] iArr = this.paramIDs;
+        int length = iArr.length;
+        int i = 0;
+        while (i < length) {
+            int i2 = iArr[i];
+            SLAvatarParams.ParamSet paramSet = SLAvatarParams.paramByIDs.get(Integer.valueOf(i2));
+            if (paramSet != null) {
+                SLAvatarParams.AvatarParam avatarParam = paramSet.params.get(0);
+                if (avatarParam.paramAlpha != null && avatarParam.paramAlpha.tgaFile != null) {
+                    float paramWeight = bakeProcess.getParamWeight(i2, avatarParam);
+                    if (z7) {
+                        z5 = false;
+                        if (!avatarParam.paramAlpha.multiplyBlend) {
+                            openJPEG3.setComponent(3, (byte) 0);
+                        }
+                    } else {
+                        z5 = z7;
+                    }
+                    if (paramWeight == 0.0f && avatarParam.paramAlpha.skipIfZero) {
+                        z4 = z8;
+                        z7 = z5;
+                    } else {
+                        boolean z9 = z8 | avatarParam.paramAlpha.multiplyBlend;
+                        try {
+                            InputStream open = LumiyaApp.getAssetManager().open("tga/" + avatarParam.paramAlpha.tgaFile);
+                            OpenJPEG openJPEG4 = new OpenJPEG(open, OpenJPEG.ImageFormat.TGA, true, true, avatarParam.paramAlpha.domain, paramWeight, false);
+                            Debug.Log(String.format("Baking: layer %s: applying alpha (weight %f domain %f) mask texture %s, width %d, height %d, num_comps %d", this.layerName, Float.valueOf(paramWeight), Float.valueOf(avatarParam.paramAlpha.domain), avatarParam.paramAlpha.tgaFile, Integer.valueOf(openJPEG4.getWidth()), Integer.valueOf(openJPEG4.getHeight()), Integer.valueOf(openJPEG4.getNumComponents())));
+                            openJPEG3.blendAlpha(openJPEG4, !avatarParam.paramAlpha.multiplyBlend);
+                            open.close();
+                            z4 = z9;
+                            z7 = z5;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            z4 = z9;
+                            z7 = z5;
+                        }
+                    }
+                    i++;
+                    z8 = z4;
+                }
+            }
+            z4 = z8;
+            i++;
+            z8 = z4;
+        }
+        z2 = false;
+        if (this.localTexture != null) {
+            try {
+                List<OpenJPEG> localTexture = bakeProcess.getLocalTexture(this.localTexture);
+                if (localTexture != null) {
+                    for (OpenJPEG openJPEG5 : localTexture) {
+                        Debug.Log(String.format("Baking: layer %s: applying local texture, writeAllChannels %s", this.layerName, Boolean.valueOf(this.writeAllChannels)));
+                        openJPEG2.draw(openJPEG5, -1, false);
+                        z2 = true;
+                    }
+                    z6 = false;
+                } else {
+                    Debug.Log(String.format("Baking: layer %s: missing local texture", this.layerName));
+                    z6 = true;
+                }
+            } catch (BakeProcess.DefaultTextureException e3) {
+                Debug.Log(String.format("Baking: layer %s: default local texture", this.layerName));
+                z6 = true;
+            }
+        }
+        if (this.tgaTexture != null) {
+            try {
+                InputStream open2 = LumiyaApp.getAssetManager().open("tga/" + this.tgaTexture);
+                OpenJPEG openJPEG6 = new OpenJPEG(open2, OpenJPEG.ImageFormat.TGA, this.tgaFileIsMask, false, 0.0f, 0.0f, false);
+                Debug.Log(String.format("Baking: layer %s: applying tga texture %s, writeAllChannels %s, width %d, height %d, num_comps %d", this.layerName, this.tgaTexture, Boolean.valueOf(this.writeAllChannels), Integer.valueOf(openJPEG6.getWidth()), Integer.valueOf(openJPEG6.getHeight()), Integer.valueOf(openJPEG6.getNumComponents())));
+                openJPEG2.draw(openJPEG6, -1, false);
+                z2 = true;
+                open2.close();
+            } catch (Exception e4) {
+                e4.printStackTrace();
+            }
+        }
+        if (!z2) {
+            openJPEG2.setComponent(0, (byte) -1);
+            openJPEG2.setComponent(1, (byte) -1);
+            openJPEG2.setComponent(2, (byte) -1);
+            openJPEG2.setComponent(3, (byte) -1);
+        }
+        openJPEG2.blendAlpha(openJPEG3, false);
+        if (z6) {
+            if (this.isRenderPassBump) {
+                openJPEG.drawBump(openJPEG2, netColor, this.writeAllChannels, z8);
+            } else {
+                openJPEG.draw(openJPEG2, netColor, this.writeAllChannels);
+            }
+        }
     }
 
     public void BakeAlpha(OpenJPEG openJPEG, BakeProcess bakeProcess) {
@@ -162,11 +263,11 @@ public class BakeLayer {
         }
         if (this.tgaTexture != null) {
             try {
-                InputStream inputStreamOpen = LumiyaApp.getAssetManager().open("tga/" + this.tgaTexture);
-                OpenJPEG openJPEG2 = new OpenJPEG(inputStreamOpen, OpenJPEG.ImageFormat.TGA, this.tgaFileIsMask, false, 0.0f, 0.0f, false);
+                InputStream open = LumiyaApp.getAssetManager().open("tga/" + this.tgaTexture);
+                OpenJPEG openJPEG2 = new OpenJPEG(open, OpenJPEG.ImageFormat.TGA, this.tgaFileIsMask, false, 0.0f, 0.0f, false);
                 Debug.Log(String.format("Baking: layer %s: applying tga alpha mask %swidth %d, height %d, num_comps %d", this.layerName, this.tgaTexture, Integer.valueOf(openJPEG2.getWidth()), Integer.valueOf(openJPEG2.getHeight()), Integer.valueOf(openJPEG2.getNumComponents())));
                 openJPEG.blendAlpha(openJPEG2, false);
-                inputStreamOpen.close();
+                open.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -82,7 +82,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
     private final SynchronousExecutor renderThreadExecutor = new SynchronousExecutor();
     private final SubscriptionData<UUID, SLAgentCircuit> agentCircuit = new SubscriptionData<>(this.renderThreadExecutor, new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.render.-$Lambda$8oUVvA5ObkigeJxIgo2HrzT6_jA
         private final /* synthetic */ void $m$0(Object obj) {
-            ((WorldViewRenderer) this).m59com_lumiyaviewer_lumiya_render_WorldViewRenderermthref0((SLAgentCircuit) obj);
+            WorldViewRenderer.this.m59com_lumiyaviewer_lumiya_render_WorldViewRenderermthref0((SLAgentCircuit) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -135,7 +135,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
     private final int[] systemFramebuffer = new int[1];
     private final Runnable initSpatialIndexRunnable = new Runnable() { // from class: com.lumiyaviewer.lumiya.render.-$Lambda$8oUVvA5ObkigeJxIgo2HrzT6_jA.1
         private final /* synthetic */ void $m$0() {
-            ((WorldViewRenderer) this).m60lambda$com_lumiyaviewer_lumiya_render_WorldViewRenderer_6642();
+            WorldViewRenderer.this.m60lambda$com_lumiyaviewer_lumiya_render_WorldViewRenderer_6642();
         }
 
         @Override // java.lang.Runnable
@@ -222,22 +222,21 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
             return;
         }
         try {
-            Iterator<T> it = this.currentDrawList.objects.iterator();
+            Iterator it = this.currentDrawList.objects.iterator();
             objectIntersectInfoTryPickObject = null;
             while (it.hasNext()) {
                 try {
                     objectIntersectInfoTryPickObject = tryPickObject(renderContext, f, f2, (DrawableObject) it.next(), objectIntersectInfoTryPickObject);
                 } catch (Exception e) {
-                    e = e;
                     Debug.Warning(e);
                 }
             }
-            Iterator<T> it2 = this.currentDrawList.avatars.iterator();
+            Iterator it2 = this.currentDrawList.avatars.iterator();
             while (it2.hasNext()) {
                 objectIntersectInfoTryPickObject = tryPickObject(renderContext, f, f2, (DrawableAvatar) it2.next(), objectIntersectInfoTryPickObject);
             }
         } catch (Exception e2) {
-            e = e2;
+            Exception e = e2;
             objectIntersectInfoTryPickObject = null;
         }
         if (objectIntersectInfoTryPickObject == null || handler == null) {
@@ -513,7 +512,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                     renderContext.curPrimProgram = null;
                     renderContext.clearFaceTexture();
                     DrawableTerrainPatch.GLPrepare(renderContext);
-                    Iterator<T> it = drawList.terrain.iterator();
+                    Iterator it = drawList.terrain.iterator();
                     while (it.hasNext()) {
                         ((DrawableTerrainPatch) it.next()).GLDraw(renderContext);
                     }
@@ -542,7 +541,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                     }
                     if (renderContext.hasGL30) {
                         BoundingBox.PrepareOcclusionQueries(renderContext);
-                        Iterator<T> it2 = arrayList.iterator();
+                        Iterator it2 = arrayList.iterator();
                         while (it2.hasNext()) {
                             ((DrawableObject) it2.next()).TestOcclusion(renderContext, this.currentFrustrumInfo.mvpMatrix);
                         }
@@ -553,7 +552,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                         this.screenshotHandler = null;
                     }
                     if (this.drawPickedObject != null && (!this.drawPickedObject.isAvatar())) {
-                        Iterator<T> it3 = drawList.objects.iterator();
+                        Iterator it3 = drawList.objects.iterator();
                         while (it3.hasNext()) {
                             ((DrawableObject) it3.next()).DrawIfPicked(renderContext, this.drawPickedObject);
                         }
@@ -576,12 +575,12 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                             drawableAvatar2.DrawNameTag(renderContext);
                         }
                     }
-                    Iterator<T> it4 = drawList.avatarStubs.iterator();
+                    Iterator it4 = drawList.avatarStubs.iterator();
                     while (it4.hasNext()) {
                         ((DrawableAvatarStub) it4.next()).DrawNameTag(renderContext);
                     }
                     if (this.hoverTextEnableObjects) {
-                        Iterator<T> it5 = drawList.objects.iterator();
+                        Iterator it5 = drawList.objects.iterator();
                         while (it5.hasNext()) {
                             ((DrawableObject) it5.next()).DrawHoverText(renderContext, false);
                         }

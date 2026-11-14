@@ -1,5 +1,7 @@
 package com.lumiyaviewer.lumiya.res.textures;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.net.HttpHeaders;
 import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.GlobalOptions;
 import com.lumiyaviewer.lumiya.render.tex.DrawableTextureParams;
@@ -10,13 +12,24 @@ import com.lumiyaviewer.lumiya.res.ResourceRequest;
 import com.lumiyaviewer.lumiya.res.executors.HTTPFetchExecutor;
 import com.lumiyaviewer.lumiya.res.executors.Startable;
 import com.lumiyaviewer.lumiya.res.executors.StartingExecutor;
+import com.lumiyaviewer.lumiya.slproto.avatar.AvatarTextureFaceIndex;
+import com.lumiyaviewer.lumiya.slproto.https.SLHTTPSConnection;
 import com.lumiyaviewer.lumiya.slproto.modules.texfetcher.SLTextureFetchRequest;
 import com.lumiyaviewer.lumiya.slproto.modules.texfetcher.SLTextureFetcher;
 import com.lumiyaviewer.lumiya.utils.HasPriority;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.UUID;
 import java.util.concurrent.Future;
+import okhttp3.Request;
+import okhttp3.Response;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class TextureCompressedCache extends ResourceManager<DrawableTextureParams, File> {
     private final StartingExecutor downloadExecutor = new StartingExecutor(GlobalOptions.getInstance().getMaxTextureDownloads());
     private final Object lock = new Object();
@@ -24,17 +37,16 @@ public class TextureCompressedCache extends ResourceManager<DrawableTextureParam
 
     private class TextureFetchRequest extends ResourceRequest<DrawableTextureParams, File> implements Startable, SLTextureFetchRequest.TextureFetchCompleteListener, Runnable, HasPriority {
 
-        /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-render-tex-TextureClassSwitchesValues, reason: not valid java name */
-        private static final /* synthetic */ int[] f53comlumiyaviewerlumiyarendertexTextureClassSwitchesValues = null;
+        /* renamed from: -com-lumiyaviewer-lumiya-render-tex-TextureClassSwitchesValues, reason: not valid java name */
+        private /* synthetic */ int[] f53comlumiyaviewerlumiyarendertexTextureClassSwitchesValues = null;
         private static final int MAX_RETRIES = 2;
-        final /* synthetic */ int[] $SWITCH_TABLE$com$lumiyaviewer$lumiya$render$tex$TextureClass;
         private final File compressedFile;
         private volatile SLTextureFetchRequest fetchRequest;
         private volatile Future<?> fetchTask;
         private final SLTextureFetcher fetcher;
 
-        /* JADX INFO: renamed from: -getcom-lumiyaviewer-lumiya-render-tex-TextureClassSwitchesValues, reason: not valid java name */
-        private static /* synthetic */ int[] m129x8a7b09f7() {
+        /* renamed from: -getcom-lumiyaviewer-lumiya-render-tex-TextureClassSwitchesValues, reason: not valid java name */
+        private /* synthetic */ int[] m129x8a7b09f7() {
             if (f53comlumiyaviewerlumiyarendertexTextureClassSwitchesValues != null) {
                 return f53comlumiyaviewerlumiyarendertexTextureClassSwitchesValues;
             }
@@ -118,19 +130,81 @@ public class TextureCompressedCache extends ResourceManager<DrawableTextureParam
             }
         }
 
-        /* JADX WARN: Removed duplicated region for block: B:57:0x01d2 A[LOOP:0: B:12:0x00bc->B:57:0x01d2, LOOP_END] */
-        /* JADX WARN: Removed duplicated region for block: B:82:0x00fc A[SYNTHETIC] */
+        /* JADX WARN: Removed duplicated region for block: B:38:0x01d2 A[LOOP:0: B:17:0x00bc->B:38:0x01d2, LOOP_END] */
+        /* JADX WARN: Removed duplicated region for block: B:39:0x00fc A[SYNTHETIC] */
         @Override // java.lang.Runnable
         /*
             Code decompiled incorrectly, please refer to instructions dump.
-            To view partially-correct code enable 'Show inconsistent code' option in preferences
         */
-        public void run() throws java.lang.Throwable {
-            /*
-                Method dump skipped, instruction units count: 502
-                To view this dump change 'Code comments level' option to 'DEBUG'
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.res.textures.TextureCompressedCache.TextureFetchRequest.run():void");
+        public void run() {
+            URL url;
+            boolean z;
+            Response execute;
+            if (this.fetcher == null) {
+                completeRequest((File) null);
+                return;
+            }
+            String capURL = this.fetcher.getCapURL();
+            String agentAppearanceService = this.fetcher.getAgentAppearanceService();
+            DrawableTextureParams params = getParams();
+            try {
+                UUID avatarUUID = params.avatarUUID();
+                AvatarTextureFaceIndex avatarFaceIndex = params.avatarFaceIndex();
+                if (agentAppearanceService == null || avatarUUID == null || avatarFaceIndex == null) {
+                    url = new URL(capURL + "/?texture_id=" + params.uuid().toString());
+                } else {
+                    if (!agentAppearanceService.endsWith("/")) {
+                        agentAppearanceService = agentAppearanceService + "/";
+                    }
+                    url = new URL(agentAppearanceService + "texture/" + avatarUUID.toString() + "/" + avatarFaceIndex.getBakedTextureName() + "/" + params.uuid().toString());
+                }
+                Debug.Log("TextureFetchRequest: Fetching texture " + params.uuid().toString() + ", url = " + url);
+                File file = new File(this.compressedFile.getAbsolutePath() + ".part");
+                File parentFile = file.getParentFile();
+                Debug.Printf("TextureFetchRequest: tempOutputDir = %s, createResult = %b, exists = %b", parentFile, Boolean.valueOf(parentFile.mkdirs()), Boolean.valueOf(parentFile.exists()));
+                for (int i = 0; i < 2; i++) {
+                    z = false;
+                    try {
+                        Debug.Printf("TextureFetchRequest: getting connection", new Object[0]);
+                        execute = SLHTTPSConnection.getOkHttpClient().newCall(new Request.Builder().url(url).header(HttpHeaders.ACCEPT, "image/x-j2c").build()).execute();
+                        if (execute == null) {
+                            throw new IOException("Null response");
+                        }
+                        try {
+                            if (!execute.isSuccessful()) {
+                                throw new IOException("Response code " + Integer.toString(execute.code()));
+                            }
+                            InputStream byteStream = execute.body().byteStream();
+                            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
+                            try {
+                                ByteStreams.copy(byteStream, bufferedOutputStream);
+                            } finally {
+                                bufferedOutputStream.close();
+                            }
+                            z = true;
+                        } finally {
+                            execute.close();
+                        }
+                    } catch (IOException e) {
+                        Debug.Warning(e);
+                    }
+                    if (z) {
+                        synchronized (TextureCompressedCache.this.lock) {
+                            file.renameTo(this.compressedFile);
+                        }
+                        completeRequest(this.compressedFile);
+                        return;
+                    }
+                }
+                if (this.fetchTask.isCancelled()) {
+                    return;
+                }
+                Debug.Log("TextureFetchRequest: HTTP fetch unsuccessful. Trying UDP.");
+                TextureCompressedCache.this.downloadExecutor.queueRequest(this);
+            } catch (MalformedURLException e4) {
+                Debug.Warning(e4);
+                completeRequest((File) null);
+            }
         }
 
         @Override // com.lumiyaviewer.lumiya.res.executors.Startable

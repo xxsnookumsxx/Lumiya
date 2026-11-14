@@ -95,7 +95,8 @@ public class ButteryProgressBar extends View {
         if (this.mAnimator.isStarted()) {
             this.mShadow.draw(canvas);
             float fFloatValue = ((Float) this.mAnimator.getAnimatedValue()).floatValue();
-            int width = getWidth() >> (this.mSegmentCount - 1);
+            int r8 = getWidth();
+            int width = r8 >> (this.mSegmentCount - 1);
             int i = 0;
             while (i < this.mSegmentCount) {
                 float f = fFloatValue * (r8 >> (i + 1));

@@ -27,10 +27,10 @@ import org.xmlpull.v1.XmlPullParserFactory;
 public class LLSDStreamingParser {
 
     /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-slproto-https-LLSDContentTypeDetector$LLSDContentTypeSwitchesValues, reason: not valid java name */
-    private static final /* synthetic */ int[] f115x653d09df = null;
+    private static /* synthetic */ int[] f115x653d09df = null;
 
     /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-slproto-llsd-LLSDNodeTypeSwitchesValues, reason: not valid java name */
-    private static final /* synthetic */ int[] f116comlumiyaviewerlumiyaslprotollsdLLSDNodeTypeSwitchesValues = null;
+    private static /* synthetic */ int[] f116comlumiyaviewerlumiyaslprotollsdLLSDNodeTypeSwitchesValues = null;
 
     public interface LLSDContentHandler {
         LLSDContentHandler onArrayBegin(String str) throws LLSDXMLException;
@@ -194,27 +194,23 @@ public class LLSDStreamingParser {
             switch (b) {
                 case 10:
                     i2 = i3;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 33:
                     lLSDContentHandler.onPrimitiveValue(str, new LLSDUndefined());
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 48:
                     lLSDContentHandler.onPrimitiveValue(str, new LLSDBoolean(false));
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 49:
                     lLSDContentHandler.onPrimitiveValue(str, new LLSDBoolean(true));
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 60:
                     break;
                 case 91:
@@ -229,30 +225,25 @@ public class LLSDStreamingParser {
                     }
                     lLSDContentHandlerOnArrayBegin.onMapEnd(str);
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
-                    break;
+                    continue;
                 case 98:
                     byte[] bArr = new byte[dataInputStream.readInt()];
                     dataInputStream.readFully(bArr);
                     lLSDContentHandler.onPrimitiveValue(str, new LLSDBinary(bArr));
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 100:
                     lLSDContentHandler.onPrimitiveValue(str, new LLSDDate(new Date(Math.round(dataInputStream.readDouble() * 1000.0d))));
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 105:
                     lLSDContentHandler.onPrimitiveValue(str, new LLSDInt(dataInputStream.readInt()));
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 108:
                     int i5 = dataInputStream.readInt();
                     if (i5 == 0) {
@@ -263,15 +254,13 @@ public class LLSDStreamingParser {
                         lLSDContentHandler.onPrimitiveValue(str, new LLSDURI(SLMessage.stringFromVariableUTF(bArr2)));
                     }
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 114:
                     lLSDContentHandler.onPrimitiveValue(str, new LLSDDouble(dataInputStream.readDouble()));
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 115:
                     int i6 = dataInputStream.readInt();
                     if (i6 == 0) {
@@ -282,15 +271,13 @@ public class LLSDStreamingParser {
                         lLSDContentHandler.onPrimitiveValue(str, new LLSDString(SLMessage.stringFromVariableUTF(bArr3)));
                     }
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case 117:
                     lLSDContentHandler.onPrimitiveValue(str, new LLSDUUID(new UUID(dataInputStream.readLong(), dataInputStream.readLong())));
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
+                    continue;
                 case Vr.VREvent.VrCore.ErrorCode.CONTROLLER_GATT_CHARACTERISTIC_NOT_FOUND /* 123 */:
                     int i7 = dataInputStream.readInt();
                     LLSDContentHandler lLSDContentHandlerOnMapBegin = lLSDContentHandler.onMapBegin(str);
@@ -310,10 +297,8 @@ public class LLSDStreamingParser {
                     }
                     lLSDContentHandlerOnMapBegin.onMapEnd(str);
                     i2 = i3 - 1;
-                    continue;
                     i3 = i2;
-                    break;
-                    break;
+                    continue;
                 default:
                     throw new LLSDXMLException("Unknown LLSD element 0x" + Integer.toHexString(b));
             }

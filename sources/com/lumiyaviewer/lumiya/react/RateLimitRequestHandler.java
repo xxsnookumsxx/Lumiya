@@ -180,6 +180,7 @@ public class RateLimitRequestHandler<K, T> implements RequestHandler<K>, Request
                 if (it.hasNext()) {
                     next = it.next();
                     it.remove();
+                    break;
                 } else {
                     this.lock.wait();
                 }

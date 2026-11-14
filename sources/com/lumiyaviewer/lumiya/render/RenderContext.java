@@ -142,7 +142,7 @@ public class RenderContext {
             this.boundingBoxProgram.Compile(shaderPreprocessor);
         }
 
-        /* synthetic */ Shaders30(ShaderPreprocessor shaderPreprocessor, Shaders30 shaders30) {
+        /* synthetic */ Shaders30(ShaderPreprocessor shaderPreprocessor, Shaders30 shaders30) throws ShaderCompileException {
             this(shaderPreprocessor);
         }
     }
@@ -315,7 +315,7 @@ public class RenderContext {
                     if (eGLDisplayEglGetCurrentDisplay != null && eGLDisplayEglGetCurrentDisplay != EGL10.EGL_NO_DISPLAY) {
                         return new GLAsyncLoadQueue(this, egl10, egl10.eglGetCurrentDisplay(), eGLConfig, this.hasGL30);
                     }
-                } catch (InstantiationException e) {
+                } catch (java.lang.InstantiationException e) {
                     Debug.Warning(e);
                 }
             }

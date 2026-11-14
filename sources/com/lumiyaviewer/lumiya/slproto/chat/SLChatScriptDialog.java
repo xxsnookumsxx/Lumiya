@@ -79,8 +79,8 @@ public final class SLChatScriptDialog extends SLChatDialogEvent {
     }
 
     public SLChatScriptDialog(ChatMessage chatMessage, @Nonnull UUID uuid) {
-        String[] strArr;
         super(chatMessage, uuid);
+        String[] strArr;
         this.selectedOption = null;
         this.selectedOption = chatMessage.getDialogSelectedOption();
         try {

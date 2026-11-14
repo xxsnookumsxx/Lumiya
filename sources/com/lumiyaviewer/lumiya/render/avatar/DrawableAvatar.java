@@ -3,6 +3,7 @@ package com.lumiyaviewer.lumiya.render.avatar;
 import android.opengl.GLES11;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.render.DrawableObject;
@@ -19,6 +20,7 @@ import com.lumiyaviewer.lumiya.render.spatial.DrawListObjectEntry;
 import com.lumiyaviewer.lumiya.render.spatial.DrawListPrimEntry;
 import com.lumiyaviewer.lumiya.res.executors.PrimComputeExecutor;
 import com.lumiyaviewer.lumiya.slproto.avatar.MeshIndex;
+import com.lumiyaviewer.lumiya.slproto.avatar.SLAttachmentPoint;
 import com.lumiyaviewer.lumiya.slproto.avatar.SLBaseAvatar;
 import com.lumiyaviewer.lumiya.slproto.avatar.SLSkeletonBone;
 import com.lumiyaviewer.lumiya.slproto.avatar.SLSkeletonBoneID;
@@ -41,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class DrawableAvatar extends DrawableAvatarStub implements IntersectPickable, DrawEntryList.EntryRemovalListener {
     private final Object animationLock;
     private final AnimationSkeletonData animationSkeletonData;
@@ -93,7 +95,7 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
         this.jointMatrixUpdated = false;
         this.updateAttachmentsRunnable = new Runnable() { // from class: com.lumiyaviewer.lumiya.render.avatar.-$Lambda$0R0mXpfMxrM5lCygN3JijOMDexU
             private final /* synthetic */ void $m$0() {
-                ((DrawableAvatar) this).m62com_lumiyaviewer_lumiya_render_avatar_DrawableAvatarmthref0();
+                DrawableAvatar.this.m62com_lumiyaviewer_lumiya_render_avatar_DrawableAvatarmthref0();
             }
 
             @Override // java.lang.Runnable
@@ -103,7 +105,7 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
         };
         this.shapeParamsUpdate = new Runnable() { // from class: com.lumiyaviewer.lumiya.render.avatar.-$Lambda$0R0mXpfMxrM5lCygN3JijOMDexU.1
             private final /* synthetic */ void $m$0() {
-                ((DrawableAvatar) this).m63x3d2f5f87();
+                DrawableAvatar.this.m63x3d2f5f87();
             }
 
             @Override // java.lang.Runnable
@@ -120,12 +122,9 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
                 for (AnimationSequenceInfo animationSequenceInfo : map.values()) {
                     this.animations.put(animationSequenceInfo.animationID, new AvatarAnimationState(animationSequenceInfo, this));
                 }
-                this.animationsInitialized = true;
-                updateRunningAnimations();
-            } else {
-                this.animationsInitialized = true;
-                updateRunningAnimations();
             }
+            this.animationsInitialized = true;
+            updateRunningAnimations();
         }
         updateAttachments();
     }
@@ -193,9 +192,9 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
     }
 
     private boolean animate(AvatarSkeleton avatarSkeleton) {
-        boolean zNeedForceAnimate = avatarSkeleton.needForceAnimate();
+        boolean needForceAnimate = avatarSkeleton.needForceAnimate();
         AvatarAnimationList avatarAnimationList = this.runningAnimations;
-        if (!avatarAnimationList.needAnimate(System.currentTimeMillis()) && !zNeedForceAnimate) {
+        if (!avatarAnimationList.needAnimate(System.currentTimeMillis()) && !needForceAnimate) {
             return false;
         }
         this.animationSkeletonData.animate(avatarSkeleton, avatarAnimationList);
@@ -211,19 +210,95 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Removed duplicated region for block: B:61:0x00ff  */
-    /* JADX WARN: Removed duplicated region for block: B:64:0x0106  */
-    /* JADX INFO: renamed from: processUpdateAttachments, reason: merged with bridge method [inline-methods] */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
+    /* JADX WARN: Multi-variable type inference failed */
+    /* JADX WARN: Type inference failed for: r0v27, types: [com.lumiyaviewer.lumiya.render.spatial.DrawListEntry[]] */
+    /* renamed from: processUpdateAttachments, reason: merged with bridge method [inline-methods] */
     public void m62com_lumiyaviewer_lumiya_render_avatar_DrawableAvatarmthref0() {
-        /*
-            Method dump skipped, instruction units count: 265
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.render.avatar.DrawableAvatar.m62com_lumiyaviewer_lumiya_render_avatar_DrawableAvatarmthref0():void");
+        DrawListEntry[] drawListPrimEntryArr;
+        boolean z;
+        DrawableObject drawableObject;
+        DrawableHUD drawableHUD;
+        int i = 0;
+        ArrayListMultimap<Integer, DrawableObject> create = ArrayListMultimap.create();
+        Set<DrawableObject> newSetFromMap = Collections.newSetFromMap(new IdentityHashMap<DrawableObject, Boolean>());
+        int i2 = this.displayedHUDid.get();
+        LinkedTreeNode<SLObjectInfo> firstChild = this.avatarObject.treeNode.getFirstChild();
+        DrawableHUD drawableHUD2 = null;
+        while (firstChild != null) {
+            SLObjectInfo dataObject = firstChild.getDataObject();
+            if (!dataObject.isDead) {
+                int i3 = dataObject.attachmentID;
+                if (i3 < 0 || i3 >= 56) {
+                    drawableHUD = drawableHUD2;
+                } else {
+                    SLAttachmentPoint sLAttachmentPoint = SLAttachmentPoint.attachmentPoints[i3];
+                    if (sLAttachmentPoint != null) {
+                        if (!sLAttachmentPoint.isHUD) {
+                            updateAttachmentParts(dataObject, create, i3);
+                            drawableHUD = drawableHUD2;
+                        } else if (i2 == dataObject.localID) {
+                            drawableHUD = new DrawableHUD(sLAttachmentPoint, this.drawableAttachments, dataObject, this.drawableStore, this);
+                        } else {
+                            drawableHUD = drawableHUD2;
+                        }
+                    } else {
+                        drawableHUD = drawableHUD2;
+                    }
+                }
+                firstChild = firstChild.getNextChild();
+                drawableHUD2 = drawableHUD;
+            }
+            drawableHUD = drawableHUD2;
+            firstChild = firstChild.getNextChild();
+            drawableHUD2 = drawableHUD;
+        }
+        synchronized (this.deadAttachmentsLock) {
+            if (this.deadAttachmentsList.isEmpty()) {
+                drawListPrimEntryArr = null;
+            } else {
+                drawListPrimEntryArr = (DrawListEntry[]) this.deadAttachmentsList.toArray(new DrawListEntry[this.deadAttachmentsList.size()]);
+                this.deadAttachmentsList.clear();
+            }
+        }
+        boolean z2 = false;
+        for (DrawableObject drawableObject2 : create.values()) {
+            if (drawableObject2.isRiggedMesh()) {
+                if (this.riggedMeshes.add(drawableObject2)) {
+                    z2 = true;
+                }
+                newSetFromMap.add(drawableObject2);
+            }
+            z2 = z2;
+        }
+        if (drawListPrimEntryArr != null) {
+            int length = drawListPrimEntryArr.length;
+            while (i < length) {
+                DrawListEntry drawListPrimEntry = drawListPrimEntryArr[i];
+                this.drawableAttachments.removeEntry(drawListPrimEntry);
+                if ((drawListPrimEntry instanceof DrawListPrimEntry) && (drawableObject = ((DrawListPrimEntry) drawListPrimEntry).getDrawableObject()) != null) {
+                    newSetFromMap.remove(drawableObject);
+                    if (this.riggedMeshes.remove(drawableObject)) {
+                        z = true;
+                        i++;
+                        z2 = z;
+                    }
+                }
+                z = z2;
+                i++;
+                z2 = z;
+            }
+        }
+        for (DrawableObject drawableObject3 : this.riggedMeshes) {
+            if (!newSetFromMap.contains(drawableObject3)) {
+                this.riggedMeshes.remove(drawableObject3);
+                z2 = true;
+            }
+        }
+        this.drawableHUD = drawableHUD2;
+        this.drawableAttachmentList = new DrawableAttachments(create);
+        if (z2) {
+            updateRiggedMeshes();
+        }
     }
 
     private void updateAttachmentParts(SLObjectInfo sLObjectInfo, Multimap<Integer, DrawableObject> multimap, int i) {
@@ -294,12 +369,12 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
     }
 
     boolean IsAnimationStopped(UUID uuid) {
-        boolean zHasStopped;
+        boolean hasStopped;
         synchronized (this.animationLock) {
             AvatarAnimationState avatarAnimationState = this.animations.get(uuid);
-            zHasStopped = avatarAnimationState != null ? avatarAnimationState.hasStopped() : false;
+            hasStopped = avatarAnimationState != null ? avatarAnimationState.hasStopped() : false;
         }
-        return zHasStopped;
+        return hasStopped;
     }
 
     @Override // com.lumiyaviewer.lumiya.render.picking.IntersectPickable
@@ -316,7 +391,7 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
         float f4 = iArr[3] - f2;
         renderContext.glObjWorldPushAndMultMatrixf(worldMatrix, 0);
         renderContext.glObjWorldTranslatef(this.pelvisTranslateX, this.pelvisTranslateY, this.pelvisTranslateZ);
-        Iterator<T> it = avatarSkeleton.bones.values().iterator();
+        Iterator it = avatarSkeleton.bones.values().iterator();
         while (true) {
             if (!it.hasNext()) {
                 objectIntersectInfo = null;
@@ -339,13 +414,13 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
                 LLVector3 lLVector3 = new LLVector3(fArr2[0], fArr2[1], fArr2[2]);
                 LLVector3 lLVector32 = new LLVector3(fArr2[3], fArr2[4], fArr2[5]);
                 LLVector3[] lLVector3Arr = CollisionBox.getInstance().vertices;
-                GLRayTrace.RayIntersectInfo rayIntersectInfoIntersect_RayTriangle = null;
-                for (int i = 0; i < 12 && (rayIntersectInfoIntersect_RayTriangle = GLRayTrace.intersect_RayTriangle(lLVector3, lLVector32, lLVector3Arr, i * 3)) == null; i++) {
+                GLRayTrace.RayIntersectInfo rayIntersectInfo = null;
+                for (int i = 0; i < 12 && (rayIntersectInfo = GLRayTrace.intersect_RayTriangle(lLVector3, lLVector32, lLVector3Arr, i * 3)) == null; i++) {
                 }
-                if (rayIntersectInfoIntersect_RayTriangle != null) {
-                    float intersectionDepth = GLRayTrace.getIntersectionDepth(renderContext, rayIntersectInfoIntersect_RayTriangle.intersectPoint, fArr);
+                if (rayIntersectInfo != null) {
+                    float intersectionDepth = GLRayTrace.getIntersectionDepth(renderContext, rayIntersectInfo.intersectPoint, fArr);
                     if (intersectionDepth >= f3) {
-                        objectIntersectInfo = new ObjectIntersectInfo(new IntersectInfo(rayIntersectInfoIntersect_RayTriangle.intersectPoint), this.avatarObject, intersectionDepth);
+                        objectIntersectInfo = new ObjectIntersectInfo(new IntersectInfo(rayIntersectInfo.intersectPoint), this.avatarObject, intersectionDepth);
                         break;
                     }
                 } else {
@@ -376,7 +451,7 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
     }
 
     void UpdateTextures(AvatarTextures avatarTextures) {
-        Iterator<T> it = this.parts.entrySet().iterator();
+        Iterator it = this.parts.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             ((DrawableAvatarPart) entry.getValue()).setTexture(this.drawableStore.glTextureCache, avatarTextures.getTexture(((DrawableAvatarPart) entry.getValue()).getFaceIndex()));
@@ -387,27 +462,27 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
         return this.drawableHUD;
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_render_avatar_DrawableAvatar_15479, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_render_avatar_DrawableAvatar_15479, reason: not valid java name */
     /* synthetic */ void m63x3d2f5f87() {
         boolean z;
-        boolean zHasExtendedBones = false;
+        boolean z2 = false;
         AvatarShapeParams avatarShapeParams = this.shapeParams;
         if (avatarShapeParams != null) {
             Debug.Printf("Avatar: shapeParamsUpdate: %d rigged meshes", Integer.valueOf(this.riggedMeshes.size()));
             MeshJointTranslations meshJointTranslations = new MeshJointTranslations();
-            Iterator<T> it = this.riggedMeshes.iterator();
+            Iterator it = this.riggedMeshes.iterator();
             while (true) {
-                z = zHasExtendedBones;
+                z = z2;
                 if (!it.hasNext()) {
                     break;
                 }
                 DrawableObject drawableObject = (DrawableObject) it.next();
                 drawableObject.ApplyJointTranslations(meshJointTranslations);
-                zHasExtendedBones = drawableObject.hasExtendedBones() | z;
+                z2 = drawableObject.hasExtendedBones() | z;
             }
             AvatarSkeleton avatarSkeleton = new AvatarSkeleton(avatarShapeParams, meshJointTranslations, z);
             this.updatedSkeleton.set(avatarSkeleton);
-            Iterator<T> it2 = this.parts.entrySet().iterator();
+            Iterator it2 = this.parts.entrySet().iterator();
             while (it2.hasNext()) {
                 Map.Entry entry = (Map.Entry) it2.next();
                 ((DrawableAvatarPart) entry.getValue()).setPartMorphParams(avatarSkeleton.getMorphParams((MeshIndex) entry.getKey()));

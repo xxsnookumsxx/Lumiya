@@ -20,7 +20,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class DetailsActivity extends ConnectedActivity {
     public static final String DEFAULT_DETAILS_FRAGMENT_TAG = "defaultDetails";
     private static final String DEFAULT_SUBTITLE_TAG = "DetailsActivity:defaultSubTitle";
@@ -90,14 +90,14 @@ public class DetailsActivity extends ConnectedActivity {
         }
 
         public Fragment getFragment(Context context) {
-            Fragment fragmentInstantiate = this.fragment.get();
-            if (fragmentInstantiate == null) {
-                fragmentInstantiate = Fragment.instantiate(context, this.className, this.arguments);
+            Fragment fragment = this.fragment.get();
+            if (fragment == null) {
+                fragment = Fragment.instantiate(context, this.className, this.arguments);
                 if (this.savedState != null) {
-                    fragmentInstantiate.setInitialSavedState(this.savedState);
+                    fragment.setInitialSavedState(this.savedState);
                 }
             }
-            return fragmentInstantiate;
+            return fragment;
         }
 
         @Override // android.os.Parcelable
@@ -123,14 +123,14 @@ public class DetailsActivity extends ConnectedActivity {
     private boolean goBack(FragmentManager fragmentManager) {
         Debug.Printf("DetailsActivity: goBack, detailsStack size %d", Integer.valueOf(this.detailsStack.size()));
         if (this.detailsStack.size() == 0) {
-            boolean zOnDetailsStackEmpty = onDetailsStackEmpty();
-            Debug.Printf("DetailsActivity: goBack, onDetailsStackEmpty: really empty: %b", Boolean.valueOf(zOnDetailsStackEmpty));
-            return !zOnDetailsStackEmpty;
+            boolean onDetailsStackEmpty = onDetailsStackEmpty();
+            Debug.Printf("DetailsActivity: goBack, onDetailsStackEmpty: really empty: %b", Boolean.valueOf(onDetailsStackEmpty));
+            return !onDetailsStackEmpty;
         }
-        DetailsStackEntry detailsStackEntryRemove = this.detailsStack.remove(this.detailsStack.size() - 1);
-        FragmentTransaction fragmentTransactionBeginTransaction = fragmentManager.beginTransaction();
-        fragmentTransactionBeginTransaction.replace(R.id.details, detailsStackEntryRemove.getFragment(this));
-        fragmentTransactionBeginTransaction.commit();
+        DetailsStackEntry remove = this.detailsStack.remove(this.detailsStack.size() - 1);
+        FragmentTransaction beginTransaction = fragmentManager.beginTransaction();
+        beginTransaction.replace(R.id.details, remove.getFragment(this));
+        beginTransaction.commit();
         updateTitle();
         return true;
     }
@@ -156,9 +156,9 @@ public class DetailsActivity extends ConnectedActivity {
 
     protected void addDetailsToStack(FragmentManager fragmentManager) {
         DetailsStackEntry detailsStackEntry = null;
-        Fragment fragmentFindFragmentById = fragmentManager.findFragmentById(R.id.details);
-        if (fragmentFindFragmentById != null) {
-            this.detailsStack.add(new DetailsStackEntry(fragmentFindFragmentById, detailsStackEntry));
+        Fragment findFragmentById = fragmentManager.findFragmentById(R.id.details);
+        if (findFragmentById != null) {
+            this.detailsStack.add(new DetailsStackEntry(findFragmentById, detailsStackEntry));
         }
     }
 
@@ -176,10 +176,10 @@ public class DetailsActivity extends ConnectedActivity {
 
     @Nullable
     public Fragment getCurrentDetailsFragment() {
-        Fragment fragmentFindFragmentById;
+        Fragment findFragmentById;
         FragmentManager supportFragmentManager = getSupportFragmentManager();
-        if (supportFragmentManager != null && (fragmentFindFragmentById = supportFragmentManager.findFragmentById(R.id.details)) != null && fragmentFindFragmentById.isAdded() && (!fragmentFindFragmentById.isDetached()) && (!fragmentFindFragmentById.isHidden())) {
-            return fragmentFindFragmentById;
+        if (supportFragmentManager != null && (findFragmentById = supportFragmentManager.findFragmentById(R.id.details)) != null && findFragmentById.isAdded() && (!findFragmentById.isDetached()) && (!findFragmentById.isHidden())) {
+            return findFragmentById;
         }
         return null;
     }
@@ -188,8 +188,8 @@ public class DetailsActivity extends ConnectedActivity {
     @Override // com.lumiyaviewer.lumiya.ui.common.ConnectedActivity
     public boolean handleBackPressed() {
         FragmentManager supportFragmentManager = getSupportFragmentManager();
-        Fragment fragmentFindFragmentById = supportFragmentManager.findFragmentById(R.id.details);
-        if ((fragmentFindFragmentById instanceof BackButtonHandler) && fragmentFindFragmentById.isAdded() && (!fragmentFindFragmentById.isDetached()) && ((BackButtonHandler) fragmentFindFragmentById).onBackButtonPressed()) {
+        Fragment findFragmentById = supportFragmentManager.findFragmentById(R.id.details);
+        if ((findFragmentById instanceof BackButtonHandler) && findFragmentById.isAdded() && (!findFragmentById.isDetached()) && ((BackButtonHandler) findFragmentById).onBackButtonPressed()) {
             return true;
         }
         if (supportFragmentManager.getBackStackEntryCount() != 0) {
@@ -217,13 +217,13 @@ public class DetailsActivity extends ConnectedActivity {
 
     protected boolean onDetailsStackEmpty() {
         FragmentManager supportFragmentManager = getSupportFragmentManager();
-        Fragment fragmentFindFragmentById = supportFragmentManager.findFragmentById(R.id.details);
-        if (fragmentFindFragmentById == null) {
+        Fragment findFragmentById = supportFragmentManager.findFragmentById(R.id.details);
+        if (findFragmentById == null) {
             return true;
         }
-        FragmentTransaction fragmentTransactionBeginTransaction = supportFragmentManager.beginTransaction();
-        fragmentTransactionBeginTransaction.remove(fragmentFindFragmentById);
-        fragmentTransactionBeginTransaction.commit();
+        FragmentTransaction beginTransaction = supportFragmentManager.beginTransaction();
+        beginTransaction.remove(findFragmentById);
+        beginTransaction.commit();
         updateTitle();
         return false;
     }
@@ -243,7 +243,7 @@ public class DetailsActivity extends ConnectedActivity {
         super.onRequestPermissionsResult(i, strArr, iArr);
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         if (fragments != null) {
-            Iterator<T> it = fragments.iterator();
+            Iterator it = fragments.iterator();
             while (it.hasNext()) {
                 ((Fragment) it.next()).onRequestPermissionsResult(i, strArr, iArr);
             }
@@ -267,11 +267,11 @@ public class DetailsActivity extends ConnectedActivity {
     }
 
     protected void replaceDetailsFragment(FragmentManager fragmentManager, Fragment fragment) {
-        FragmentTransaction fragmentTransactionBeginTransaction = fragmentManager.beginTransaction();
-        fragmentTransactionBeginTransaction.setCustomAnimations(R.anim.slide_from_right, 0, 0, R.anim.slide_to_right);
-        fragmentTransactionBeginTransaction.replace(R.id.details, fragment);
-        fragmentTransactionBeginTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        fragmentTransactionBeginTransaction.commit();
+        FragmentTransaction beginTransaction = fragmentManager.beginTransaction();
+        beginTransaction.setCustomAnimations(R.anim.slide_from_right, 0, 0, R.anim.slide_to_right);
+        beginTransaction.replace(R.id.details, fragment);
+        beginTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        beginTransaction.commit();
         updateTitle();
     }
 
@@ -287,12 +287,12 @@ public class DetailsActivity extends ConnectedActivity {
 
     /* JADX WARN: Multi-variable type inference failed */
     public boolean setCurrentDetailsArguments(Class<? extends Fragment> cls, Bundle bundle) {
-        Fragment fragmentFindFragmentById;
+        Fragment findFragmentById;
         FragmentManager supportFragmentManager = getSupportFragmentManager();
-        if (supportFragmentManager == null || (fragmentFindFragmentById = supportFragmentManager.findFragmentById(R.id.details)) == 0 || !cls.isInstance(fragmentFindFragmentById) || !(fragmentFindFragmentById instanceof ReloadableFragment) || fragmentFindFragmentById.getArguments() == null) {
+        if (supportFragmentManager == null || (findFragmentById = supportFragmentManager.findFragmentById(R.id.details)) == null || !cls.isInstance(findFragmentById) || !(findFragmentById instanceof ReloadableFragment) || findFragmentById.getArguments() == null) {
             return false;
         }
-        ((ReloadableFragment) fragmentFindFragmentById).setFragmentArgs(getIntent(), bundle);
+        ((ReloadableFragment) findFragmentById).setFragmentArgs(getIntent(), bundle);
         return true;
     }
 
@@ -305,120 +305,81 @@ public class DetailsActivity extends ConnectedActivity {
     /* JADX WARN: Multi-variable type inference failed */
     @Nullable
     public Fragment showDetailsFragment(Class<? extends Fragment> cls, Intent intent, Bundle bundle) {
+        Fragment newInstance;
         Debug.Printf("DetailsActivity: fragmentClass %s, intent %s, arguments %s", cls.toString(), intent, bundle);
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         if (supportFragmentManager == null) {
             return null;
         }
-        boolean zIsRootDetailsFragment = isRootDetailsFragment(cls);
-        Fragment fragmentFindFragmentById = supportFragmentManager.findFragmentById(R.id.details);
-        Debug.Printf("DetailsActivity: isRootFragment %b existing fragment: %s", Boolean.valueOf(zIsRootDetailsFragment), fragmentFindFragmentById);
-        if (fragmentFindFragmentById != 0) {
-            Debug.Printf("DetailsActivity: is good instance: %b", Boolean.valueOf(cls.isInstance(fragmentFindFragmentById)));
-            Debug.Printf("DetailsActivity: is reloadable: %b", Boolean.valueOf(fragmentFindFragmentById instanceof ReloadableFragment));
-            Debug.Printf("DetailsActivity: has arguments: %b", fragmentFindFragmentById.getArguments());
+        boolean isRootDetailsFragment = isRootDetailsFragment(cls);
+        Fragment findFragmentById = supportFragmentManager.findFragmentById(R.id.details);
+        Debug.Printf("DetailsActivity: isRootFragment %b existing fragment: %s", Boolean.valueOf(isRootDetailsFragment), findFragmentById);
+        if (findFragmentById != null) {
+            Debug.Printf("DetailsActivity: is good instance: %b", Boolean.valueOf(cls.isInstance(findFragmentById)));
+            Debug.Printf("DetailsActivity: is reloadable: %b", Boolean.valueOf(findFragmentById instanceof ReloadableFragment));
+            Debug.Printf("DetailsActivity: has arguments: %b", findFragmentById.getArguments());
         }
-        if (fragmentFindFragmentById != 0 && fragmentFindFragmentById.isVisible() && cls.isInstance(fragmentFindFragmentById) && (fragmentFindFragmentById instanceof ReloadableFragment) && fragmentFindFragmentById.getArguments() != null) {
-            ((ReloadableFragment) fragmentFindFragmentById).setFragmentArgs(intent, bundle);
+        if (findFragmentById != null && findFragmentById.isVisible() && cls.isInstance(findFragmentById) && (findFragmentById instanceof ReloadableFragment) && findFragmentById.getArguments() != null) {
+            ((ReloadableFragment) findFragmentById).setFragmentArgs(intent, bundle);
             invalidateOptionsMenu();
-            return fragmentFindFragmentById;
+            return findFragmentById;
         }
-        if (zIsRootDetailsFragment) {
+        if (isRootDetailsFragment) {
             clearDetailsStack();
         } else {
             addDetailsToStack(supportFragmentManager);
         }
         try {
-            Fragment fragmentNewInstance = cls.newInstance();
-            try {
-                if (fragmentNewInstance instanceof ReloadableFragment) {
-                    fragmentNewInstance.setArguments(new Bundle());
-                    ((ReloadableFragment) fragmentNewInstance).setFragmentArgs(intent, bundle);
-                } else {
-                    fragmentNewInstance.setArguments(bundle);
-                }
-                replaceDetailsFragment(supportFragmentManager, fragmentNewInstance);
-                return fragmentNewInstance;
-            } catch (Exception e) {
-                fragmentFindFragmentById = fragmentNewInstance;
-                e = e;
-                Debug.Warning(e);
-                return fragmentFindFragmentById;
+            newInstance = cls.newInstance();
+        } catch (Exception e) {
+            Debug.Warning(e);
+            return null;
+        }
+        try {
+            if (newInstance instanceof ReloadableFragment) {
+                newInstance.setArguments(new Bundle());
+                ((ReloadableFragment) newInstance).setFragmentArgs(intent, bundle);
+            } else {
+                newInstance.setArguments(bundle);
             }
+            replaceDetailsFragment(supportFragmentManager, newInstance);
+            return newInstance;
         } catch (Exception e2) {
-            e = e2;
+            findFragmentById = newInstance;
+            Exception e = e2;
+            Debug.Warning(e);
+            return findFragmentById;
         }
     }
 
     /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Removed duplicated region for block: B:19:0x0082  */
+    /* JADX WARN: Removed duplicated region for block: B:15:0x007c  */
+    /* JADX WARN: Removed duplicated region for block: B:18:? A[RETURN, SYNTHETIC] */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
     protected void updateTitle() {
-        /*
-            r7 = this;
-            r6 = 2
-            r2 = 1
-            r3 = 0
-            android.support.v4.app.FragmentManager r0 = r7.getSupportFragmentManager()
-            if (r0 == 0) goto L82
-            r1 = 2131755284(0x7f100114, float:1.9141443E38)
-            android.support.v4.app.Fragment r1 = r0.findFragmentById(r1)
-            java.lang.String r0 = "updateTitle: detailsFragment %s"
-            java.lang.Object[] r4 = new java.lang.Object[r2]
-            r4[r3] = r1
-            com.lumiyaviewer.lumiya.Debug.Printf(r0, r4)
-            boolean r0 = r1 instanceof com.lumiyaviewer.lumiya.ui.common.FragmentHasTitle
-            if (r0 == 0) goto L82
-            java.lang.String r0 = "updateTitle: detailsFragment added %b hidden %b detached %b"
-            r4 = 3
-            java.lang.Object[] r4 = new java.lang.Object[r4]
-            boolean r5 = r1.isAdded()
-            java.lang.Boolean r5 = java.lang.Boolean.valueOf(r5)
-            r4[r3] = r5
-            boolean r5 = r1.isHidden()
-            java.lang.Boolean r5 = java.lang.Boolean.valueOf(r5)
-            r4[r2] = r5
-            boolean r5 = r1.isDetached()
-            java.lang.Boolean r5 = java.lang.Boolean.valueOf(r5)
-            r4[r6] = r5
-            com.lumiyaviewer.lumiya.Debug.Printf(r0, r4)
-            boolean r0 = r1.isAdded()
-            if (r0 == 0) goto L80
-            boolean r0 = r1.isHidden()
-            r0 = r0 ^ 1
-            if (r0 == 0) goto L80
-            boolean r0 = r1.isDetached()
-            r0 = r0 ^ 1
-            if (r0 == 0) goto L82
-            r0 = r1
-            com.lumiyaviewer.lumiya.ui.common.FragmentHasTitle r0 = (com.lumiyaviewer.lumiya.ui.common.FragmentHasTitle) r0
-            java.lang.String r0 = r0.getTitle()
-            com.lumiyaviewer.lumiya.ui.common.FragmentHasTitle r1 = (com.lumiyaviewer.lumiya.ui.common.FragmentHasTitle) r1
-            java.lang.String r1 = r1.getSubTitle()
-            java.lang.String r4 = "updateTitle: got title '%s', subtitle '%s'"
-            java.lang.Object[] r5 = new java.lang.Object[r6]
-            r5[r3] = r0
-            r5[r2] = r1
-            com.lumiyaviewer.lumiya.Debug.Printf(r4, r5)
-            if (r0 == 0) goto L82
-            r7.setActivityTitle(r0, r1)
-            r0 = r2
-        L7a:
-            if (r0 != 0) goto L7f
-            r7.updateTitleNoDetails()
-        L7f:
-            return
-        L80:
-            r0 = r3
-            goto L7a
-        L82:
-            r0 = r3
-            goto L7a
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.ui.common.DetailsActivity.updateTitle():void");
+        boolean z = false;
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        if (supportFragmentManager != null) {
+            Fragment findFragmentById = supportFragmentManager.findFragmentById(R.id.details);
+            Debug.Printf("updateTitle: detailsFragment %s", findFragmentById);
+            if (findFragmentById instanceof FragmentHasTitle) {
+                Debug.Printf("updateTitle: detailsFragment added %b hidden %b detached %b", Boolean.valueOf(findFragmentById.isAdded()), Boolean.valueOf(findFragmentById.isHidden()), Boolean.valueOf(findFragmentById.isDetached()));
+                if (findFragmentById.isAdded() && !findFragmentById.isHidden() && !findFragmentById.isDetached()) {
+                    String title = ((FragmentHasTitle) findFragmentById).getTitle();
+                    String subTitle = ((FragmentHasTitle) findFragmentById).getSubTitle();
+                    Debug.Printf("updateTitle: got title '%s', subtitle '%s'", title, subTitle);
+                    if (title != null) {
+                        setActivityTitle(title, subTitle);
+                        z = true;
+                    }
+                }
+            }
+        }
+        if (!z) {
+            updateTitleNoDetails();
+        }
     }
 
     protected void updateTitleNoDetails() {

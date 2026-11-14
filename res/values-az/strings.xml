@@ -31,8 +31,8 @@
     <string name="dialog_title_vr_core_not_installed">Quraşdırma tələb olunur</string>
     <string name="dialog_title_warning">Xəbərdarlıq</string>
     <string name="dialog_vr_core_not_enabled">Google VR Xidmətləri aktiv olmadığı halda, bu tətbiq düzgün işləməyə bilər. Davam etməmişdən əvvəl telefonun Ayarlarında aktiv edin.</string>
-    <string name="dialog_vr_core_not_installed">Google VR Xidmətləri olmada bu tətbiq düzgün işləməyə bilər. Davam etməmişdən əvvəl Play Store\'dan Google VR Xidmətlərini quraşdırın.</string>
-    <string name="go_to_playstore_button">Play Store\'a keçin</string>
+    <string name="dialog_vr_core_not_installed">"Google VR Xidmətləri olmada bu tətbiq düzgün işləməyə bilər. Davam etməmişdən əvvəl Play Store'dan Google VR Xidmətlərini quraşdırın."</string>
+    <string name="go_to_playstore_button">"Play Store'a keçin"</string>
     <string name="go_to_vr_listeners_settings_button">Ayarlara gedin</string>
     <string name="no_browser_text">Veb saytı açmaq üçün brauzer yoxdur</string>
     <string name="place_your_phone_into_cardboard">Telefonunuzu Cardboard izləyicisinə yerləşdirin</string>

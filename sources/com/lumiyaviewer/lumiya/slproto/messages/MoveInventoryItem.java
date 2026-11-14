@@ -33,7 +33,7 @@ public class MoveInventoryItem extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public int CalcPayloadSize() {
         int length = 38;
-        Iterator<T> it = this.InventoryData_Fields.iterator();
+        Iterator it = this.InventoryData_Fields.iterator();
         while (true) {
             int i = length;
             if (!it.hasNext()) {

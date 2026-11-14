@@ -3,10 +3,12 @@ package com.lumiyaviewer.lumiya;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.lumiyaviewer.lumiya.eventbus.EventBus;
 import com.lumiyaviewer.lumiya.render.TextureMemoryTracker;
+import com.lumiyaviewer.lumiya.res.mesh.MeshCache;
 import com.lumiyaviewer.lumiya.res.textures.TextureCache;
 import com.lumiyaviewer.lumiya.ui.media.NotificationSounds;
 import com.lumiyaviewer.lumiya.ui.settings.NotificationType;
@@ -16,12 +18,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChangeListener {
     private int themeResourceId = R.style.Theme_Lumiya_Light;
     private boolean legacyUserNames = false;
@@ -76,7 +80,7 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
             this.lodName = str;
         }
 
-        /* JADX INFO: renamed from: values, reason: to resolve conflict with enum method */
+        /* renamed from: values, reason: to resolve conflict with enum method */
         public static MeshRendering[] valuesCustom() {
             return values();
         }
@@ -91,25 +95,26 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
     }
 
     private static long getTotalMemory() {
+        long r0 = 0L;
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader("/proc/meminfo"), 8192);
             while (true) {
-                String line = bufferedReader.readLine();
-                if (line == null) {
+                String readLine = bufferedReader.readLine();
+                if (readLine == null) {
                     break;
                 }
-                if (line.startsWith("MemTotal:")) {
-                    String[] strArrSplit = line.split("\\s+");
-                    j = strArrSplit.length >= 2 ? Long.parseLong(strArrSplit[1]) : 0L;
-                    for (int i = 0; i < strArrSplit.length; i++) {
-                        Debug.Log("Memory " + i + ":" + strArrSplit[i]);
+                if (readLine.startsWith("MemTotal:")) {
+                    String[] split = readLine.split("\\s+");
+                    r0 = split.length >= 2 ? Long.parseLong(split[1]) : 0L;
+                    for (int i = 0; i < split.length; i++) {
+                        Debug.Log("Memory " + i + ":" + split[i]);
                     }
                 }
             }
             bufferedReader.close();
         } catch (Exception e) {
         }
-        return j;
+        return r0;
     }
 
     private boolean isCacheDirectoryWriteable(@Nullable File file) {
@@ -139,36 +144,66 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
         }
     }
 
-    /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Removed duplicated region for block: B:46:0x00d7  */
-    /* JADX WARN: Type inference failed for: r0v2, types: [java.io.File] */
-    /* JADX WARN: Type inference failed for: r10v0, types: [com.lumiyaviewer.lumiya.GlobalOptions] */
-    /* JADX WARN: Type inference failed for: r1v0 */
-    /* JADX WARN: Type inference failed for: r1v1 */
-    /* JADX WARN: Type inference failed for: r1v12, types: [java.io.File, java.lang.Object] */
-    /* JADX WARN: Type inference failed for: r1v13 */
-    /* JADX WARN: Type inference failed for: r1v14 */
-    /* JADX WARN: Type inference failed for: r1v15 */
-    /* JADX WARN: Type inference failed for: r1v16 */
-    /* JADX WARN: Type inference failed for: r1v17 */
-    /* JADX WARN: Type inference failed for: r1v18 */
-    /* JADX WARN: Type inference failed for: r1v19 */
-    /* JADX WARN: Type inference failed for: r1v2 */
-    /* JADX WARN: Type inference failed for: r1v20 */
-    /* JADX WARN: Type inference failed for: r2v2 */
-    /* JADX WARN: Type inference failed for: r2v3, types: [java.io.File, java.lang.Object] */
-    /* JADX WARN: Type inference failed for: r2v4, types: [java.io.File] */
-    /* JADX WARN: Type inference failed for: r8v0, types: [java.lang.Object[]] */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
-    private void updateCacheDir(android.content.Context r11, android.content.SharedPreferences r12) {
-        /*
-            Method dump skipped, instruction units count: 217
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.GlobalOptions.updateCacheDir(android.content.Context, android.content.SharedPreferences):void");
+    private void updateCacheDir(Context context, SharedPreferences sharedPreferences) {
+        File file;
+        File file2 = null;
+        File file3 = this.baseCacheDir.get();
+        String string = sharedPreferences.getString("cache_location", "");
+        if (file3 != null && isCacheDirectoryWriteable(file3) && string.isEmpty()) {
+            file2 = file3;
+        }
+        ArrayList arrayList = new ArrayList();
+        File[] externalCacheDirs = ContextCompat.getExternalCacheDirs(context);
+        if (externalCacheDirs != null) {
+            for (File file4 : externalCacheDirs) {
+                if (file4 != null) {
+                    arrayList.add(file4);
+                }
+            }
+        }
+        File cacheDir = context.getCacheDir();
+        if (cacheDir != null) {
+            arrayList.add(cacheDir);
+        }
+        ImmutableList.Builder builder = ImmutableList.builder();
+        Iterator it = arrayList.iterator();
+        while (true) {
+            file = file2;
+            if (!it.hasNext()) {
+                break;
+            }
+            file2 = (File) it.next();
+            Debug.Printf("Cache: checking cache location %s", file2);
+            if (isCacheDirectoryWriteable(file2)) {
+                builder.add(file2);
+                if (file != null) {
+                    if (string.isEmpty()) {
+                        file2 = file;
+                    } else if (file2.getAbsolutePath().equals(string)) {
+                    }
+                }
+            }
+            file2 = file;
+        }
+        if (file == null) {
+            file = context.getCacheDir();
+        }
+        Debug.Printf("Cache: cache location set to %s", file.getAbsolutePath());
+        this.availableCacheDirs.set(builder.build());
+        this.baseCacheDir.set(file);
+        try {
+            file.mkdirs();
+            if (file.exists()) {
+                new File(file, ".nomedia").createNewFile();
+            }
+        } catch (Exception e) {
+        }
+        if (file3 == null || file3.equals(file)) {
+            return;
+        }
+        Debug.Printf("Cache: Cache location has been changed.", new Object[0]);
+        TextureCache.getInstance().onCacheDirChanged();
+        MeshCache.onCacheDirChanged();
     }
 
     private void updateNotificationSoundDefault(SharedPreferences sharedPreferences, NotificationType notificationType) {
@@ -177,16 +212,16 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
             return;
         }
         Uri uri = notificationSounds.getUri();
-        SharedPreferences.Editor editorEdit = sharedPreferences.edit();
-        editorEdit.putString(notificationType.getRingtoneKey(), uri.toString());
-        editorEdit.apply();
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putString(notificationType.getRingtoneKey(), uri.toString());
+        edit.apply();
         Debug.Printf("NotificationSounds: Updated %s preference to %s", notificationType.getRingtoneKey(), uri);
     }
 
     public void enableVoice() {
-        SharedPreferences.Editor editorEdit = LumiyaApp.getDefaultSharedPreferences().edit();
-        editorEdit.putBoolean("enableVoice", true);
-        editorEdit.apply();
+        SharedPreferences.Editor edit = LumiyaApp.getDefaultSharedPreferences().edit();
+        edit.putBoolean("enableVoice", true);
+        edit.apply();
     }
 
     public boolean getAdvancedRendering() {
@@ -207,16 +242,16 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
 
     public final File getCacheDir(@Nonnull String str) {
         this.cacheDirUsed.set(true);
-        File cacheDir = this.baseCacheDir.get();
-        if (cacheDir == null) {
-            cacheDir = LumiyaApp.getContext().getCacheDir();
+        File file = this.baseCacheDir.get();
+        if (file == null) {
+            file = LumiyaApp.getContext().getCacheDir();
         }
-        File file = new File(cacheDir, str);
+        File file2 = new File(file, str);
         try {
-            file.mkdirs();
+            file2.mkdirs();
         } catch (Exception e) {
         }
-        return file;
+        return file2;
     }
 
     public final boolean getCompressedTextures() {
@@ -314,30 +349,30 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
         updateNotificationSoundDefault(sharedPreferences, NotificationType.Group);
         updateNotificationSoundDefault(sharedPreferences, NotificationType.LocalChat);
         if (!sharedPreferences.getBoolean("system_defaults_set", false)) {
-            SharedPreferences.Editor editorEdit = sharedPreferences.edit();
+            SharedPreferences.Editor edit = sharedPreferences.edit();
             long totalMemory = getTotalMemory();
-            int iAvailableProcessors = Runtime.getRuntime().availableProcessors();
-            if (iAvailableProcessors < 2 || totalMemory <= 524288) {
-                editorEdit.putBoolean("high_quality_textures", false);
+            int availableProcessors = Runtime.getRuntime().availableProcessors();
+            if (availableProcessors < 2 || totalMemory <= 524288) {
+                edit.putBoolean("high_quality_textures", false);
             } else {
-                editorEdit.putBoolean("high_quality_textures", true);
+                edit.putBoolean("high_quality_textures", true);
             }
-            editorEdit.putString("texture_memory_limit", Integer.toString(totalMemory != 0 ? totalMemory <= 262144 ? 32 : totalMemory <= 524288 ? 64 : 128 : 64));
+            edit.putString("texture_memory_limit", Integer.toString(totalMemory != 0 ? totalMemory <= 262144 ? 32 : totalMemory <= 524288 ? 64 : 128 : 64));
             int i2 = 2;
-            if (iAvailableProcessors >= 4 && totalMemory > 524288) {
+            if (availableProcessors >= 4 && totalMemory > 524288) {
                 i2 = 8;
-            } else if (iAvailableProcessors >= 2) {
+            } else if (availableProcessors >= 2) {
                 i2 = 4;
             }
-            editorEdit.putString("max_texture_downloads", Integer.toString(i2));
-            editorEdit.putBoolean("system_defaults_set", true);
-            editorEdit.commit();
+            edit.putString("max_texture_downloads", Integer.toString(i2));
+            edit.putBoolean("system_defaults_set", true);
+            edit.commit();
         }
         int i3 = this.themeResourceId;
-        String strNullToEmpty = Strings.nullToEmpty(sharedPreferences.getString("theme", "light"));
-        if (strNullToEmpty.equals("dark")) {
+        String nullToEmpty = Strings.nullToEmpty(sharedPreferences.getString("theme", "light"));
+        if (nullToEmpty.equals("dark")) {
             this.themeResourceId = R.style.Theme_Lumiya;
-        } else if (strNullToEmpty.equals("pink")) {
+        } else if (nullToEmpty.equals("pink")) {
             this.themeResourceId = R.style.Theme_Lumiya_Pink;
         } else {
             this.themeResourceId = R.style.Theme_Lumiya_Light;

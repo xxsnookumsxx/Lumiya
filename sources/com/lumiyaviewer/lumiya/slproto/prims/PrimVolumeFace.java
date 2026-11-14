@@ -517,6 +517,8 @@ public class PrimVolumeFace {
                     }
                     i6++;
                     i9 = i10 + 1;
+                } else {
+                    break;
                 }
             }
             i7 = i8 + 1;

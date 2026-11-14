@@ -2,9 +2,11 @@ package com.lumiyaviewer.lumiya.slproto.users.manager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import com.google.common.collect.ImmutableMap;
 import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.GlobalOptions;
 import com.lumiyaviewer.lumiya.LumiyaApp;
+import com.lumiyaviewer.lumiya.dao.ChatMessage;
 import com.lumiyaviewer.lumiya.dao.ChatMessageDao;
 import com.lumiyaviewer.lumiya.dao.Chatter;
 import com.lumiyaviewer.lumiya.dao.ChatterDao;
@@ -14,6 +16,7 @@ import com.lumiyaviewer.lumiya.eventbus.EventHandler;
 import com.lumiyaviewer.lumiya.react.SimpleRequestHandler;
 import com.lumiyaviewer.lumiya.react.Subscribable;
 import com.lumiyaviewer.lumiya.react.SubscriptionPool;
+import com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent;
 import com.lumiyaviewer.lumiya.slproto.users.ChatterID;
 import com.lumiyaviewer.lumiya.slproto.users.ChatterNameRetriever;
 import com.lumiyaviewer.lumiya.slproto.users.manager.UnreadNotificationInfo;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
@@ -35,7 +39,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class UnreadNotificationManager implements ChatterNameRetriever.OnChatterNameUpdated {
     private static final long FRESH_MESSAGES_NOTIFICATION_INTERVAL = 3000;
     private static final int MASK_ENABLED_ALL = 7;
@@ -105,20 +109,151 @@ public class UnreadNotificationManager implements ChatterNameRetriever.OnChatter
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Removed duplicated region for block: B:97:0x0241 A[PHI: r8
-  0x0241: PHI (r8v7 int) = (r8v5 int), (r8v8 int) binds: [B:26:0x00bc, B:34:0x00de] A[DONT_GENERATE, DONT_INLINE]] */
-    /* JADX WARN: Removed duplicated region for block: B:99:0x024c  */
-    @javax.annotation.Nonnull
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
-    public com.lumiyaviewer.lumiya.slproto.users.manager.UnreadNotifications getUnreadNotification() {
-        /*
-            Method dump skipped, instruction units count: 601
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.slproto.users.manager.UnreadNotificationManager.getUnreadNotification():com.lumiyaviewer.lumiya.slproto.users.manager.UnreadNotifications");
+    @Nonnull
+    public UnreadNotifications getUnreadNotification() {
+        int i;
+        NotificationType notificationType;
+        ArrayList arrayList;
+        UnreadNotificationInfo.UnreadMessageSource unreadMessageSource;
+        int i2;
+        int i3;
+        NotificationType notificationType2;
+        NotificationType notificationType3;
+        Long l;
+        int intValue;
+        boolean z = System.currentTimeMillis() >= this.lastFreshMessageNotification.get() + FRESH_MESSAGES_NOTIFICATION_INTERVAL;
+        ImmutableMap.Builder builder = ImmutableMap.builder();
+        for (NotificationType notificationType4 : NotificationType.VALUES) {
+            int i4 = 0;
+            int i5 = 0;
+            NotificationType notificationType5 = null;
+            NotificationType notificationType6 = null;
+            Long l2 = null;
+            boolean z2 = false;
+            if (this.chatterSources.isEmpty()) {
+                i = 0;
+                notificationType = null;
+                arrayList = null;
+                unreadMessageSource = null;
+            } else {
+                HashMap hashMap = new HashMap();
+                Iterator it = this.chatterSources.entrySet().iterator();
+                while (true) {
+                    i2 = i5;
+                    i3 = i4;
+                    notificationType2 = notificationType6;
+                    notificationType3 = notificationType5;
+                    boolean z3 = z2;
+                    l = l2;
+                    if (!it.hasNext()) {
+                        break;
+                    }
+                    Map.Entry entry = (Map.Entry) it.next();
+                    ChatterNameRetriever chatterNameRetriever = (ChatterNameRetriever) entry.getValue();
+                    ChatterID chatterID = chatterNameRetriever.chatterID;
+                    NotificationType notificationType7 = chatterID.getChatterType().getNotificationType();
+                    if (notificationType7 == notificationType4) {
+                        if (chatterID.getChatterType() == ChatterID.ChatterType.Local || chatterNameRetriever.getResolvedName() != null) {
+                            Chatter load = this.chatterDao.load((Long) entry.getKey());
+                            if (load != null) {
+                                int unreadCount = load.getUnreadCount();
+                                int i6 = i3 + unreadCount;
+                                hashMap.put(load.getId(), UnreadNotificationInfo.UnreadMessageSource.create(chatterID, chatterNameRetriever.getResolvedName(), null, unreadCount));
+                                NotificationType notificationType8 = (notificationType3 == null || notificationType7.compareTo(notificationType3) > 0) ? notificationType7 : notificationType3;
+                                if (z) {
+                                    synchronized (this.freshMessageCountsLock) {
+                                        Integer remove = this.freshMessageCounts.remove(load.getId());
+                                        intValue = remove != null ? remove.intValue() : 0;
+                                    }
+                                    i2 += intValue;
+                                    if (intValue != 0) {
+                                        if (l == null && (!z3)) {
+                                            l = load.getId();
+                                        } else if (l != null) {
+                                            l = null;
+                                            z3 = true;
+                                        }
+                                        if (notificationType2 == null || notificationType7.compareTo(notificationType2) > 0) {
+                                            z2 = z3;
+                                            l2 = l;
+                                            i5 = i2;
+                                            i4 = i6;
+                                            notificationType6 = notificationType7;
+                                            notificationType5 = notificationType8;
+                                        } else {
+                                            z2 = z3;
+                                            l2 = l;
+                                            i4 = i6;
+                                            notificationType5 = notificationType8;
+                                            notificationType6 = notificationType2;
+                                            i5 = i2;
+                                        }
+                                    }
+                                }
+                                z2 = z3;
+                                l2 = l;
+                                i4 = i6;
+                                notificationType5 = notificationType8;
+                                notificationType6 = notificationType2;
+                                i5 = i2;
+                            }
+                        } else {
+                            z2 = z3;
+                            l2 = l;
+                            notificationType6 = notificationType2;
+                            notificationType5 = notificationType3;
+                            i5 = i2;
+                            i4 = i3;
+                        }
+                    }
+                    z2 = z3;
+                    l2 = l;
+                    notificationType6 = notificationType2;
+                    notificationType5 = notificationType3;
+                    i5 = i2;
+                    i4 = i3;
+                }
+                int i7 = hashMap.size() <= 1 ? 3 : 1;
+                ArrayList arrayList2 = new ArrayList(hashMap.size());
+                UnreadNotificationInfo.UnreadMessageSource unreadMessageSource2 = null;
+                for (Map.Entry entry2 : ((Map<?, ?>) hashMap).entrySet()) {
+                    LinkedList linkedList = new LinkedList();
+                    int unreadMessagesCount = ((UnreadNotificationInfo.UnreadMessageSource) entry2.getValue()).unreadMessagesCount();
+                    if (unreadMessagesCount > i7) {
+                        unreadMessagesCount = i7;
+                    }
+                    Iterator it2 = this.chatMessageDao.queryBuilder().where(ChatMessageDao.Properties.ChatterID.eq(entry2.getKey()), new WhereCondition[0]).orderDesc(ChatMessageDao.Properties.Id).limit(unreadMessagesCount).list().iterator();
+                    while (it2.hasNext()) {
+                        SLChatEvent loadFromDatabaseObject = SLChatEvent.loadFromDatabaseObject((ChatMessage) it2.next(), this.userManager.getUserID());
+                        if (loadFromDatabaseObject != null) {
+                            linkedList.add(0, loadFromDatabaseObject);
+                        }
+                    }
+                    UnreadNotificationInfo.UnreadMessageSource withMessages = ((UnreadNotificationInfo.UnreadMessageSource) entry2.getValue()).withMessages(linkedList);
+                    UnreadNotificationInfo.UnreadMessageSource unreadMessageSource3 = (l == null || !((Long) entry2.getKey()).equals(l)) ? unreadMessageSource2 : withMessages;
+                    arrayList2.add(withMessages);
+                    unreadMessageSource2 = unreadMessageSource3;
+                }
+                arrayList = arrayList2;
+                notificationType5 = notificationType3;
+                i = i3;
+                notificationType = notificationType2;
+                i5 = i2;
+                unreadMessageSource = unreadMessageSource2;
+            }
+            UnreadNotificationInfo.ObjectPopupNotification notification = this.userManager.getObjectPopupsManager().getNotification(z);
+            if (z && (i5 != 0 || notification.freshObjectPopupsCount() != 0)) {
+                this.lastFreshMessageNotification.set(System.currentTimeMillis());
+            }
+            boolean z4 = false;
+            if (arrayList != null && !arrayList.isEmpty()) {
+                z4 = true;
+            }
+            if (!((i == 0 && z4 && i5 == 0) ? notification.isEmpty() : false)) {
+                builder.put(notificationType4, UnreadNotificationInfo.create(this.userManager.getUserID(), i, arrayList, notificationType5, i5, notificationType, unreadMessageSource, notification));
+            }
+        }
+        return UnreadNotifications.create(this.userManager.getUserID(), builder.build());
     }
 
     private void setEnabledMask(int i) {
@@ -157,7 +292,7 @@ public class UnreadNotificationManager implements ChatterNameRetriever.OnChatter
             this.mostImportantNotificationType.set(null);
             return;
         }
-        QueryBuilder<Chatter> queryBuilderWhere = this.chatterDao.queryBuilder().where(ChatterDao.Properties.UnreadCount.gt(0), ChatterDao.Properties.Muted.notEq(true));
+        QueryBuilder<Chatter> where = this.chatterDao.queryBuilder().where(ChatterDao.Properties.UnreadCount.gt(0), ChatterDao.Properties.Muted.notEq(true));
         if (i != 7) {
             ArrayList arrayList = new ArrayList(3);
             if ((i & 1) != 0) {
@@ -169,37 +304,37 @@ public class UnreadNotificationManager implements ChatterNameRetriever.OnChatter
             if ((i & 4) != 0) {
                 arrayList.add(Integer.valueOf(ChatterID.ChatterType.User.ordinal()));
             }
-            queryBuilderWhere = queryBuilderWhere.where(ChatterDao.Properties.Type.in(arrayList), new WhereCondition[0]);
+            where = where.where(ChatterDao.Properties.Type.in(arrayList), new WhereCondition[0]);
         }
         HashSet hashSet = null;
         int i2 = 0;
-        int unreadCount = 0;
+        int i3 = 0;
         NotificationType notificationType = null;
-        for (Chatter chatter : queryBuilderWhere.orderDesc(ChatterDao.Properties.LastMessageID).listLazy()) {
-            ChatterID chatterIDFromDatabaseObject = ChatterID.fromDatabaseObject(this.userManager.getUserID(), chatter);
-            if (chatterIDFromDatabaseObject != null) {
+        for (Chatter chatter : where.orderDesc(ChatterDao.Properties.LastMessageID).listLazy()) {
+            ChatterID fromDatabaseObject = ChatterID.fromDatabaseObject(this.userManager.getUserID(), chatter);
+            if (fromDatabaseObject != null) {
                 if (hashSet == null) {
                     hashSet = new HashSet();
                 }
                 if (hashSet.size() < 3) {
                     hashSet.add(chatter.getId());
                     if (!this.chatterSources.containsKey(chatter.getId())) {
-                        this.chatterSources.put(chatter.getId(), new ChatterNameRetriever(chatterIDFromDatabaseObject, this, null));
+                        this.chatterSources.put(chatter.getId(), new ChatterNameRetriever(fromDatabaseObject, this, null));
                     }
                 }
-                NotificationType notificationType2 = chatterIDFromDatabaseObject.getChatterType().getNotificationType();
+                NotificationType notificationType2 = fromDatabaseObject.getChatterType().getNotificationType();
                 if (notificationType == null || notificationType2.compareTo(notificationType) > 0) {
                     notificationType = notificationType2;
                 }
-                unreadCount += chatter.getUnreadCount();
+                i3 += chatter.getUnreadCount();
                 i2++;
             }
-            unreadCount = unreadCount;
+            i3 = i3;
             i2 = i2;
             hashSet = hashSet;
             notificationType = notificationType;
         }
-        this.totalUnreadCount.set(unreadCount);
+        this.totalUnreadCount.set(i3);
         this.totalSourcesCount.set(i2);
         this.mostImportantNotificationType.set(notificationType);
         Iterator<Map.Entry<Long, ChatterNameRetriever>> it2 = this.chatterSources.entrySet().iterator();

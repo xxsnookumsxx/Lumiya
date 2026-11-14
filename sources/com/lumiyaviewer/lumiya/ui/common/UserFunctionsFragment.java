@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,10 +54,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class UserFunctionsFragment extends ChatterReloadableFragment implements ReloadableFragment {
 
     /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-slproto-users-ChatterID$ChatterTypeSwitchesValues, reason: not valid java name */
-    private static final /* synthetic */ int[] f378xb1d54699 = null;
+    private static /* synthetic */ int[] f378xb1d54699 = null;
     private final SubscriptionData<SubscriptionSingleKey, Boolean> voiceLoggedIn = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks.9
         private final /* synthetic */ void $m$0(Object obj) {
-            ((UserFunctionsFragment) this).m583xeb75d0e8((Boolean) obj);
+            UserFunctionsFragment.this.m583xeb75d0e8((Boolean) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -68,7 +67,7 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
     });
     protected final SubscriptionData<SubscriptionSingleKey, CurrentLocationInfo> currentLocationInfo = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks.10
         private final /* synthetic */ void $m$0(Object obj) {
-            ((UserFunctionsFragment) this).m584xeb75d0e9((CurrentLocationInfo) obj);
+            UserFunctionsFragment.this.m584xeb75d0e9((CurrentLocationInfo) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -123,7 +122,7 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
         } else {
             new AlertDialog.Builder(getContext()).setTitle(R.string.enable_voice).setMessage(getContext().getString(R.string.enable_voice_plugin_message, LicenseChecker.APP_STORE_NAME)).setPositiveButton("Yes", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks.7
                 private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                    ((UserFunctionsFragment) this).m585x54293cc7(dialogInterface, i);
+                    UserFunctionsFragment.this.m585x54293cc7(dialogInterface, i);
                 }
 
                 @Override // android.content.DialogInterface.OnClickListener
@@ -152,7 +151,7 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(getString(R.string.teleport_to_user_title)).setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks.15
                 private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                    ((UserFunctionsFragment) this).m587x5441d035((SLAgentCircuit) sLAgentCircuit, (ChatterID.ChatterIDUser) chatterIDUser, dialogInterface, i);
+                    UserFunctionsFragment.this.m587x5441d035((SLAgentCircuit) sLAgentCircuit, (ChatterID.ChatterIDUser) chatterIDUser, dialogInterface, i);
                 }
 
                 @Override // android.content.DialogInterface.OnClickListener
@@ -214,10 +213,7 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
         if (chatterID == null || userManager == null) {
             return;
         }
-        final String resolvedName = this.nameRetriever != null ? this.nameRetriever.getResolvedName() : null;
-        if (resolvedName == null) {
-            resolvedName = getString(R.string.name_loading_title);
-        }
+        final String resolvedName = (this.nameRetriever != null && this.nameRetriever.getResolvedName() != null) ? this.nameRetriever.getResolvedName() : getString(R.string.name_loading_title);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(getString(R.string.block_confirm_message, resolvedName)).setCancelable(true);
         CharSequence[] charSequenceArr = userManager.getActiveAgentCircuit() != null ? new CharSequence[]{getString(R.string.mute_action_description), getString(R.string.block_action_description)} : new CharSequence[]{getString(R.string.mute_action_description)};
@@ -234,7 +230,7 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
         });
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks.17
             private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                ((UserFunctionsFragment) this).m586x543591ca((AtomicInteger) atomicInteger, (ChatterID) chatterID, (UserManager) userManager, (String) resolvedName, dialogInterface, i);
+                UserFunctionsFragment.this.m586x543591ca((AtomicInteger) atomicInteger, (ChatterID) chatterID, (UserManager) userManager, (String) resolvedName, dialogInterface, i);
             }
 
             @Override // android.content.DialogInterface.OnClickListener
@@ -339,10 +335,7 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
         if (chatterID == null || userManager == null) {
             return;
         }
-        final String resolvedName = this.nameRetriever != null ? this.nameRetriever.getResolvedName() : null;
-        if (resolvedName == null) {
-            resolvedName = getString(R.string.name_loading_title);
-        }
+        final String resolvedName = (this.nameRetriever != null && this.nameRetriever.getResolvedName() != null) ? this.nameRetriever.getResolvedName() : getString(R.string.name_loading_title);
         new AlertDialog.Builder(getContext()).setMessage(getString(R.string.unblock_confirm_message, resolvedName)).setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks.16
             private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
                 UserFunctionsFragment.m573x543499cf((UserManager) userManager, (ChatterID) chatterID, (String) resolvedName, dialogInterface, i);

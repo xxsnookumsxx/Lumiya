@@ -44,7 +44,7 @@ public class DirEventsReply extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public int CalcPayloadSize() {
         int length = 37;
-        Iterator<T> it = this.QueryReplies_Fields.iterator();
+        Iterator it = this.QueryReplies_Fields.iterator();
         while (true) {
             int i = length;
             if (!it.hasNext()) {
@@ -77,7 +77,7 @@ public class DirEventsReply extends SLMessage {
             packInt(byteBuffer, queryReplies.EventFlags);
         }
         byteBuffer.put((byte) this.StatusData_Fields.size());
-        Iterator<T> it = this.StatusData_Fields.iterator();
+        Iterator it = this.StatusData_Fields.iterator();
         while (it.hasNext()) {
             packInt(byteBuffer, ((StatusData) it.next()).Status);
         }

@@ -155,7 +155,8 @@ public class ImageAssetView extends View {
         float fMax = Math.max(width2 / width, height2 / height);
         int iRound = Math.round(width2 / fMax);
         int i = (width / 2) - (iRound / 2);
-        int iRound2 = this.alignTop ? 0 : (height / 2) - (Math.round(height2 / fMax) / 2);
+        int r7 = Math.round(height2 / fMax);
+        int iRound2 = this.alignTop ? 0 : (height / 2) - (r7 / 2);
         this.bitmapDestRect.left = i + 1;
         this.bitmapDestRect.top = iRound2 + 1;
         this.bitmapDestRect.right = (iRound + i) - 1;

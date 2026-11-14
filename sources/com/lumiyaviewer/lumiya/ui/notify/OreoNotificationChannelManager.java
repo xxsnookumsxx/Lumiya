@@ -46,7 +46,7 @@ public class OreoNotificationChannelManager implements NotificationChannelManage
     public OreoNotificationChannelManager() {
         int i = 3;
         boolean z = true;
-        this.channelSettings = ImmutableMap.of(NotificationChannels.Channel.OnlineStatus, new NotificationChannelSettings(2, false, null, 0 == true ? 1 : 0), NotificationChannels.Channel.Local, new NotificationChannelSettings(i, z, NotificationType.LocalChat, 0 == true ? 1 : 0), NotificationChannels.Channel.Group, new NotificationChannelSettings(i, z, NotificationType.Group, 0 == true ? 1 : 0), NotificationChannels.Channel.IM, new NotificationChannelSettings(4, z, NotificationType.Private, 0 == true ? 1 : 0));
+        this.channelSettings = ImmutableMap.of(NotificationChannels.Channel.OnlineStatus, new NotificationChannelSettings(2, false, null, null), NotificationChannels.Channel.Local, new NotificationChannelSettings(i, z, NotificationType.LocalChat, null), NotificationChannels.Channel.Group, new NotificationChannelSettings(i, z, NotificationType.Group, null), NotificationChannels.Channel.IM, new NotificationChannelSettings(4, z, NotificationType.Private, null));
     }
 
     @Override // com.lumiyaviewer.lumiya.ui.notify.NotificationChannelManager

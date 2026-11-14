@@ -62,7 +62,7 @@ public class SLWorldMap extends SLModule {
         boolean z;
         boolean z2 = false;
         boolean z3 = false;
-        Iterator<T> it = mapBlockReply.Data_Fields.iterator();
+        Iterator it = mapBlockReply.Data_Fields.iterator();
         while (true) {
             z = z3;
             if (!it.hasNext()) {

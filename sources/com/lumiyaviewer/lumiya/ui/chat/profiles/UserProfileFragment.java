@@ -55,7 +55,7 @@ public class UserProfileFragment extends UserFunctionsFragment {
                 return fragment;
             } catch (IllegalAccessException e) {
                 return null;
-            } catch (InstantiationException e2) {
+            } catch (java.lang.InstantiationException e2) {
                 return null;
             }
         }
@@ -112,7 +112,7 @@ public class UserProfileFragment extends UserFunctionsFragment {
 
     @Override // com.lumiyaviewer.lumiya.ui.common.ChatterFragment
     protected void onShowUser(@Nullable ChatterID chatterID) {
-        Iterator<T> it = this.activeFragments.values().iterator();
+        Iterator it = this.activeFragments.values().iterator();
         while (it.hasNext()) {
             ComponentCallbacks componentCallbacks = (Fragment) ((WeakReference) it.next()).get();
             if (componentCallbacks instanceof ReloadableFragment) {

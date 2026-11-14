@@ -15,6 +15,7 @@ import com.lumiyaviewer.lumiya.slproto.messages.StartPingCheck;
 import com.lumiyaviewer.lumiya.slproto.modules.SLIdleHandler;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.CancelledKeyException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
@@ -28,7 +29,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class SLCircuit extends SLMessageHandler {
     private static final int DEFAULT_IDLE_INTERVAL = 1000;
     private static final int FAST_IDLE_INTERVAL = 100;
@@ -175,7 +176,7 @@ public class SLCircuit extends SLMessageHandler {
 
     @Override // com.lumiyaviewer.lumiya.slproto.messages.SLMessageHandler
     public void HandlePacketAck(PacketAck packetAck) {
-        Iterator<T> it = packetAck.Packets_Fields.iterator();
+        Iterator it = packetAck.Packets_Fields.iterator();
         while (it.hasNext()) {
             ProcessReceivedAck(((PacketAck.Packets) it.next()).ID);
         }
@@ -190,7 +191,7 @@ public class SLCircuit extends SLMessageHandler {
 
     protected void InvokeProcessIdle() {
         ProcessIdle();
-        Iterator<T> it = this.idleHandlers.iterator();
+        Iterator it = this.idleHandlers.iterator();
         while (it.hasNext()) {
             ((SLIdleHandler) it.next()).ProcessIdle();
         }
@@ -205,17 +206,76 @@ public class SLCircuit extends SLMessageHandler {
     public void ProcessNetworkError() {
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:51:0x010b  */
+    /* JADX WARN: Removed duplicated region for block: B:17:0x007f A[LOOP:0: B:17:0x007f->B:52:?, LOOP_START] */
+    /* JADX WARN: Removed duplicated region for block: B:54:0x0109  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
-    public boolean ProcessReceive() throws java.io.IOException {
-        /*
-            Method dump skipped, instruction units count: 270
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.slproto.SLCircuit.ProcessReceive():boolean");
+    public boolean ProcessReceive() throws IOException {
+        SLMessage sLMessage;
+        boolean z;
+        boolean z2;
+        this.rxBuffer.clear();
+        this.rxBuffer.order(ByteOrder.BIG_ENDIAN);
+        if (this.datagramChannel.read(this.rxBuffer) == 0) {
+            return false;
+        }
+        this.rxBuffer.flip();
+        this.receivedAcks.clear();
+        SLMessage Unpack = SLMessage.Unpack(this.rxBuffer, this.tempBuffer, this.receivedAcks);
+        if (Unpack != null) {
+            this.lastReceivedPacketMillis = SystemClock.elapsedRealtime();
+            this.pingSentCount = 0;
+            z2 = false;
+            if (Unpack.seqNum - this.lastReceivedSeqnum <= 0) {
+                Debug.Printf("Detected incoming out of order: seqNum = %d", Integer.valueOf(Unpack.seqNum));
+                if (!(Unpack instanceof PacketAck) && !(Unpack instanceof StartPingCheck) && !(Unpack instanceof CompletePingCheck) && this.handledPackets.contains(Integer.valueOf(Unpack.seqNum))) {
+                    Debug.Printf("Detected incoming duplicate: seqNum = %d", Integer.valueOf(Unpack.seqNum));
+                    z2 = true;
+                }
+            }
+            if (!z2) {
+                while (this.handledPackets.size() >= 1024 && this.handledPackets.poll() != null) {
+                }
+                this.handledPackets.add(Integer.valueOf(Unpack.seqNum));
+                this.lastReceivedSeqnum = Unpack.seqNum;
+                if ((Unpack instanceof PacketAck) || (Unpack instanceof StartPingCheck)) {
+                    Unpack.Handle(this);
+                    sLMessage = null;
+                } else {
+                    sLMessage = Unpack;
+                }
+            } else {
+                sLMessage = null;
+            }
+        } else {
+            Debug.Log("message discarded!");
+            sLMessage = null;
+        }
+        Iterator it = this.receivedAcks.iterator();
+        while (it.hasNext()) {
+            ProcessReceivedAck(((Integer) it.next()).intValue());
+        }
+        if (Unpack != null && Unpack.isReliable) {
+            Iterator it2 = this.pendingAcks.iterator();
+            while (true) {
+                if (!it2.hasNext()) {
+                    z = false;
+                    break;
+                }
+                if (((Integer) it2.next()).intValue() == Unpack.seqNum) {
+                    z = true;
+                    break;
+                }
+            }
+            if (!z) {
+                this.pendingAcks.add(Integer.valueOf(Unpack.seqNum));
+            }
+        }
+        if (sLMessage != null) {
+            HandleMessage(sLMessage);
+        }
+        return true;
     }
 
     public void ProcessReceivedAck(int i) {
@@ -241,22 +301,22 @@ public class SLCircuit extends SLMessageHandler {
     }
 
     public boolean ProcessTransmit() throws IOException {
-        SLMessage sLMessagePeek = this.outgoingQueue.peek();
-        if (sLMessagePeek != null) {
-            sLMessagePeek.Pack(this.txBuffer, this.tempBuffer);
-            int iAppendPendingAcks = sLMessagePeek.AppendPendingAcks(this.txBuffer, this.pendingAcks);
+        SLMessage peek = this.outgoingQueue.peek();
+        if (peek != null) {
+            peek.Pack(this.txBuffer, this.tempBuffer);
+            int AppendPendingAcks = peek.AppendPendingAcks(this.txBuffer, this.pendingAcks);
             this.txBuffer.flip();
             if (this.datagramChannel.write(this.txBuffer) != 0) {
-                this.outgoingQueue.remove(sLMessagePeek);
-                if (iAppendPendingAcks >= this.pendingAcks.size()) {
+                this.outgoingQueue.remove(peek);
+                if (AppendPendingAcks >= this.pendingAcks.size()) {
                     this.pendingAcks.clear();
                 } else {
-                    for (int i = 0; i < iAppendPendingAcks; i++) {
+                    for (int i = 0; i < AppendPendingAcks; i++) {
                         this.pendingAcks.remove(0);
                     }
                 }
-                if (sLMessagePeek.isReliable) {
-                    this.unackedQueue.add(sLMessagePeek);
+                if (peek.isReliable) {
+                    this.unackedQueue.add(peek);
                 }
                 return true;
             }
@@ -309,8 +369,8 @@ public class SLCircuit extends SLMessageHandler {
     }
 
     public void TryProcessIdle() {
-        long jElapsedRealtime = SystemClock.elapsedRealtime();
-        if (jElapsedRealtime < this.lastReceivedPacketMillis + NEED_PING_TIMEOUT || jElapsedRealtime < this.lastPingSent + PING_INTERVAL) {
+        long elapsedRealtime = SystemClock.elapsedRealtime();
+        if (elapsedRealtime < this.lastReceivedPacketMillis + NEED_PING_TIMEOUT || elapsedRealtime < this.lastPingSent + PING_INTERVAL) {
             return;
         }
         if (this.pingSentCount >= 3) {
@@ -325,8 +385,8 @@ public class SLCircuit extends SLMessageHandler {
         Debug.Log("SLCircuit: Sending ping ID " + ((int) this.lastPingID));
         StartPingCheck startPingCheck = new StartPingCheck();
         int i = this.lastSeqNum.get();
-        SLMessage sLMessagePeek = this.unackedQueue.peek();
-        int i2 = sLMessagePeek != null ? sLMessagePeek.seqNum : i;
+        SLMessage peek = this.unackedQueue.peek();
+        int i2 = peek != null ? peek.seqNum : i;
         StartPingCheck.PingID pingID = startPingCheck.PingID_Field;
         byte b = this.lastPingID;
         this.lastPingID = (byte) (b + 1);
@@ -334,7 +394,7 @@ public class SLCircuit extends SLMessageHandler {
         startPingCheck.PingID_Field.OldestUnacked = i2;
         SendMessage(startPingCheck);
         this.pingSentCount++;
-        this.lastPingSent = jElapsedRealtime;
+        this.lastPingSent = elapsedRealtime;
     }
 
     public synchronized void UnregisterMessageHandler(Object obj) {

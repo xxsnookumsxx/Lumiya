@@ -66,10 +66,12 @@ public class OpportunisticExecutor implements Executor {
                                 Debug.Warning(e2);
                             }
                         }
-                        Debug.Warning(e2);
                     }
                     OpportunisticExecutor.this.lock.unlock();
                     runnable.run();
+                } catch (Exception e2) {
+                    OpportunisticExecutor.this.lock.unlock();
+                    Debug.Warning(e2);
                 } catch (Throwable th2) {
                     OpportunisticExecutor.this.lock.unlock();
                     throw th2;

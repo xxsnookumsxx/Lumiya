@@ -1,5 +1,6 @@
 package com.lumiyaviewer.lumiya.voiceintf;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -15,12 +16,14 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
+import android.support.v7.app.NotificationCompat;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.lumiyaviewer.lumiya.Debug;
+import com.lumiyaviewer.lumiya.GridConnectionService;
 import com.lumiyaviewer.lumiya.LumiyaApp;
 import com.lumiyaviewer.lumiya.R;
 import com.lumiyaviewer.lumiya.licensing.LicenseChecker;
@@ -34,7 +37,12 @@ import com.lumiyaviewer.lumiya.slproto.users.ChatterID;
 import com.lumiyaviewer.lumiya.slproto.users.ChatterNameRetriever;
 import com.lumiyaviewer.lumiya.slproto.users.chatsrc.ChatMessageSourceUnknown;
 import com.lumiyaviewer.lumiya.slproto.users.chatsrc.ChatMessageSourceUser;
+import com.lumiyaviewer.lumiya.slproto.users.manager.UnreadNotificationInfo;
 import com.lumiyaviewer.lumiya.slproto.users.manager.UserManager;
+import com.lumiyaviewer.lumiya.ui.chat.ChatFragment;
+import com.lumiyaviewer.lumiya.ui.chat.contacts.ChatFragmentActivityFactory;
+import com.lumiyaviewer.lumiya.ui.common.ActivityUtils;
+import com.lumiyaviewer.lumiya.ui.settings.NotificationType;
 import com.lumiyaviewer.lumiya.voice.common.VoicePluginMessage;
 import com.lumiyaviewer.lumiya.voice.common.VoicePluginMessageType;
 import com.lumiyaviewer.lumiya.voice.common.VoicePluginMessenger;
@@ -63,7 +71,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class VoicePluginServiceConnection implements ServiceConnection {
     public static final String ACTION_VOICE_ACCEPT = "accept";
     public static final String ACTION_VOICE_REJECT = "reject";
@@ -88,12 +96,10 @@ public class VoicePluginServiceConnection implements ServiceConnection {
     private ChatterNameRetriever ringingChatterNameRetriever = null;
     private final Handler fromPluginHandler = new Handler() { // from class: com.lumiyaviewer.lumiya.voiceintf.VoicePluginServiceConnection.1
 
-        /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-voice-common-VoicePluginMessageTypeSwitchesValues, reason: not valid java name */
-        private static final /* synthetic */ int[] f611x5636931c = null;
-        final /* synthetic */ int[] $SWITCH_TABLE$com$lumiyaviewer$lumiya$voice$common$VoicePluginMessageType;
-
-        /* JADX INFO: renamed from: -getcom-lumiyaviewer-lumiya-voice-common-VoicePluginMessageTypeSwitchesValues, reason: not valid java name */
-        private static /* synthetic */ int[] m916xcae206c0() {
+        /* renamed from: -com-lumiyaviewer-lumiya-voice-common-VoicePluginMessageTypeSwitchesValues, reason: not valid java name */
+        private /* synthetic */ int[] f611x5636931c = null;
+        /* renamed from: -getcom-lumiyaviewer-lumiya-voice-common-VoicePluginMessageTypeSwitchesValues, reason: not valid java name */
+        private /* synthetic */ int[] m916xcae206c0() {
             if (f611x5636931c != null) {
                 return f611x5636931c;
             }
@@ -208,7 +214,7 @@ public class VoicePluginServiceConnection implements ServiceConnection {
             notificationManager.cancel(str, 1001);
             this.incomingCallNotificationTags.remove(str);
         } else {
-            Iterator<T> it = this.incomingCallNotificationTags.iterator();
+            Iterator it = this.incomingCallNotificationTags.iterator();
             while (it.hasNext()) {
                 notificationManager.cancel((String) it.next(), 1001);
             }
@@ -219,8 +225,8 @@ public class VoicePluginServiceConnection implements ServiceConnection {
     public static boolean checkPluginInstalled(Context context) {
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("com.lumiyaviewer.lumiya.voice", "com.lumiyaviewer.lumiya.voice.VoiceService"));
-        List<ResolveInfo> listQueryIntentServices = context.getPackageManager().queryIntentServices(intent, 0);
-        return listQueryIntentServices != null && listQueryIntentServices.size() > 0;
+        List<ResolveInfo> queryIntentServices = context.getPackageManager().queryIntentServices(intent, 0);
+        return queryIntentServices != null && queryIntentServices.size() > 0;
     }
 
     public static boolean isPluginSupported() {
@@ -329,7 +335,7 @@ public class VoicePluginServiceConnection implements ServiceConnection {
         this.voiceChannels.forcePut(userChatterID, voiceRinging.voiceChannelInfo);
         this.ringingChatterNameRetriever = new ChatterNameRetriever(userChatterID, new ChatterNameRetriever.OnChatterNameUpdated() { // from class: com.lumiyaviewer.lumiya.voiceintf.-$Lambda$KEiwggiQxhrsJugAMeHgzXJrgrA.1
             private final /* synthetic */ void $m$0(ChatterNameRetriever chatterNameRetriever) {
-                ((VoicePluginServiceConnection) this).m914x2afa1cbb((VoiceRinging) voiceRinging, chatterNameRetriever);
+                VoicePluginServiceConnection.this.m914x2afa1cbb((VoiceRinging) voiceRinging, chatterNameRetriever);
             }
 
             @Override // com.lumiyaviewer.lumiya.slproto.users.ChatterNameRetriever.OnChatterNameUpdated
@@ -348,17 +354,37 @@ public class VoicePluginServiceConnection implements ServiceConnection {
         return !installOfferDisplayed.getAndSet(true);
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:8:0x0123  */
+    /* JADX WARN: Code restructure failed: missing block: B:4:0x0061, code lost:
+    
+        if (r0 != null) goto L6;
+     */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
-    private void showIncomingCallNotification(com.lumiyaviewer.lumiya.voice.common.messages.VoiceRinging r12, java.lang.String r13, com.lumiyaviewer.lumiya.slproto.users.ChatterID r14) {
-        /*
-            Method dump skipped, instruction units count: 294
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.voiceintf.VoicePluginServiceConnection.showIncomingCallNotification(com.lumiyaviewer.lumiya.voice.common.messages.VoiceRinging, java.lang.String, com.lumiyaviewer.lumiya.slproto.users.ChatterID):void");
+    private void showIncomingCallNotification(VoiceRinging voiceRinging, String str, ChatterID chatterID) {
+        Intent intent;
+        Intent intent2 = new Intent(this.context, (Class<?>) GridConnectionService.class);
+        intent2.setAction(ACTION_VOICE_REJECT);
+        intent2.setData(voiceRinging.toUri());
+        intent2.putExtra(INTENT_EXTRA_RINGING_MESSSAGE, voiceRinging.toBundle());
+        Intent createIntent = ChatFragmentActivityFactory.getInstance().createIntent(this.context, ChatFragment.makeSelection(chatterID));
+        createIntent.addFlags(536870912);
+        ActivityUtils.setActiveAgentID(createIntent, chatterID.agentUUID);
+        UserManager userManager = this.userManager.get();
+        if (userManager != null) {
+            intent = userManager.getUnreadNotificationManager().captureNotify(UnreadNotificationInfo.create(userManager.getUserID(), 0, null, null, 1, NotificationType.Private, UnreadNotificationInfo.UnreadMessageSource.create(chatterID, null, null, 0), UnreadNotificationInfo.ObjectPopupNotification.create(0, 0, null)), createIntent);
+        }
+        intent = createIntent;
+        Intent intent3 = new Intent(this.context, (Class<?>) GridConnectionService.class);
+        intent3.setAction(ACTION_VOICE_ACCEPT);
+        intent3.setData(voiceRinging.toUri());
+        intent3.putExtra(INTENT_EXTRA_RINGING_MESSSAGE, voiceRinging.toBundle());
+        intent3.putExtra("chatterID", chatterID.toBundle());
+        intent3.putExtra(INTENT_EXTRA_OPEN_CHATTER, PendingIntent.getActivity(this.context, 0, intent, 0));
+        Notification build = new NotificationCompat.Builder(this.context).setSmallIcon(R.drawable.ic_incoming_voice_call).setContentTitle(str).setContentText(this.context.getString(R.string.incoming_voice_call_text)).setDefaults(-1).setPriority(1).setDeleteIntent(PendingIntent.getService(this.context, 0, intent2, 0)).setContentIntent(PendingIntent.getActivity(this.context, 0, intent, 0)).setAutoCancel(true).addAction(R.drawable.ic_voice_call_accept, this.context.getString(R.string.voice_call_accept), PendingIntent.getService(this.context, 0, intent3, 0)).addAction(R.drawable.ic_voice_call_reject, this.context.getString(R.string.voice_call_reject), PendingIntent.getService(this.context, 0, intent2, 0)).build();
+        String str2 = voiceRinging.voiceChannelInfo.voiceChannelURI;
+        this.incomingCallNotificationTags.add(str2);
+        ((NotificationManager) this.context.getSystemService("notification")).notify(str2, 1001, build);
     }
 
     public void acceptCall(Intent intent) {
@@ -406,7 +432,7 @@ public class VoicePluginServiceConnection implements ServiceConnection {
     public void disconnect() {
         this.mainThreadHandler.post(new Runnable() { // from class: com.lumiyaviewer.lumiya.voiceintf.-$Lambda$KEiwggiQxhrsJugAMeHgzXJrgrA
             private final /* synthetic */ void $m$0() {
-                ((VoicePluginServiceConnection) this).m915x2afbf316();
+                VoicePluginServiceConnection.this.m915x2afbf316();
             }
 
             @Override // java.lang.Runnable
@@ -420,7 +446,7 @@ public class VoicePluginServiceConnection implements ServiceConnection {
         sendMessage(VoicePluginMessageType.VoiceEnableMic, new VoiceEnableMic(z));
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_voiceintf_VoicePluginServiceConnection_13701, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_voiceintf_VoicePluginServiceConnection_13701, reason: not valid java name */
     /* synthetic */ void m914x2afa1cbb(VoiceRinging voiceRinging, ChatterNameRetriever chatterNameRetriever) {
         if (chatterNameRetriever == this.ringingChatterNameRetriever) {
             String resolvedName = chatterNameRetriever.getResolvedName();
@@ -431,7 +457,7 @@ public class VoicePluginServiceConnection implements ServiceConnection {
         }
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_voiceintf_VoicePluginServiceConnection_17898, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_voiceintf_VoicePluginServiceConnection_17898, reason: not valid java name */
     /* synthetic */ void m915x2afbf316() {
         Debug.Printf("LumiyaVoice: disconnecting from voice plugin", new Object[0]);
         UserManager userManager = this.userManager.get();

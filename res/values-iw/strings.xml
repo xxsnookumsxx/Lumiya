@@ -34,7 +34,7 @@
     <string name="dialog_vr_core_not_enabled">ייתכן שהאפליקציה לא תפעל כהלכה ללא שירותי VR של Google. כדי להמשיך, הפעל אותם בהגדרות הטלפון.</string>
     <string name="dialog_vr_core_not_installed">ייתכן שהאפליקציה לא תפעל כהלכה ללא שירותי VR של Google. כדי להמשיך, התקן את שירותי VR של Google מחנות Play.</string>
     <string name="go_to_playstore_button">עבור לחנות Play</string>
-    <string name="go_to_vr_listeners_settings_button">עבור ל\'הגדרות\'</string>
+    <string name="go_to_vr_listeners_settings_button">"עבור ל'הגדרות'"</string>
     <string name="no_browser_text">לא נמצא דפדפן שיכול לפתוח את האתר</string>
     <string name="place_your_phone_into_cardboard">הנח את הטלפון במכשיר Cardboard שלך</string>
     <string name="place_your_viewer_into_viewer_format">הנח את הטלפון במכשיר הצפייה %s</string>

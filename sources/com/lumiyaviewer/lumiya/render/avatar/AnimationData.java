@@ -299,7 +299,7 @@ public class AnimationData {
             return this.outPoint > this.inPoint ? this.inPoint + ((f - this.inPoint) % (this.outPoint - this.inPoint)) : this.inPoint;
         }
         if (this.outPoint > this.inPoint) {
-            fFloor = ((f - f2) - (((float) Math.floor((r0 - this.inPoint) / (this.outPoint - this.inPoint))) * (this.outPoint - this.inPoint))) + f2;
+            fFloor = ((f - f2) - (((float) Math.floor(((f - f2) - this.inPoint) / (this.outPoint - this.inPoint))) * (this.outPoint - this.inPoint))) + f2;
         } else {
             fFloor = this.outPoint + f2;
         }

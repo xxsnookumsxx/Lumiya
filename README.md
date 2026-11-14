@@ -79,10 +79,10 @@ Both the compiled native libraries (`lib/arm64-v8a/`) and the Java/JNI layer are
 
 ## 4. Four-Phase Modernization Roadmap
 
-### Phase 1: Clean Gradle Build (`minSdk 26`, `arm64-v8a`) & Recover 36 Decompilation Errors
-1. Set up the Android Gradle build system (`settings.gradle`, `build.gradle`, `gradle.properties`, `gradlew`) configured for `minSdkVersion 26` and `abiFilters 'arm64-v8a'`.
-2. Replace decompiled third-party libraries in `sources/` with clean Maven/Gradle dependencies (or resolve duplicate class conflicts) and fix JADX resource compilation issues in `res/`.
-3. Reconstruct all 36 un-decompiled methods in `sources/com/lumiyaviewer/` from `base.apk` (`classes.dex`) and fix JADX lambda/synthetic syntax artifacts so the full project compiles into a working `arm64-v8a` APK.
+### Phase 1: Clean Gradle Build (`minSdk 26`, `arm64-v8a`) & Recover 36 Decompilation Errors (✅ Completed)
+1. ✅ Configured the Android Gradle build system (`settings.gradle`, `build.gradle`, `gradle.properties`, `gradlew`, `stable-ids.txt`) for `minSdkVersion 26`, `targetSdkVersion 26`, and `abiFilters 'arm64-v8a'`.
+2. ✅ Extracted all 5,258 third-party library bytecode classes from `base.apk` into `libs/bundled-3p-libs.jar`, removed the 1,704 decompiled third-party source files from `sources/`, and restored properly decoded resources and 9-patch drawables in `res/` via Apktool (`stable-ids.txt` + `attrs.xml` `<declare-styleable>`).
+3. ✅ Reconstructed all 36 un-decompiled files (41 methods) in `sources/com/lumiyaviewer/` from `base.apk` (`classes.dex`) using Vineflower/CFR + bytecode recovery, and fixed all JADX decompilation syntax/type/exception artifacts across all 1,292 Lumiya classes (`0` compilation errors). Both `.\gradlew.bat assembleDebug` and `.\gradlew.bat assembleRelease` now build clean 64-bit `arm64-v8a` APKs.
 
 ### Phase 2: Fix Broken Second Life Protocol & Capabilities
 1. **Mesh Loading**: Add `GetMesh2` capability support in `SLCaps.java` and eliminate the infinite wait deadlock in `MeshCache.java`.

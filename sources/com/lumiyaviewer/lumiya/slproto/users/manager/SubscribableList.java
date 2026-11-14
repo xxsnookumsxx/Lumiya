@@ -25,7 +25,7 @@ public class SubscribableList<T> extends AbstractList<T> {
         }
         for (Map.Entry entry : immutableListCopyOf) {
             final List list = (List) entry.getKey();
-            Executor executor = (Executor) ((Optional) entry.getValue()).orNull();
+            Executor executor = (Executor) ((com.google.common.base.Optional) entry.getValue()).orNull();
             if (executor != null) {
                 executor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$Gzuh54B3D66vdv-4A7qntNjZJmM.2
                     private final /* synthetic */ void $m$0() {
@@ -61,7 +61,7 @@ public class SubscribableList<T> extends AbstractList<T> {
         }
         for (Map.Entry entry : immutableListCopyOf) {
             final List list = (List) entry.getKey();
-            Executor executor = (Executor) ((Optional) entry.getValue()).orNull();
+            Executor executor = (Executor) ((com.google.common.base.Optional) entry.getValue()).orNull();
             if (executor != null) {
                 list.getClass();
                 executor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$Gzuh54B3D66vdv-4A7qntNjZJmM
@@ -99,7 +99,7 @@ public class SubscribableList<T> extends AbstractList<T> {
         }
         for (Map.Entry entry : immutableListCopyOf) {
             final List list = (List) entry.getKey();
-            Executor executor = (Executor) ((Optional) entry.getValue()).orNull();
+            Executor executor = (Executor) ((com.google.common.base.Optional) entry.getValue()).orNull();
             if (executor != null) {
                 executor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$Gzuh54B3D66vdv-4A7qntNjZJmM.1
                     private final /* synthetic */ void $m$0() {
@@ -134,7 +134,7 @@ public class SubscribableList<T> extends AbstractList<T> {
         }
         for (Map.Entry entry : immutableListCopyOf) {
             final List list = (List) entry.getKey();
-            Executor executor = (Executor) ((Optional) entry.getValue()).orNull();
+            Executor executor = (Executor) ((com.google.common.base.Optional) entry.getValue()).orNull();
             if (executor != null) {
                 executor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$Gzuh54B3D66vdv-4A7qntNjZJmM.3
                     private final /* synthetic */ void $m$0() {

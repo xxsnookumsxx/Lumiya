@@ -30,7 +30,7 @@ public class ObjectUpdateCompressed extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public int CalcPayloadSize() {
         int length = 12;
-        Iterator<T> it = this.ObjectData_Fields.iterator();
+        Iterator it = this.ObjectData_Fields.iterator();
         while (true) {
             int i = length;
             if (!it.hasNext()) {

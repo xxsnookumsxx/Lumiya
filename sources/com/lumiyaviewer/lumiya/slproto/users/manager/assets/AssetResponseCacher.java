@@ -24,7 +24,7 @@ public class AssetResponseCacher implements Refreshable<AssetKey> {
         this.cachedAssetDao = daoSession.getCachedAssetDao();
         this.pool.setCacheInvalidateHandler(new Refreshable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.assets.-$Lambda$9LOU8pkPwNY-FJNwesblYMTVNE0
             private final /* synthetic */ void $m$0(Object obj) {
-                ((AssetResponseCacher) this).m388x50f99f72((AssetKey) obj);
+                AssetResponseCacher.this.m388x50f99f72((AssetKey) obj);
             }
 
             @Override // com.lumiyaviewer.lumiya.react.Refreshable
@@ -36,7 +36,8 @@ public class AssetResponseCacher implements Refreshable<AssetKey> {
             /* JADX INFO: Access modifiers changed from: protected */
             @Override // com.lumiyaviewer.lumiya.react.RequestProcessor
             public boolean isRequestComplete(@Nonnull AssetKey assetKey, AssetData assetData) {
-                if (AssetResponseCacher.this.cachedAssetDao.load(assetKey.toString()) != null) {
+                CachedAsset r0 = AssetResponseCacher.this.cachedAssetDao.load(assetKey.toString());
+                if (r0 != null) {
                     return !r0.getMustRevalidate();
                 }
                 return false;

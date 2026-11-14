@@ -29,7 +29,7 @@ public class InlineList<T extends InlineListEntry<T>> {
     public void removeEntry(T t) {
         if (t.getList() == this) {
             T t2 = (T) t.getNext();
-            InlineListEntry prev = t.getPrev();
+            T prev = t.getPrev();
             if (prev != null) {
                 prev.setNext(t2);
             } else {

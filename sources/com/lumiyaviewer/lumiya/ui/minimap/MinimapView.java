@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class MinimapView extends View {
     private static final float USER_MARK_TOUCH_SLACK = 50.0f;
     private int activePointerId;
@@ -136,7 +137,7 @@ public class MinimapView extends View {
 
     private void drawUserMark(ImmutableVector immutableVector, Canvas canvas, Paint paint, Rect rect, boolean z, float f, boolean z2) {
         float x = immutableVector.getX();
-        float fWidth = rect.left + ((x / 256.0f) * rect.width());
+        float width = rect.left + ((x / 256.0f) * rect.width());
         float y = rect.top + (((256.0f - immutableVector.getY()) / 256.0f) * rect.width());
         if (z) {
             paint.setARGB(255, 255, 255, 0);
@@ -145,123 +146,65 @@ public class MinimapView extends View {
         }
         paint.setStrokeWidth(0.0f);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        canvas.drawCircle(fWidth, y, 5.0f, paint);
+        canvas.drawCircle(width, y, 5.0f, paint);
         paint.setARGB(255, 128, 255, 128);
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle(fWidth, y, 5.0f, paint);
+        canvas.drawCircle(width, y, 5.0f, paint);
         if (z && (!Float.isNaN(f))) {
-            float fCos = (float) (Math.cos(f) * 20.0d);
-            float fSin = (float) (Math.sin(f) * 20.0d);
-            float fCos2 = (float) ((Math.cos(f) * 15.0d) - (Math.sin(f) * (-5.0d)));
-            float fCos3 = (float) ((Math.cos(f) * (-5.0d)) + (Math.sin(f) * 15.0d));
-            float fCos4 = (float) ((Math.cos(f) * 15.0d) - (Math.sin(f) * 5.0d));
-            float fCos5 = (float) ((Math.cos(f) * 5.0d) + (Math.sin(f) * 15.0d));
+            float cos = (float) (Math.cos(f) * 20.0d);
+            float sin = (float) (Math.sin(f) * 20.0d);
+            float cos2 = (float) ((Math.cos(f) * 15.0d) - (Math.sin(f) * (-5.0d)));
+            float cos3 = (float) ((Math.cos(f) * (-5.0d)) + (Math.sin(f) * 15.0d));
+            float cos4 = (float) ((Math.cos(f) * 15.0d) - (Math.sin(f) * 5.0d));
+            float cos5 = (float) ((Math.cos(f) * 5.0d) + (Math.sin(f) * 15.0d));
             paint.setStrokeWidth(3.0f);
-            canvas.drawLine(fWidth, y, fWidth + fCos, y - fSin, paint);
-            canvas.drawLine(fWidth + fCos, y - fSin, fCos2 + fWidth, y - fCos3, paint);
-            canvas.drawLine(fWidth + fCos, y - fSin, fWidth + fCos4, y - fCos5, paint);
+            canvas.drawLine(width, y, width + cos, y - sin, paint);
+            canvas.drawLine(width + cos, y - sin, cos2 + width, y - cos3, paint);
+            canvas.drawLine(width + cos, y - sin, width + cos4, y - cos5, paint);
         }
         if (z2) {
             paint.setStrokeWidth(2.0f);
             paint.setARGB(255, 255, 255, 0);
-            canvas.drawCircle(fWidth, y, 10.0f, paint);
+            canvas.drawCircle(width, y, 10.0f, paint);
         }
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:21:0x009f  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
-    private void handleTouch(float r10, float r11) {
-        /*
-            r9 = this;
-            r8 = 1132462080(0x43800000, float:256.0)
-            r0 = 0
-            com.lumiyaviewer.lumiya.slproto.modules.SLMinimap$UserLocations r1 = r9.userLocations
-            if (r1 == 0) goto L9e
-            android.graphics.Rect r1 = r9.lastDrawRect
-            if (r1 == 0) goto L9e
-            android.content.res.Resources r1 = r9.getResources()
-            android.util.DisplayMetrics r1 = r1.getDisplayMetrics()
-            r2 = 1
-            r3 = 1112014848(0x42480000, float:50.0)
-            float r4 = android.util.TypedValue.applyDimension(r2, r3, r1)
-            r1 = 0
-            com.lumiyaviewer.lumiya.slproto.modules.SLMinimap$UserLocations r2 = r9.userLocations
-            java.util.Map<java.util.UUID, com.lumiyaviewer.lumiya.slproto.modules.SLMinimap$UserLocation> r2 = r2.userPositions
-            java.util.Set r2 = r2.entrySet()
-            java.util.Iterator r5 = r2.iterator()
-            r2 = r0
-            r3 = r1
-        L29:
-            boolean r0 = r5.hasNext()
-            if (r0 == 0) goto L92
-            java.lang.Object r0 = r5.next()
-            java.util.Map$Entry r0 = (java.util.Map.Entry) r0
-            java.lang.Object r1 = r0.getValue()
-            com.lumiyaviewer.lumiya.slproto.modules.SLMinimap$UserLocation r1 = (com.lumiyaviewer.lumiya.slproto.modules.SLMinimap.UserLocation) r1
-            com.lumiyaviewer.lumiya.slproto.types.ImmutableVector r1 = r1.location
-            float r6 = r1.getX()
-            float r6 = r6 / r8
-            android.graphics.Rect r7 = r9.lastDrawRect
-            int r7 = r7.width()
-            float r7 = (float) r7
-            float r6 = r6 * r7
-            android.graphics.Rect r7 = r9.lastDrawRect
-            int r7 = r7.left
-            float r7 = (float) r7
-            float r6 = r6 + r7
-            float r1 = r1.getY()
-            float r1 = r8 - r1
-            float r1 = r1 / r8
-            android.graphics.Rect r7 = r9.lastDrawRect
-            int r7 = r7.width()
-            float r7 = (float) r7
-            float r1 = r1 * r7
-            android.graphics.Rect r7 = r9.lastDrawRect
-            int r7 = r7.top
-            float r7 = (float) r7
-            float r1 = r1 + r7
-            float r6 = r6 - r10
-            float r6 = java.lang.Math.abs(r6)
-            float r1 = r1 - r11
-            float r1 = java.lang.Math.abs(r1)
-            float r6 = r6 * r6
-            float r1 = r1 * r1
-            float r1 = r1 + r6
-            double r6 = (double) r1
-            double r6 = java.lang.Math.sqrt(r6)
-            float r1 = (float) r6
-            int r6 = (r1 > r4 ? 1 : (r1 == r4 ? 0 : -1))
-            if (r6 >= 0) goto L9f
-            if (r2 != 0) goto L87
-            java.lang.Object r0 = r0.getKey()
-            java.util.UUID r0 = (java.util.UUID) r0
-        L84:
-            r2 = r0
-            r3 = r1
-            goto L29
-        L87:
-            int r6 = (r1 > r3 ? 1 : (r1 == r3 ? 0 : -1))
-            if (r6 >= 0) goto L9f
-            java.lang.Object r0 = r0.getKey()
-            java.util.UUID r0 = (java.util.UUID) r0
-            goto L84
-        L92:
-            r9.setSelectedUser(r2)
-            com.lumiyaviewer.lumiya.ui.minimap.MinimapView$OnUserClickListener r0 = r9.onUserClickListener
-            if (r0 == 0) goto L9e
-            com.lumiyaviewer.lumiya.ui.minimap.MinimapView$OnUserClickListener r0 = r9.onUserClickListener
-            r0.onUserClick(r2)
-        L9e:
-            return
-        L9f:
-            r0 = r2
-            r1 = r3
-            goto L84
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.ui.minimap.MinimapView.handleTouch(float, float):void");
+    private void handleTouch(float f, float f2) {
+        UUID uuid;
+        UUID uuid2 = null;
+        if (this.userLocations == null || this.lastDrawRect == null) {
+            return;
+        }
+        float applyDimension = TypedValue.applyDimension(1, USER_MARK_TOUCH_SLACK, getResources().getDisplayMetrics());
+        float f3 = 0.0f;
+        Iterator it = this.userLocations.userPositions.entrySet().iterator();
+        while (true) {
+            uuid = uuid2;
+            float f4 = f3;
+            if (!it.hasNext()) {
+                break;
+            }
+            Map.Entry entry = (Map.Entry) it.next();
+            ImmutableVector immutableVector = ((SLMinimap.UserLocation) entry.getValue()).location;
+            float x = ((immutableVector.getX() / 256.0f) * this.lastDrawRect.width()) + this.lastDrawRect.left;
+            float y = (((256.0f - immutableVector.getY()) / 256.0f) * this.lastDrawRect.width()) + this.lastDrawRect.top;
+            float abs = Math.abs(x - f);
+            float abs2 = Math.abs(y - f2);
+            f3 = (float) Math.sqrt((abs2 * abs2) + (abs * abs));
+            if (f3 < applyDimension) {
+                if (uuid == null) {
+                    uuid2 = (UUID) entry.getKey();
+                } else if (f3 < f4) {
+                    uuid2 = (UUID) entry.getKey();
+                }
+            }
+            uuid2 = uuid;
+            f3 = f4;
+        }
+        setSelectedUser(uuid);
+        if (this.onUserClickListener != null) {
+            this.onUserClickListener.onUserClick(uuid);
+        }
     }
 
     @Override // android.view.View
@@ -269,38 +212,38 @@ public class MinimapView extends View {
         if (this.minimapBitmap != null) {
             int width = getWidth();
             int height = getHeight();
-            int iRound = Math.round(Math.min(width, height) * this.actualZoomFactor);
+            int round = Math.round(Math.min(width, height) * this.actualZoomFactor);
             int i = width / 2;
             int i2 = height / 2;
-            if (iRound <= width) {
+            if (round <= width) {
                 this.mapOffsetX = 0.0f;
             }
-            if (iRound <= height) {
+            if (round <= height) {
                 this.mapOffsetY = 0.0f;
             }
-            int i3 = (i - (iRound / 2)) + ((int) this.mapOffsetX);
-            if (i3 > 0 && iRound > width) {
-                this.mapOffsetX = (iRound / 2) - i;
-                i3 = (i - (iRound / 2)) + ((int) this.mapOffsetX);
+            int i3 = (i - (round / 2)) + ((int) this.mapOffsetX);
+            if (i3 > 0 && round > width) {
+                this.mapOffsetX = (round / 2) - i;
+                i3 = (i - (round / 2)) + ((int) this.mapOffsetX);
             }
-            if (i3 + iRound <= width && iRound > width) {
-                this.mapOffsetX = ((width - iRound) - i) + (iRound / 2);
-                i3 = (i - (iRound / 2)) + ((int) this.mapOffsetX);
+            if (i3 + round <= width && round > width) {
+                this.mapOffsetX = ((width - round) - i) + (round / 2);
+                i3 = (i - (round / 2)) + ((int) this.mapOffsetX);
             }
-            int i4 = (i2 - (iRound / 2)) + ((int) this.mapOffsetY);
-            if (i4 > 0 && iRound > height) {
-                this.mapOffsetY = (iRound / 2) - i2;
-                i4 = (i2 - (iRound / 2)) + ((int) this.mapOffsetY);
+            int i4 = (i2 - (round / 2)) + ((int) this.mapOffsetY);
+            if (i4 > 0 && round > height) {
+                this.mapOffsetY = (round / 2) - i2;
+                i4 = (i2 - (round / 2)) + ((int) this.mapOffsetY);
             }
-            if (i4 + iRound <= height && iRound > height) {
-                this.mapOffsetY = ((height - iRound) - i2) + (iRound / 2);
-                i4 = (i2 - (iRound / 2)) + ((int) this.mapOffsetY);
+            if (i4 + round <= height && round > height) {
+                this.mapOffsetY = ((height - round) - i2) + (round / 2);
+                i4 = (i2 - (round / 2)) + ((int) this.mapOffsetY);
             }
-            this.bitmapDstRect.set(i3, i4, i3 + iRound, iRound + i4);
+            this.bitmapDstRect.set(i3, i4, i3 + round, round + i4);
             this.bitmapSrcRect.set(0, 0, this.minimapBitmap.getWidth(), this.minimapBitmap.getHeight());
             canvas.drawBitmap(this.minimapBitmap, this.bitmapSrcRect, this.bitmapDstRect, this.bitmapPaint);
             if (this.userLocations != null) {
-                Iterator<T> it = this.userLocations.userPositions.entrySet().iterator();
+                Iterator it = this.userLocations.userPositions.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry entry = (Map.Entry) it.next();
                     drawUserMark(((SLMinimap.UserLocation) entry.getValue()).location, canvas, this.userMarkPaint, this.bitmapDstRect, false, Float.NaN, Objects.equal(this.selectedUser, entry.getKey()));
@@ -326,18 +269,25 @@ public class MinimapView extends View {
         } else {
             this.displaySize.set(defaultDisplay.getWidth(), defaultDisplay.getHeight());
         }
-        int iMin = Math.min(this.displaySize.x, this.displaySize.y);
+        int min = Math.min(this.displaySize.x, this.displaySize.y);
         if (View.MeasureSpec.getMode(i) != 0) {
-            iMin = Math.min(iMin, View.MeasureSpec.getSize(i));
+            min = Math.min(min, View.MeasureSpec.getSize(i));
         }
         if (View.MeasureSpec.getMode(i2) != 0) {
-            iMin = Math.min(iMin, View.MeasureSpec.getSize(i2));
+            min = Math.min(min, View.MeasureSpec.getSize(i2));
         }
-        setMeasuredDimension(iMin, iMin);
+        setMeasuredDimension(min, min);
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Code restructure failed: missing block: B:3:0x000f, code lost:
+    
+        return true;
+     */
     @Override // android.view.View
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public boolean onTouchEvent(MotionEvent motionEvent) {
         this.scaleGestureDetector.onTouchEvent(motionEvent);
         switch (motionEvent.getActionMasked()) {
@@ -346,14 +296,14 @@ public class MinimapView extends View {
                 this.prevTouchX = motionEvent.getX();
                 this.prevTouchY = motionEvent.getY();
                 handleTouch(this.prevTouchX, this.prevTouchY);
-                return true;
+                break;
             case 1:
                 this.activePointerId = -1;
-                return true;
+                break;
             case 2:
-                int iFindPointerIndex = motionEvent.findPointerIndex(this.activePointerId);
-                float x = motionEvent.getX(iFindPointerIndex);
-                float y = motionEvent.getY(iFindPointerIndex);
+                int findPointerIndex = motionEvent.findPointerIndex(this.activePointerId);
+                float x = motionEvent.getX(findPointerIndex);
+                float y = motionEvent.getY(findPointerIndex);
                 if (!this.scaleGestureDetector.isInProgress()) {
                     float f = x - this.prevTouchX;
                     float f2 = y - this.prevTouchY;
@@ -363,14 +313,10 @@ public class MinimapView extends View {
                 }
                 this.prevTouchX = x;
                 this.prevTouchY = y;
-                return true;
+                break;
             case 3:
                 this.activePointerId = -1;
-                return true;
-            case 4:
-            case 5:
-            default:
-                return true;
+                break;
             case 6:
                 int actionIndex = motionEvent.getActionIndex();
                 if (motionEvent.getPointerId(actionIndex) == this.activePointerId) {
@@ -378,9 +324,11 @@ public class MinimapView extends View {
                     this.prevTouchX = motionEvent.getX(i);
                     this.prevTouchY = motionEvent.getY(i);
                     this.activePointerId = motionEvent.getPointerId(i);
+                    break;
                 }
-                return true;
+                break;
         }
+        return true;
     }
 
     void setMinimapBitmap(@Nullable SLMinimap.MinimapBitmap minimapBitmap) {

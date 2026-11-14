@@ -96,7 +96,7 @@ public class SubscriptionPool<K, T> implements Unsubscribable<K, T>, Refreshable
         if (this.disposeExecutor != null) {
             this.disposeExecutor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.react.-$Lambda$FQ4ueWG6sVQMwgP3YGPP2nbRyFo
                 private final /* synthetic */ void $m$0() {
-                    ((SubscriptionPool) this).m50lambda$com_lumiyaviewer_lumiya_react_SubscriptionPool_8106(data);
+                    SubscriptionPool.this.m50lambda$com_lumiyaviewer_lumiya_react_SubscriptionPool_8106(data);
                 }
 
                 @Override // java.lang.Runnable
@@ -127,12 +127,12 @@ public class SubscriptionPool<K, T> implements Unsubscribable<K, T>, Refreshable
     }
 
     /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_react_SubscriptionPool_8106, reason: not valid java name */
-    /* synthetic */ void m50lambda$com_lumiyaviewer_lumiya_react_SubscriptionPool_8106(Object obj) {
+    /* synthetic */ void m50lambda$com_lumiyaviewer_lumiya_react_SubscriptionPool_8106(T obj) {
         this.disposeHandler.onDispose(obj);
     }
 
     /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_react_SubscriptionPool_8749, reason: not valid java name */
-    /* synthetic */ void m51lambda$com_lumiyaviewer_lumiya_react_SubscriptionPool_8749(Object obj) {
+    /* synthetic */ void m51lambda$com_lumiyaviewer_lumiya_react_SubscriptionPool_8749(K obj) {
         this.cacheInvalidateHandler.requestUpdate(obj);
     }
 
@@ -151,7 +151,7 @@ public class SubscriptionPool<K, T> implements Unsubscribable<K, T>, Refreshable
             }
         }
         if (subscriptions != null) {
-            Iterator<T> it = subscriptions.iterator();
+            Iterator<Subscription<K, T>> it = subscriptions.iterator();
             while (it.hasNext()) {
                 ((Subscription) it.next()).onData(t);
             }
@@ -173,7 +173,7 @@ public class SubscriptionPool<K, T> implements Unsubscribable<K, T>, Refreshable
             }
         }
         if (subscriptions != null) {
-            Iterator<T> it = subscriptions.iterator();
+            Iterator<Subscription<K, T>> it = subscriptions.iterator();
             while (it.hasNext()) {
                 ((Subscription) it.next()).onError(th);
             }
@@ -187,7 +187,7 @@ public class SubscriptionPool<K, T> implements Unsubscribable<K, T>, Refreshable
                 if (this.cacheInvalidateExecutor != null) {
                     this.cacheInvalidateExecutor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.react.-$Lambda$FQ4ueWG6sVQMwgP3YGPP2nbRyFo.1
                         private final /* synthetic */ void $m$0() {
-                            ((SubscriptionPool) this).m51lambda$com_lumiyaviewer_lumiya_react_SubscriptionPool_8749(k);
+                            SubscriptionPool.this.m51lambda$com_lumiyaviewer_lumiya_react_SubscriptionPool_8749(k);
                         }
 
                         @Override // java.lang.Runnable
@@ -213,10 +213,10 @@ public class SubscriptionPool<K, T> implements Unsubscribable<K, T>, Refreshable
 
     public void requestUpdateAll() {
         synchronized (this.lock) {
-            Iterator<T> it = this.entries.entrySet().iterator();
+            Iterator it = this.entries.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry entry = (Map.Entry) it.next();
-                Object key = entry.getKey();
+                K key = (K) entry.getKey();
                 SubscriptionRequestedList subscriptionRequestedList = (SubscriptionRequestedList) entry.getValue();
                 if (subscriptionRequestedList != null && this.requestHandler != null && (!this.requestOnce || (!subscriptionRequestedList.requested))) {
                     subscriptionRequestedList.requested = true;
@@ -233,10 +233,10 @@ public class SubscriptionPool<K, T> implements Unsubscribable<K, T>, Refreshable
         RequestHandler<K> requestHandler = this.requestHandler;
         if (requestHandler != null) {
             synchronized (this.lock) {
-                Iterator<T> it = this.entries.entrySet().iterator();
+                Iterator it = this.entries.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry entry = (Map.Entry) it.next();
-                    Object key = entry.getKey();
+                    K key = (K) entry.getKey();
                     SubscriptionRequestedList subscriptionRequestedList = (SubscriptionRequestedList) entry.getValue();
                     if (subscriptionRequestedList == null || !predicate.apply(key) || (this.requestOnce && !(!subscriptionRequestedList.requested))) {
                         hashSet = hashSet2;
@@ -307,7 +307,7 @@ public class SubscriptionPool<K, T> implements Unsubscribable<K, T>, Refreshable
             if (error != null) {
                 subscription.onError(error);
             } else {
-                T data = subscriptionRequestedList2.getData();
+                T data = (T) subscriptionRequestedList2.getData();
                 if (data != null) {
                     subscription.onData(data);
                 }

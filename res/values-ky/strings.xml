@@ -23,7 +23,7 @@
     <string name="cancel_button">Жокко чыгаруу</string>
     <string name="dialog_button_got_it">ТҮШҮНДҮМ</string>
     <string name="dialog_button_open_help_center">ЖАРДАМ БОРБОРУН АЧУУ</string>
-    <string name="dialog_message_incompatible_phone">Daydream\'ге шайкеш келген телефон талап кылынат. Кеңири маалымат үчүн, жардам борборуна кайрылыңыз.</string>
+    <string name="dialog_message_incompatible_phone">"Daydream'ге шайкеш келген телефон талап кылынат. Кеңири маалымат үчүн, жардам борборуна кайрылыңыз."</string>
     <string name="dialog_message_no_cardboard">Көрүү каражатын конфигурациялоо үчүн Cardboard колдонмосун алыңыз.</string>
     <string name="dialog_message_setup">Мыкты мүмкүнчүлүктөрдү колдонуу үчүн көрүү каражатын жөндөңүз.</string>
     <string name="dialog_title">Конфигурациялоо</string>

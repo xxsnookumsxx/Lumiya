@@ -62,7 +62,7 @@ public class InventoryDescendents extends SLMessage {
     public int CalcPayloadSize() {
         int i;
         int length = 61;
-        Iterator<T> it = this.FolderData_Fields.iterator();
+        Iterator it = this.FolderData_Fields.iterator();
         while (true) {
             i = length;
             if (!it.hasNext()) {
@@ -71,7 +71,7 @@ public class InventoryDescendents extends SLMessage {
             length = ((FolderData) it.next()).Name.length + 34 + i;
         }
         int length2 = i + 1;
-        Iterator<T> it2 = this.ItemData_Fields.iterator();
+        Iterator it2 = this.ItemData_Fields.iterator();
         while (true) {
             int i2 = length2;
             if (!it2.hasNext()) {

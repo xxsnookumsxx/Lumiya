@@ -121,9 +121,12 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                         childAt.getHitRect(rect);
                         if (rect.contains(rawX, rawY)) {
                             this.mDownView = childAt;
+                            break;
                         } else {
                             i++;
                         }
+                    } else {
+                        break;
                     }
                 }
                 if (this.mDownView != null) {

@@ -42,8 +42,5 @@ public class TerrainGeometryCache extends ResourceMemoryCache<TerrainPatchHeight
         return new TerrainGeometryRequest(terrainPatchHeightMap, resourceManager);
     }
 
-    @Override // com.lumiyaviewer.lumiya.res.ResourceManager
-    protected /* bridge */ /* synthetic */ ResourceRequest CreateNewRequest(Object obj, ResourceManager resourceManager) {
-        return CreateNewRequest((TerrainPatchHeightMap) obj, (ResourceManager<TerrainPatchHeightMap, TerrainPatchGeometry>) resourceManager);
-    }
+    
 }

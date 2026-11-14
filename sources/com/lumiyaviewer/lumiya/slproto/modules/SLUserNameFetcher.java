@@ -49,19 +49,15 @@ public class SLUserNameFetcher extends SLModule implements RequestListener {
             @Override // java.lang.Runnable
             public void run() {
                 while (!SLUserNameFetcher.this.threadMustExit) {
-                    do {
-                        try {
-                        } catch (InterruptedException e) {
-                            return;
-                        }
-                    } while (SLUserNameFetcher.this.FetchSomeNamesOverHTTP());
+                    while (SLUserNameFetcher.this.FetchSomeNamesOverHTTP()) {
+                    }
                     SLUserNameFetcher.this.lock.lock();
                     try {
                         SLUserNameFetcher.this.hasNamesToFetch.await();
+                    } catch (InterruptedException e) {
+                        return;
+                    } finally {
                         SLUserNameFetcher.this.lock.unlock();
-                    } catch (Throwable th) {
-                        SLUserNameFetcher.this.lock.unlock();
-                        throw th;
                     }
                 }
             }
@@ -86,7 +82,7 @@ public class SLUserNameFetcher extends SLModule implements RequestListener {
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    public boolean FetchSomeNamesOverHTTP() throws IOException, LLSDXMLException {
+    public boolean FetchSomeNamesOverHTTP() {
         String str;
         LLSDNode lLSDNodePerformRequest;
         List<UUID> uUIDsToFetch = getUUIDsToFetch(4);
@@ -94,26 +90,22 @@ public class SLUserNameFetcher extends SLModule implements RequestListener {
             return false;
         }
         String str2 = this.caps.getCapability(SLCaps.SLCapability.GetDisplayNames) + "/";
-        Iterator<T> it = uUIDsToFetch.iterator();
+        Iterator it = uUIDsToFetch.iterator();
         boolean z = true;
-        while (true) {
-            str = str2;
-            if (it.hasNext()) {
-                str2 = (z ? str + "?" : str + "&") + "ids=" + ((UUID) it.next()).toString();
-                z = false;
-            } else {
-                try {
-                    break;
-                } catch (LLSDXMLException e) {
-                    e.printStackTrace();
-                    lLSDNodePerformRequest = null;
-                } catch (IOException e2) {
-                    e2.printStackTrace();
-                    lLSDNodePerformRequest = null;
-                }
-            }
+        str = str2;
+        while (it.hasNext()) {
+            str = (z ? str + "?" : str + "&") + "ids=" + ((UUID) it.next()).toString();
+            z = false;
         }
-        lLSDNodePerformRequest = this.xmlReq.PerformRequest(str, null);
+        try {
+            lLSDNodePerformRequest = this.xmlReq.PerformRequest(str, null);
+        } catch (LLSDXMLException e) {
+            e.printStackTrace();
+            lLSDNodePerformRequest = null;
+        } catch (IOException e2) {
+            e2.printStackTrace();
+            lLSDNodePerformRequest = null;
+        }
         if (lLSDNodePerformRequest != null) {
             try {
                 if (lLSDNodePerformRequest.keyExists("agents")) {

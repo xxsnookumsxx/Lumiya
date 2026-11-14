@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class ObjectPopupsManager {
     private static final int MAX_POPUPS = 99;
 
@@ -60,7 +60,7 @@ public class ObjectPopupsManager {
         }
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_slproto_users_manager_ObjectPopupsManager_8558, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_slproto_users_manager_ObjectPopupsManager_8558, reason: not valid java name */
     static /* synthetic */ void m347xe63a07b1(ObjectPopupListener objectPopupListener) {
         objectPopupListener.onObjectPopupCountChanged(0);
         objectPopupListener.onNewObjectPopup(null);
@@ -68,15 +68,16 @@ public class ObjectPopupsManager {
 
     private void notifyCountUpdated() {
         Executor executor;
-        final ObjectPopupListener objectPopupListener = null;
+        ObjectPopupListener tempPopupListener = null;
         synchronized (this.listenerLock) {
             if (this.objectPopupListener != null) {
-                objectPopupListener = this.objectPopupListener.get();
+                tempPopupListener = this.objectPopupListener.get();
                 executor = this.objectPopupListenerExecutor;
             } else {
                 executor = null;
             }
         }
+        final ObjectPopupListener objectPopupListener = tempPopupListener;
         if (objectPopupListener != null) {
             final int size = this.objectPopups.size();
             if (executor != null) {
@@ -99,12 +100,12 @@ public class ObjectPopupsManager {
     void addObjectPopup(final SLChatEvent sLChatEvent) {
         Executor executor;
         boolean z = false;
-        final ObjectPopupListener objectPopupListener = null;
+        ObjectPopupListener tempPopupListener = null;
         synchronized (this.listenerLock) {
             if (this.objectPopupListener != null) {
-                objectPopupListener = this.objectPopupListener.get();
+                tempPopupListener = this.objectPopupListener.get();
                 executor = this.objectPopupListenerExecutor;
-                if (objectPopupListener != null && this.displayedPopupEvent == null) {
+                if (tempPopupListener != null && this.displayedPopupEvent == null) {
                     this.displayedPopupEvent = sLChatEvent;
                     this.popupAnimated = false;
                     z = true;
@@ -118,6 +119,7 @@ public class ObjectPopupsManager {
                 this.lastEvent = sLChatEvent;
             }
         }
+        final ObjectPopupListener objectPopupListener = tempPopupListener;
         if (!z) {
             addObjectPopupInternal(sLChatEvent);
             final int size = this.objectPopups.size();
@@ -163,67 +165,46 @@ public class ObjectPopupsManager {
         this.userManager.getUnreadNotificationManager().updateUnreadNotifications();
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:24:0x0046  */
+    /* JADX WARN: Removed duplicated region for block: B:7:0x001f A[Catch: all -> 0x0049, TRY_LEAVE, TryCatch #0 {, blocks: (B:23:0x0006, B:25:0x000a, B:27:0x0011, B:28:0x0019, B:5:0x001b, B:7:0x001f), top: B:22:0x0006 }] */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
-    public void cancelObjectPopup(com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent r6) {
-        /*
-            r5 = this;
-            r1 = 0
-            java.lang.Object r3 = r5.listenerLock
-            monitor-enter(r3)
-            if (r6 == 0) goto L46
-            com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent r0 = r5.displayedPopupEvent     // Catch: java.lang.Throwable -> L49
-            if (r6 != r0) goto L46
-            r0 = 0
-            r5.displayedPopupEvent = r0     // Catch: java.lang.Throwable -> L49
-            java.lang.ref.WeakReference<com.lumiyaviewer.lumiya.slproto.users.manager.ObjectPopupsManager$ObjectPopupListener> r0 = r5.objectPopupListener     // Catch: java.lang.Throwable -> L49
-            if (r0 == 0) goto L44
-            java.lang.ref.WeakReference<com.lumiyaviewer.lumiya.slproto.users.manager.ObjectPopupsManager$ObjectPopupListener> r0 = r5.objectPopupListener     // Catch: java.lang.Throwable -> L49
-            java.lang.Object r0 = r0.get()     // Catch: java.lang.Throwable -> L49
-            com.lumiyaviewer.lumiya.slproto.users.manager.ObjectPopupsManager$ObjectPopupListener r0 = (com.lumiyaviewer.lumiya.slproto.users.manager.ObjectPopupsManager.ObjectPopupListener) r0     // Catch: java.lang.Throwable -> L49
-        L19:
-            java.util.concurrent.Executor r2 = r5.objectPopupListenerExecutor     // Catch: java.lang.Throwable -> L49
-        L1b:
-            com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent r4 = r5.lastEvent     // Catch: java.lang.Throwable -> L49
-            if (r6 != r4) goto L22
-            r4 = 0
-            r5.lastEvent = r4     // Catch: java.lang.Throwable -> L49
-        L22:
-            monitor-exit(r3)
-            if (r0 == 0) goto L2f
-            if (r2 == 0) goto L4c
-            com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$gJtxV6TiuzFNXMR7-6og75a4tFE r1 = new com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$gJtxV6TiuzFNXMR7-6og75a4tFE
-            r1.<init>()
-            r2.execute(r1)
-        L2f:
-            com.lumiyaviewer.lumiya.slproto.users.manager.SubscribableList<com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent> r0 = r5.objectPopups
-            boolean r0 = r0.remove(r6)
-            if (r0 == 0) goto L3a
-            r5.notifyCountUpdated()
-        L3a:
-            com.lumiyaviewer.lumiya.slproto.users.manager.UserManager r0 = r5.userManager
-            com.lumiyaviewer.lumiya.slproto.users.manager.UnreadNotificationManager r0 = r0.getUnreadNotificationManager()
-            r0.updateUnreadNotifications()
-            return
-        L44:
-            r0 = r1
-            goto L19
-        L46:
-            r0 = r1
-            r2 = r1
-            goto L1b
-        L49:
-            r0 = move-exception
-            monitor-exit(r3)
-            throw r0
-        L4c:
-            r0.onNewObjectPopup(r1)
-            goto L2f
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.slproto.users.manager.ObjectPopupsManager.cancelObjectPopup(com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent):void");
+    public void cancelObjectPopup(SLChatEvent sLChatEvent) {
+        final ObjectPopupListener objectPopupListener;
+        Executor executor;
+        synchronized (this.listenerLock) {
+            if (sLChatEvent != null && sLChatEvent == this.displayedPopupEvent) {
+                this.displayedPopupEvent = null;
+                objectPopupListener = this.objectPopupListener != null ? this.objectPopupListener.get() : null;
+                executor = this.objectPopupListenerExecutor;
+            } else {
+                objectPopupListener = null;
+                executor = null;
+            }
+            if (sLChatEvent != null && sLChatEvent == this.lastEvent) {
+                this.lastEvent = null;
+            }
+        }
+        if (objectPopupListener != null) {
+            if (executor != null) {
+                executor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$gJtxV6TiuzFNXMR7-6og75a4tFE
+                    private final /* synthetic */ void $m$0() {
+                        ((ObjectPopupsManager.ObjectPopupListener) objectPopupListener).onNewObjectPopup(null);
+                    }
+
+                    @Override // java.lang.Runnable
+                    public final void run() {
+                        $m$0();
+                    }
+                });
+            } else {
+                objectPopupListener.onNewObjectPopup(null);
+            }
+        }
+        if (this.objectPopups.remove(sLChatEvent)) {
+            notifyCountUpdated();
+        }
+        this.userManager.getUnreadNotificationManager().updateUnreadNotifications();
     }
 
     void clearObjectPopups() {
@@ -288,11 +269,11 @@ public class ObjectPopupsManager {
 
     @Nonnull
     UnreadNotificationInfo.ObjectPopupNotification getNotification(boolean z) {
-        UnreadNotificationInfo.ObjectPopupNotification objectPopupNotificationCreate;
+        UnreadNotificationInfo.ObjectPopupNotification create;
         synchronized (this.listenerLock) {
-            objectPopupNotificationCreate = UnreadNotificationInfo.ObjectPopupNotification.create(z ? this.freshPopupsCount.getAndSet(0) : 0, this.unreadPopupCount.get(), this.lastEvent instanceof SLChatTextEvent ? UnreadNotificationInfo.ObjectPopupMessage.create(this.lastEvent.getSource().getSourceName(this.userManager), ((SLChatTextEvent) this.lastEvent).getRawText()) : null);
+            create = UnreadNotificationInfo.ObjectPopupNotification.create(z ? this.freshPopupsCount.getAndSet(0) : 0, this.unreadPopupCount.get(), this.lastEvent instanceof SLChatTextEvent ? UnreadNotificationInfo.ObjectPopupMessage.create(this.lastEvent.getSource().getSourceName(this.userManager), ((SLChatTextEvent) this.lastEvent).getRawText()) : null);
         }
-        return objectPopupNotificationCreate;
+        return create;
     }
 
     public int getObjectPopupCount() {

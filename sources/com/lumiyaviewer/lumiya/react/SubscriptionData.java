@@ -98,7 +98,7 @@ public class SubscriptionData<K, T> implements Subscription.OnData<T>, Subscript
             synchronized (this.lock) {
                 immutableListCopyOf = ImmutableList.copyOf((Collection) this.loadableStatusListeners);
             }
-            Iterator<E> it = immutableListCopyOf.iterator();
+            Iterator it = immutableListCopyOf.iterator();
             while (it.hasNext()) {
                 ((Loadable.LoadableStatusListener) it.next()).onLoadableStatusChange(this, getLoadableStatus());
             }

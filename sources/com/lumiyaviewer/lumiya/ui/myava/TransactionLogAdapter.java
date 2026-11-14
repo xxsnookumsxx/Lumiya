@@ -25,7 +25,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /* JADX INFO: loaded from: classes.dex */
-public class TransactionLogAdapter extends RecyclerView.Adapter<TransactionViewHolder> {
+public class TransactionLogAdapter extends RecyclerView.Adapter<TransactionLogAdapter.TransactionViewHolder> {
     private final UUID agentUUID;
     private final Context context;
 

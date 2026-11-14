@@ -70,7 +70,7 @@ public class Subscription<K, T> implements RefreshableOne {
     }
 
     /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_react_Subscription_1719, reason: not valid java name */
-    /* synthetic */ void m48lambda$com_lumiyaviewer_lumiya_react_Subscription_1719(Object obj) {
+    /* synthetic */ void m48lambda$com_lumiyaviewer_lumiya_react_Subscription_1719(T obj) {
         this.onData.onData(obj);
     }
 
@@ -83,7 +83,7 @@ public class Subscription<K, T> implements RefreshableOne {
         if (this.executor != null) {
             this.executor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.react.-$Lambda$CF5cnl0on0-506QrOcvyL8_AER8
                 private final /* synthetic */ void $m$0() {
-                    ((Subscription) this).m48lambda$com_lumiyaviewer_lumiya_react_Subscription_1719(t);
+                    Subscription.this.m48lambda$com_lumiyaviewer_lumiya_react_Subscription_1719(t);
                 }
 
                 @Override // java.lang.Runnable
@@ -101,7 +101,7 @@ public class Subscription<K, T> implements RefreshableOne {
             if (this.executor != null) {
                 this.executor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.react.-$Lambda$CF5cnl0on0-506QrOcvyL8_AER8.1
                     private final /* synthetic */ void $m$0() {
-                        ((Subscription) this).m49lambda$com_lumiyaviewer_lumiya_react_Subscription_1938((Throwable) th);
+                        Subscription.this.m49lambda$com_lumiyaviewer_lumiya_react_Subscription_1938((Throwable) th);
                     }
 
                     @Override // java.lang.Runnable

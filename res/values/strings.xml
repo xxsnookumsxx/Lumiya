@@ -137,7 +137,8 @@
     <string name="born_since">Since %s</string>
     <string name="bottom_sheet_behavior">android.support.design.widget.BottomSheetBehavior</string>
     <string name="browse_inventory_title">Inventory</string>
-    <string name="button_3d_view">3D\nView</string>
+    <string name="button_3d_view">"3D
+View"</string>
     <string name="button_about_cancel">Cancel</string>
     <string name="button_about_edit">Edit</string>
     <string name="button_about_save">Save</string>
@@ -174,7 +175,7 @@
     <string name="character_counter_pattern">%1$d / %2$d</string>
     <string name="chat_hint_message_format">Message to %s</string>
     <string name="chat_history_title_format">History: %s</string>
-    <string name="chat_inventory_other_offer_format">has offered you \'%s\'.</string>
+    <string name="chat_inventory_other_offer_format">"has offered you '%s'."</string>
     <string name="chat_inventory_own_offer_format">You have offered inventory item %s.</string>
     <string name="chat_menu_item_title">Chat</string>
     <string name="chat_offline_message">Network connection lost. Your messages will not be delivered.</string>
@@ -257,7 +258,9 @@
     <string name="dialog_ignored">Dialog ignored.</string>
     <string name="dialog_selected_format">Selected option: %s</string>
     <string name="discard_changes_question">Discard changes?</string>
-    <string name="disclaimer">This software is not provided or supported by Linden Lab, the makers of Second Life. This viewer has limited functionality. For full Second Life experience, please use the official Second Life viewer on a supported platform.\n\nSecond Life® is a registered trademark or Linden Research, Inc.</string>
+    <string name="disclaimer">"This software is not provided or supported by Linden Lab, the makers of Second Life. This viewer has limited functionality. For full Second Life experience, please use the official Second Life viewer on a supported platform.
+
+Second Life® is a registered trademark or Linden Research, Inc."</string>
     <string name="disconnnected_message">Not connected to the grid</string>
     <string name="drag_to_select">Drag to select</string>
     <string name="edit_about_hint">About you</string>
@@ -289,8 +292,8 @@
     <string name="failed_to_make_screenshot">Failed to make screenshot</string>
     <string name="failed_to_open_picture">Failed to open image file.</string>
     <string name="failed_to_upload_picture">Failed to upload picture.</string>
-    <string name="filter_less_button">  Less ▲</string>
-    <string name="filter_more_button">  More ▼</string>
+    <string name="filter_less_button">"  Less ▲"</string>
+    <string name="filter_more_button">"  More ▼"</string>
     <string name="format_land_contribution">%d sq.m. contributed</string>
     <string name="founder_caption">Founder</string>
     <string name="friends_online_caption">Friends online</string>
@@ -327,7 +330,7 @@
     <string name="group_members_page_title">Members</string>
     <string name="group_membership">Membership</string>
     <string name="group_notice_attach">Attach</string>
-    <string name="group_notice_attachment_format">This notice contains attached item \'%s\'.</string>
+    <string name="group_notice_attachment_format">"This notice contains attached item '%s'."</string>
     <string name="group_notice_no_attachment">No attached item.</string>
     <string name="group_notice_remove_attachment">Remove</string>
     <string name="group_notice_send">Send notice</string>
@@ -391,7 +394,7 @@
     <string name="join_group_dialog_title">Join group</string>
     <string name="join_group_free_confirm">Join this group?</string>
     <string name="join_group_no">Decline</string>
-    <string name="join_group_no_funds">You don\'t have enough L$s to join this group.</string>
+    <string name="join_group_no_funds">"You don't have enough L$s to join this group."</string>
     <string name="join_group_paid_confirm">Join this group for L$%d?</string>
     <string name="join_group_question_free">Join group?</string>
     <string name="join_group_question_message_free">Joining this group is free. Proceed?</string>
@@ -564,7 +567,7 @@
     <string name="object_list_not_connected">Not connected to the grid</string>
     <string name="object_list_result_empty">No matching objects in range</string>
     <string name="object_messages_menu_title">Object messages</string>
-    <string name="object_more_button">  More ▼</string>
+    <string name="object_more_button">"  More ▼"</string>
     <string name="object_more_buy">Buy object</string>
     <string name="object_more_contents">Open contents</string>
     <string name="object_more_profile">View object profile</string>
@@ -664,7 +667,7 @@
     <string name="profile_payment_info">Payment info</string>
     <string name="profile_picks_caption">Picks</string>
     <string name="profile_tab_caption">Profile</string>
-    <string name="profile_url_link">&lt;a href=\"%s\"&gt;View in browser&lt;/a&gt;</string>
+    <string name="profile_url_link">&lt;a href=\"%s\">View in browser&lt;/a></string>
     <string name="profile_url_none">None</string>
     <string name="profile_user_name">User name</string>
     <string name="profile_user_offline">Offline</string>
@@ -721,7 +724,7 @@
     <string name="role_gp_proposal_start">Start group proposals</string>
     <string name="role_gp_proposal_vote">Vote for group proposals</string>
     <string name="role_gp_role_assign_member">Assign members to any role</string>
-    <string name="role_gp_role_assign_member_limited">Assign members to assigner\'s role</string>
+    <string name="role_gp_role_assign_member_limited">"Assign members to assigner's role"</string>
     <string name="role_gp_role_change_actions">Change role permissions</string>
     <string name="role_gp_role_create">Create new roles</string>
     <string name="role_gp_role_delete">Delete roles</string>
@@ -845,7 +848,7 @@
     <string name="teleport_parcel_confirm_title">Teleport to selected location?</string>
     <string name="teleport_pick_confirm_title">Teleport to picked location?</string>
     <string name="teleport_to_destination">Teleport to the following destination?</string>
-    <string name="teleport_to_user_title">Teleport to selected user\'s location?</string>
+    <string name="teleport_to_user_title">"Teleport to selected user's location?"</string>
     <string name="teleport_unable">Unable to initiate teleport.</string>
     <string name="teleport_yes">Teleport</string>
     <string name="teleporting_progress_message">Teleporting...</string>
@@ -906,8 +909,8 @@
     <string name="voice_upgrade_yes">Upgrade</string>
     <string name="went_offline">is offline.</string>
     <string name="went_online">is online.</string>
-    <string name="whatsnew_caption">What\'s new in version %s</string>
-    <string name="whatsnew_link">&lt;a href=\"%1$s\"&gt;What\'s new in version %2$s&lt;/a&gt;</string>
+    <string name="whatsnew_caption">"What's new in version %s"</string>
+    <string name="whatsnew_link">"&lt;a href=\"%1$s\">What's new in version %2$s&lt;/a>"</string>
     <string name="yes_add_button">Yes, add</string>
     <string name="yes_eject_button">Yes, eject</string>
     <string name="yes_join_button">Yes, join</string>

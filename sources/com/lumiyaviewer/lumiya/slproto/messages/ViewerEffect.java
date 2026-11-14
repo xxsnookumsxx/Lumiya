@@ -34,7 +34,7 @@ public class ViewerEffect extends SLMessage {
     @Override // com.lumiyaviewer.lumiya.slproto.SLMessage
     public int CalcPayloadSize() {
         int length = 35;
-        Iterator<T> it = this.Effect_Fields.iterator();
+        Iterator it = this.Effect_Fields.iterator();
         while (true) {
             int i = length;
             if (!it.hasNext()) {

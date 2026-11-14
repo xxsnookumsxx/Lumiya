@@ -67,8 +67,5 @@ public class PrimCache extends ResourceMemoryCache<PrimDrawParams, DrawablePrim>
         return new PrimRequest(this.textureCache, this.geometryCache, primDrawParams, resourceManager);
     }
 
-    @Override // com.lumiyaviewer.lumiya.res.ResourceManager
-    protected /* bridge */ /* synthetic */ ResourceRequest CreateNewRequest(Object obj, ResourceManager resourceManager) {
-        return CreateNewRequest((PrimDrawParams) obj, (ResourceManager<PrimDrawParams, DrawablePrim>) resourceManager);
-    }
+    
 }

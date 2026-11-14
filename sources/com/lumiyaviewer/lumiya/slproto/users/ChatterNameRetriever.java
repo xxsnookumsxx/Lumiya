@@ -112,7 +112,7 @@ public class ChatterNameRetriever {
         if (this.chatterID.getChatterType() == ChatterID.ChatterType.Local) {
             this.subscription = userManager.getCurrentLocationInfo().subscribe(SubscriptionSingleDataPool.getSingleDataKey(), this.executor, new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.slproto.users.-$Lambda$Tr7QBnh_GnHDqFtHSpMdsLw3Yfs
                 private final /* synthetic */ void $m$0(Object obj) {
-                    ((ChatterNameRetriever) this).m272x6559d93c((CurrentLocationInfo) obj);
+                    ChatterNameRetriever.this.m272x6559d93c((CurrentLocationInfo) obj);
                 }
 
                 @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -125,7 +125,7 @@ public class ChatterNameRetriever {
         if (this.chatterID instanceof ChatterID.ChatterIDUser) {
             this.subscription = userManager.getUserNames().subscribe(((ChatterID.ChatterIDUser) this.chatterID).getChatterUUID(), this.executor, new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.slproto.users.-$Lambda$Tr7QBnh_GnHDqFtHSpMdsLw3Yfs.1
                 private final /* synthetic */ void $m$0(Object obj) {
-                    ((ChatterNameRetriever) this).m273x6559d93d((UserName) obj);
+                    ChatterNameRetriever.this.m273x6559d93d((UserName) obj);
                 }
 
                 @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -136,7 +136,7 @@ public class ChatterNameRetriever {
         } else if (this.chatterID instanceof ChatterID.ChatterIDGroup) {
             this.subscription = userManager.getCachedGroupProfiles().getPool().subscribe(((ChatterID.ChatterIDGroup) this.chatterID).getChatterUUID(), this.executor, new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.slproto.users.-$Lambda$Tr7QBnh_GnHDqFtHSpMdsLw3Yfs.2
                 private final /* synthetic */ void $m$0(Object obj) {
-                    ((ChatterNameRetriever) this).m274x6559d93e((GroupProfileReply) obj);
+                    ChatterNameRetriever.this.m274x6559d93e((GroupProfileReply) obj);
                 }
 
                 @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData

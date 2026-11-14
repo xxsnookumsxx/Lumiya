@@ -133,8 +133,5 @@ public class GeometryCache extends ResourceMemoryCache<PrimVolumeParams, Drawabl
         return primVolumeParams.isMesh() ? new MeshGeometryRequest(this.meshCache, primVolumeParams, resourceManager) : primVolumeParams.isSculpt() ? new SculptGeometryRequest(primVolumeParams, resourceManager) : new SimpleGeometryRequest(primVolumeParams, resourceManager);
     }
 
-    @Override // com.lumiyaviewer.lumiya.res.ResourceManager
-    protected /* bridge */ /* synthetic */ ResourceRequest CreateNewRequest(Object obj, ResourceManager resourceManager) {
-        return CreateNewRequest((PrimVolumeParams) obj, (ResourceManager<PrimVolumeParams, DrawableGeometry>) resourceManager);
-    }
+    
 }

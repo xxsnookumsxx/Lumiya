@@ -25,7 +25,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /* JADX INFO: loaded from: classes.dex */
-class SearchGridAdapter extends RecyclerView.Adapter<SearchViewHolder> {
+class SearchGridAdapter extends RecyclerView.Adapter<SearchGridAdapter.SearchViewHolder> {
     private final UUID agentUUID;
     private final Context context;
 

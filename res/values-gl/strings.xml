@@ -41,7 +41,7 @@
     <string name="search_menu_title">Buscar</string>
     <string name="settings_button_content_description">Configuración</string>
     <string name="setup_button">Configurar</string>
-    <string name="status_bar_notification_info_overflow">&gt;999</string>
+    <string name="status_bar_notification_info_overflow">>999</string>
     <string name="switch_viewer_action">Cambiar</string>
     <string name="switch_viewer_prompt">Queres usar un visor distinto?</string>
 </resources>

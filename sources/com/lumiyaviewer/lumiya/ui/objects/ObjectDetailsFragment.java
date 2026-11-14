@@ -77,7 +77,7 @@ public class ObjectDetailsFragment extends FragmentWithTitle implements Reloadab
     private final ChatterNameDisplayer ownerNameDisplayer = new ChatterNameDisplayer();
     private final OnChatEventListener chatEventListener = new OnChatEventListener() { // from class: com.lumiyaviewer.lumiya.ui.objects.-$Lambda$IbcMrpWxKnmu4WU7ZN8rETVfqs8.3
         private final /* synthetic */ void $m$0(SLChatEvent sLChatEvent) {
-            ((ObjectDetailsFragment) this).m685xa60fd782(sLChatEvent);
+            ObjectDetailsFragment.this.m685xa60fd782(sLChatEvent);
         }
 
         @Override // com.lumiyaviewer.lumiya.slproto.chat.generic.OnChatEventListener
@@ -369,6 +369,7 @@ public class ObjectDetailsFragment extends FragmentWithTitle implements Reloadab
         boolean zEquals;
         boolean z;
         boolean zEquals2;
+        boolean zIsCopyable = false;
         UserManager userManager = getUserManager();
         if (userManager == null || this.objectProfileData == null || !(!this.objectProfileData.isDead())) {
             zEquals = false;

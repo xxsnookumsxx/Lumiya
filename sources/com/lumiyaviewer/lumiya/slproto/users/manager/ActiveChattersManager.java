@@ -1,6 +1,7 @@
 package com.lumiyaviewer.lumiya.slproto.users.manager;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.lumiyaviewer.lumiya.Debug;
 import com.lumiyaviewer.lumiya.dao.ChatMessage;
@@ -16,13 +17,16 @@ import com.lumiyaviewer.lumiya.slproto.chat.SLChatSessionMarkEvent;
 import com.lumiyaviewer.lumiya.slproto.chat.generic.OnChatEventListener;
 import com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent;
 import com.lumiyaviewer.lumiya.slproto.users.ChatterID;
+import com.lumiyaviewer.lumiya.slproto.users.chatsrc.ChatMessageSource;
 import com.lumiyaviewer.lumiya.slproto.users.chatsrc.ChatMessageSourceUnknown;
+import com.lumiyaviewer.lumiya.slproto.users.chatsrc.ChatMessageSourceUser;
 import com.lumiyaviewer.lumiya.slproto.users.manager.MessageSourceNameResolver;
 import com.lumiyaviewer.lumiya.utils.wlist.ChunkedListLoader;
 import de.greenrobot.dao.query.LazyList;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.WhereCondition;
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,7 +42,7 @@ import java.util.concurrent.Executor;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class ActiveChattersManager implements MessageSourceNameResolver.OnMessageSourcesResolvedListener {
     private static final int CHAT_LOG_CHUNK_SIZE = 100;
 
@@ -105,10 +109,10 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
             /* JADX INFO: Access modifiers changed from: protected */
             @Override // com.lumiyaviewer.lumiya.react.RequestFinalProcessor
             public UnreadMessageInfo processRequest(@Nonnull ChatterID chatterID) throws Throwable {
-                ChatMessage chatMessageLoad;
+                ChatMessage load;
                 Chatter chatter = ActiveChattersManager.this.getChatter(chatterID);
                 if (chatter != null) {
-                    return UnreadMessageInfo.create(chatter.getUnreadCount(), (chatter.getLastMessageID() == null || (chatMessageLoad = ActiveChattersManager.this.chatMessageDao.load(chatter.getLastMessageID())) == null) ? null : SLChatEvent.loadFromDatabaseObject(chatMessageLoad, userManager.getUserID()));
+                    return UnreadMessageInfo.create(chatter.getUnreadCount(), (chatter.getLastMessageID() == null || (load = ActiveChattersManager.this.chatMessageDao.load(chatter.getLastMessageID())) == null) ? null : SLChatEvent.loadFromDatabaseObject(load, userManager.getUserID()));
                 }
                 return UnreadMessageInfo.create(0, null);
             }
@@ -116,7 +120,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: clearChatHistoryInternal, reason: merged with bridge method [inline-methods] */
+    /* renamed from: clearChatHistoryInternal, reason: merged with bridge method [inline-methods] */
     public void m284x2aa4c8d2(@Nonnull ChatterID chatterID) {
         Chatter chatter;
         synchronized (this.chatEventLock) {
@@ -130,7 +134,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
         }
         List<ChatMessageLoader> loaders = getLoaders(chatterID);
         if (loaders != null) {
-            Iterator<T> it = loaders.iterator();
+            Iterator it = loaders.iterator();
             while (it.hasNext()) {
                 ((ChatMessageLoader) it.next()).reload();
             }
@@ -139,7 +143,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: clearUnreadCount, reason: merged with bridge method [inline-methods] */
+    /* renamed from: clearUnreadCount, reason: merged with bridge method [inline-methods] */
     public void m289x43721060(@Nonnull ChatterID chatterID) {
         Chatter chatter = null;
         boolean z = false;
@@ -182,25 +186,146 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Removed duplicated region for block: B:101:0x01d8 A[ADDED_TO_REGION, REMOVE] */
-    /* JADX WARN: Removed duplicated region for block: B:48:0x00d2 A[Catch: all -> 0x01da, TryCatch #1 {, blocks: (B:32:0x0089, B:34:0x0091, B:36:0x0095, B:38:0x00ab, B:40:0x00b5, B:41:0x00bc, B:43:0x00c2, B:44:0x00c9, B:48:0x00d2, B:49:0x00d7, B:51:0x00dd, B:53:0x00e5, B:55:0x00eb, B:58:0x00f3, B:59:0x00f6, B:61:0x00fe, B:63:0x0104, B:65:0x0115, B:67:0x0121, B:69:0x0127, B:70:0x0132, B:71:0x0135, B:73:0x014f, B:75:0x0157, B:78:0x0160, B:79:0x016a), top: B:116:0x0089 }] */
-    /* JADX WARN: Removed duplicated region for block: B:51:0x00dd A[Catch: all -> 0x01da, TryCatch #1 {, blocks: (B:32:0x0089, B:34:0x0091, B:36:0x0095, B:38:0x00ab, B:40:0x00b5, B:41:0x00bc, B:43:0x00c2, B:44:0x00c9, B:48:0x00d2, B:49:0x00d7, B:51:0x00dd, B:53:0x00e5, B:55:0x00eb, B:58:0x00f3, B:59:0x00f6, B:61:0x00fe, B:63:0x0104, B:65:0x0115, B:67:0x0121, B:69:0x0127, B:70:0x0132, B:71:0x0135, B:73:0x014f, B:75:0x0157, B:78:0x0160, B:79:0x016a), top: B:116:0x0089 }] */
-    /* JADX WARN: Removed duplicated region for block: B:61:0x00fe A[Catch: all -> 0x01da, TryCatch #1 {, blocks: (B:32:0x0089, B:34:0x0091, B:36:0x0095, B:38:0x00ab, B:40:0x00b5, B:41:0x00bc, B:43:0x00c2, B:44:0x00c9, B:48:0x00d2, B:49:0x00d7, B:51:0x00dd, B:53:0x00e5, B:55:0x00eb, B:58:0x00f3, B:59:0x00f6, B:61:0x00fe, B:63:0x0104, B:65:0x0115, B:67:0x0121, B:69:0x0127, B:70:0x0132, B:71:0x0135, B:73:0x014f, B:75:0x0157, B:78:0x0160, B:79:0x016a), top: B:116:0x0089 }] */
-    /* JADX WARN: Removed duplicated region for block: B:65:0x0115 A[Catch: all -> 0x01da, TryCatch #1 {, blocks: (B:32:0x0089, B:34:0x0091, B:36:0x0095, B:38:0x00ab, B:40:0x00b5, B:41:0x00bc, B:43:0x00c2, B:44:0x00c9, B:48:0x00d2, B:49:0x00d7, B:51:0x00dd, B:53:0x00e5, B:55:0x00eb, B:58:0x00f3, B:59:0x00f6, B:61:0x00fe, B:63:0x0104, B:65:0x0115, B:67:0x0121, B:69:0x0127, B:70:0x0132, B:71:0x0135, B:73:0x014f, B:75:0x0157, B:78:0x0160, B:79:0x016a), top: B:116:0x0089 }] */
-    /* JADX WARN: Removed duplicated region for block: B:69:0x0127 A[Catch: all -> 0x01da, TryCatch #1 {, blocks: (B:32:0x0089, B:34:0x0091, B:36:0x0095, B:38:0x00ab, B:40:0x00b5, B:41:0x00bc, B:43:0x00c2, B:44:0x00c9, B:48:0x00d2, B:49:0x00d7, B:51:0x00dd, B:53:0x00e5, B:55:0x00eb, B:58:0x00f3, B:59:0x00f6, B:61:0x00fe, B:63:0x0104, B:65:0x0115, B:67:0x0121, B:69:0x0127, B:70:0x0132, B:71:0x0135, B:73:0x014f, B:75:0x0157, B:78:0x0160, B:79:0x016a), top: B:116:0x0089 }] */
-    /* JADX WARN: Removed duplicated region for block: B:73:0x014f A[Catch: all -> 0x01da, TryCatch #1 {, blocks: (B:32:0x0089, B:34:0x0091, B:36:0x0095, B:38:0x00ab, B:40:0x00b5, B:41:0x00bc, B:43:0x00c2, B:44:0x00c9, B:48:0x00d2, B:49:0x00d7, B:51:0x00dd, B:53:0x00e5, B:55:0x00eb, B:58:0x00f3, B:59:0x00f6, B:61:0x00fe, B:63:0x0104, B:65:0x0115, B:67:0x0121, B:69:0x0127, B:70:0x0132, B:71:0x0135, B:73:0x014f, B:75:0x0157, B:78:0x0160, B:79:0x016a), top: B:116:0x0089 }] */
-    /* JADX WARN: Removed duplicated region for block: B:77:0x015e A[ADDED_TO_REGION] */
-    /* JADX INFO: renamed from: handleChatEventInternal, reason: merged with bridge method [inline-methods] */
+    /* JADX WARN: Removed duplicated region for block: B:56:0x00d2 A[Catch: all -> 0x01da, TryCatch #1 {, blocks: (B:40:0x0089, B:42:0x0091, B:44:0x0095, B:46:0x00ab, B:48:0x00b5, B:49:0x00bc, B:51:0x00c2, B:52:0x00c9, B:56:0x00d2, B:57:0x00d7, B:59:0x00dd, B:61:0x00e5, B:63:0x00eb, B:66:0x00f3, B:67:0x00f6, B:69:0x00fe, B:71:0x0104, B:73:0x0115, B:75:0x0121, B:77:0x0127, B:78:0x0132, B:79:0x0135, B:81:0x014f, B:83:0x0157, B:86:0x0160, B:87:0x016a), top: B:39:0x0089 }] */
+    /* renamed from: handleChatEventInternal, reason: merged with bridge method [inline-methods] */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
-    public void m283x2a96bcb8(com.lumiyaviewer.lumiya.slproto.users.ChatterID r12, final com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent r13, boolean r14) {
-        /*
-            Method dump skipped, instruction units count: 502
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.slproto.users.manager.ActiveChattersManager.m283x2a96bcb8(com.lumiyaviewer.lumiya.slproto.users.ChatterID, com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent, boolean):void");
+    public void m283x2a96bcb8(ChatterID chatterID, final SLChatEvent sLChatEvent, boolean z) {
+        UUID uuid;
+        Chatter chatter;
+        Chatter chatter2;
+        ChatMessage databaseObject;
+        boolean z2;
+        boolean z3;
+        boolean z4;
+        ImmutableList<Map.Entry> copyOf;
+        if (sLChatEvent.isObjectPopup()) {
+            this.userManager.getObjectPopupsManager().addObjectPopup(sLChatEvent);
+        } else {
+            ChatMessageSource source = sLChatEvent.getSource();
+            if (source.getSourceType() == ChatMessageSource.ChatMessageSourceType.Object) {
+                synchronized (this.objectMessageListenersLock) {
+                    copyOf = !this.objectMessageListeners.isEmpty() ? ImmutableList.copyOf((Collection) this.objectMessageListeners.entrySet()) : null;
+                }
+                if (copyOf != null) {
+                    for (Map.Entry entry : copyOf) {
+                        final OnChatEventListener onChatEventListener = (OnChatEventListener) entry.getKey();
+                        Executor executor = (Executor) entry.getValue();
+                        if (executor != null) {
+                            executor.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$bC26PUjVA14BMgZPIZxiNFWFltI.2
+                                private final /* synthetic */ void $m$0() {
+                                    ((OnChatEventListener) onChatEventListener).onChatEvent((SLChatEvent) sLChatEvent);
+                                }
+
+                                @Override // java.lang.Runnable
+                                public final void run() {
+                                    $m$0();
+                                }
+                            });
+                        } else {
+                            onChatEventListener.onChatEvent(sLChatEvent);
+                        }
+                    }
+                }
+            }
+            SLAgentCircuit activeAgentCircuit = this.userManager.getActiveAgentCircuit();
+            UUID sessionID = activeAgentCircuit != null ? activeAgentCircuit.getSessionID() : null;
+            synchronized (this.chatEventLock) {
+                if (source.getSourceType() == ChatMessageSource.ChatMessageSourceType.User) {
+                    if (source instanceof ChatMessageSourceUser) {
+                        UserName load = this.userManager.getDaoSession().getUserNameDao().load(source.getSourceUUID());
+                        if (load != null) {
+                            ChatMessageSourceUser chatMessageSourceUser = (ChatMessageSourceUser) source;
+                            if (load.getDisplayName() != null) {
+                                chatMessageSourceUser.setDisplayName(load.getDisplayName());
+                            }
+                            if (load.getUserName() != null) {
+                                chatMessageSourceUser.setLegacyName(load.getUserName());
+                            }
+                            if (load.isComplete()) {
+                                z4 = true;
+                                if (!z4) {
+                                    uuid = source.getSourceUUID();
+                                }
+                            }
+                        }
+                        z4 = false;
+                        if (!z4) {
+                        }
+                    }
+                    uuid = null;
+                } else {
+                    uuid = null;
+                }
+                if (sLChatEvent.opensNewChatter() || chatterID.getChatterType() == ChatterID.ChatterType.Local) {
+                    chatter = null;
+                } else {
+                    Chatter chatter3 = getChatter(chatterID);
+                    Chatter chatter4 = (chatter3 == null || chatter3.getActive()) ? chatter3 : null;
+                    if (chatter4 == null) {
+                        chatterID = this.localChatterID;
+                        chatter = chatter4;
+                    } else {
+                        chatter = chatter4;
+                    }
+                }
+                boolean contains = this.displayedChatters.contains(chatterID);
+                if (chatter == null && (chatter = getChatter(chatterID)) == null) {
+                    Chatter chatter5 = new Chatter(null);
+                    chatterID.toDatabaseObject(chatter5);
+                    this.chatterDao.insert(chatter5);
+                    chatter2 = chatter5;
+                } else {
+                    chatter2 = chatter;
+                }
+                if (sessionID != null && (!Objects.equal(sessionID, chatter2.getLastSessionID()))) {
+                    if (chatter2.getLastSessionID() != null) {
+                        makeSessionMark(chatterID, chatter2.getId().longValue());
+                    }
+                    chatter2.setLastSessionID(sessionID);
+                }
+                databaseObject = sLChatEvent.getDatabaseObject();
+                databaseObject.setChatterID(chatter2.getId().longValue());
+                this.chatMessageDao.insert(databaseObject);
+                if (chatter2.getActive()) {
+                    z2 = false;
+                } else if (!chatter2.getMuted()) {
+                    chatter2.setActive(true);
+                    z2 = true;
+                } else {
+                    z2 = false;
+                }
+                if (!z || contains) {
+                    z3 = false;
+                } else {
+                    chatter2.setUnreadCount(chatter2.getUnreadCount() + 1);
+                    z3 = true;
+                }
+                chatter2.setLastMessageID(databaseObject.getId());
+                this.chatterDao.update(chatter2);
+            }
+            if (!chatter2.getMuted() && z3) {
+                this.userManager.getUnreadNotificationManager().addFreshMessage(chatter2);
+                this.chatEventBus.post(new ChatMessageEvent(databaseObject, true, chatter2.getType() == ChatterID.ChatterType.User.ordinal()));
+            }
+            if (uuid != null) {
+                this.messageSourceNameResolver.requestResolve(uuid, databaseObject.getId());
+            }
+            this.unreadCountsPool.requestUpdate(chatterID);
+            if (z2) {
+                this.chatterList.updateList(ChatterListType.Active);
+            }
+            List<ChatMessageLoader> loaders = getLoaders(chatterID);
+            if (loaders != null) {
+                Iterator it = loaders.iterator();
+                while (it.hasNext()) {
+                    ((ChatMessageLoader) it.next()).addElement(databaseObject);
+                }
+            }
+        }
+        this.userManager.getSyncManager().syncNewMessages();
+        this.userManager.getUnreadNotificationManager().updateUnreadNotifications();
     }
 
     private void makeSessionMark(@Nonnull ChatterID chatterID, long j) {
@@ -209,12 +334,19 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
         boolean z = false;
         synchronized (this.chatEventLock) {
             List<ChatMessage> list = this.chatMessageDao.queryBuilder().where(ChatMessageDao.Properties.ChatterID.eq(Long.valueOf(j)), new WhereCondition[0]).orderDesc(ChatMessageDao.Properties.Id).limit(1).list();
-            if (list == null || list.size() <= 0 || (chatMessage = list.get(0)) == null || chatMessage.getMessageType() != SLChatEvent.ChatMessageType.SessionMark.ordinal() || !Objects.equal(chatMessage.getChatChannel(), Integer.valueOf(SLChatSessionMarkEvent.SessionMarkType.NewSession.ordinal()))) {
+            if (list == null || list.size() <= 0) {
                 chatMessage = null;
             } else {
-                chatMessage.setTimestamp(new Date());
-                this.chatMessageDao.update(chatMessage);
-                z = true;
+                chatMessage = list.get(0);
+                if (chatMessage == null || chatMessage.getMessageType() != SLChatEvent.ChatMessageType.SessionMark.ordinal()) {
+                    chatMessage = null;
+                } else if (Objects.equal(chatMessage.getChatChannel(), Integer.valueOf(SLChatSessionMarkEvent.SessionMarkType.NewSession.ordinal()))) {
+                    chatMessage.setTimestamp(new Date());
+                    this.chatMessageDao.update(chatMessage);
+                    z = true;
+                } else {
+                    chatMessage = null;
+                }
             }
             if (chatMessage == null) {
                 ChatMessage databaseObject = new SLChatSessionMarkEvent(ChatMessageSourceUnknown.getInstance(), this.userManager.getUserID(), SLChatSessionMarkEvent.SessionMarkType.NewSession, null).getDatabaseObject();
@@ -239,7 +371,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: markChatterInactiveInternal, reason: merged with bridge method [inline-methods] */
+    /* renamed from: markChatterInactiveInternal, reason: merged with bridge method [inline-methods] */
     public void m285x2aa5b155(ChatterID chatterID, boolean z) {
         boolean z2 = false;
         boolean z3 = true;
@@ -279,7 +411,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: notifyChatEventUpdatedInternal, reason: merged with bridge method [inline-methods] */
+    /* renamed from: notifyChatEventUpdatedInternal, reason: merged with bridge method [inline-methods] */
     public void m287x2aa63116(SLChatEvent sLChatEvent) {
         ChatMessage databaseObject;
         synchronized (this.chatEventLock) {
@@ -291,7 +423,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: notifyTeleportCompleteInternal, reason: merged with bridge method [inline-methods] */
+    /* renamed from: notifyTeleportCompleteInternal, reason: merged with bridge method [inline-methods] */
     public void m288x2aa63855(String str) {
         Chatter chatter = getChatter(this.localChatterID);
         if (chatter != null) {
@@ -302,7 +434,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
             }
             List<ChatMessageLoader> loaders = getLoaders(this.localChatterID);
             if (loaders != null) {
-                Iterator<T> it = loaders.iterator();
+                Iterator it = loaders.iterator();
                 while (it.hasNext()) {
                     ((ChatMessageLoader) it.next()).addElement(databaseObject);
                 }
@@ -311,28 +443,28 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     }
 
     private void onMessageUpdated(ChatMessage chatMessage) {
-        Chatter chatterLoad = this.chatterDao.load(Long.valueOf(chatMessage.getChatterID()));
-        ChatterID chatterIDFromDatabaseObject = chatterLoad != null ? ChatterID.fromDatabaseObject(this.userManager.getUserID(), chatterLoad) : null;
-        if (chatterIDFromDatabaseObject != null) {
-            List<ChatMessageLoader> loaders = getLoaders(chatterIDFromDatabaseObject);
+        Chatter load = this.chatterDao.load(Long.valueOf(chatMessage.getChatterID()));
+        ChatterID fromDatabaseObject = load != null ? ChatterID.fromDatabaseObject(this.userManager.getUserID(), load) : null;
+        if (fromDatabaseObject != null) {
+            List<ChatMessageLoader> loaders = getLoaders(fromDatabaseObject);
             if (loaders != null) {
-                Iterator<T> it = loaders.iterator();
+                Iterator it = loaders.iterator();
                 while (it.hasNext()) {
                     ((ChatMessageLoader) it.next()).updateElement(chatMessage);
                 }
             }
-            if (Objects.equal(chatMessage.getId(), chatterLoad.getLastMessageID())) {
-                this.unreadCountsPool.requestUpdate(chatterIDFromDatabaseObject);
+            if (Objects.equal(chatMessage.getId(), load.getLastMessageID())) {
+                this.unreadCountsPool.requestUpdate(fromDatabaseObject);
             }
             this.userManager.getUnreadNotificationManager().updateUnreadNotifications();
-            this.chatEventBus.post(new ChatMessageEvent(chatMessage, false, chatterIDFromDatabaseObject.getChatterType() == ChatterID.ChatterType.User));
+            this.chatEventBus.post(new ChatMessageEvent(chatMessage, false, fromDatabaseObject.getChatterType() == ChatterID.ChatterType.User));
         }
     }
 
     public void HandleChatEvent(final ChatterID chatterID, final SLChatEvent sLChatEvent, final boolean z) {
         this.userManager.getDatabaseExecutor().execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$bC26PUjVA14BMgZPIZxiNFWFltI.8
             private final /* synthetic */ void $m$0() {
-                ((ActiveChattersManager) this).m283x2a96bcb8((ChatterID) chatterID, (SLChatEvent) sLChatEvent, z);
+                ActiveChattersManager.this.m283x2a96bcb8((ChatterID) chatterID, (SLChatEvent) sLChatEvent, z);
             }
 
             @Override // java.lang.Runnable
@@ -346,7 +478,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
         if (this.displayedChatters.add(chatterID)) {
             this.userManager.getDatabaseExecutor().execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$bC26PUjVA14BMgZPIZxiNFWFltI
                 private final /* synthetic */ void $m$0() {
-                    ((ActiveChattersManager) this).m289x43721060((ChatterID) chatterID);
+                    ActiveChattersManager.this.m289x43721060((ChatterID) chatterID);
                 }
 
                 @Override // java.lang.Runnable
@@ -366,7 +498,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     public void clearChatHistory(@Nonnull final ChatterID chatterID) {
         this.userManager.getDatabaseExecutor().execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$bC26PUjVA14BMgZPIZxiNFWFltI.1
             private final /* synthetic */ void $m$0() {
-                ((ActiveChattersManager) this).m284x2aa4c8d2((ChatterID) chatterID);
+                ActiveChattersManager.this.m284x2aa4c8d2((ChatterID) chatterID);
             }
 
             @Override // java.lang.Runnable
@@ -385,11 +517,11 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     }
 
     public ChatMessage getChatMessage(long j) {
-        ChatMessage chatMessageLoad;
+        ChatMessage load;
         synchronized (this.chatEventLock) {
-            chatMessageLoad = this.chatMessageDao.load(Long.valueOf(j));
+            load = this.chatMessageDao.load(Long.valueOf(j));
         }
-        return chatMessageLoad;
+        return load;
     }
 
     public Chatter getChatter(@Nonnull ChatterID chatterID) {
@@ -397,42 +529,44 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     }
 
     Chatter getChatter(@Nonnull final ChatterID chatterID, boolean z) {
-        Query<Chatter> queryForCurrentThread;
-        final Chatter chatterUnique;
+        Query<Chatter> forCurrentThread;
+        final Chatter unique;
         boolean z2;
         SLAgentCircuit activeAgentCircuit = this.userManager.getActiveAgentCircuit();
         UUID sessionID = activeAgentCircuit != null ? activeAgentCircuit.getSessionID() : null;
         synchronized (this.chatEventLock) {
             UUID optionalChatterUUID = chatterID.getOptionalChatterUUID();
             if (optionalChatterUUID != null) {
-                queryForCurrentThread = this.findChatterQuery.forCurrentThread();
-                queryForCurrentThread.setParameter(0, Integer.valueOf(chatterID.getChatterType().ordinal()));
-                queryForCurrentThread.setParameter(1, optionalChatterUUID.toString());
+                forCurrentThread = this.findChatterQuery.forCurrentThread();
+                forCurrentThread.setParameter(0, Integer.valueOf(chatterID.getChatterType().ordinal()));
+                forCurrentThread.setParameter(1, optionalChatterUUID.toString());
             } else {
-                queryForCurrentThread = this.findChatterQueryNullUUID.forCurrentThread();
-                queryForCurrentThread.setParameter(0, Integer.valueOf(chatterID.getChatterType().ordinal()));
+                forCurrentThread = this.findChatterQueryNullUUID.forCurrentThread();
+                forCurrentThread.setParameter(0, Integer.valueOf(chatterID.getChatterType().ordinal()));
             }
-            chatterUnique = queryForCurrentThread.unique();
+            unique = forCurrentThread.unique();
             if (z) {
                 Object[] objArr = new Object[3];
-                objArr[0] = Boolean.valueOf(chatterUnique != null);
+                objArr[0] = Boolean.valueOf(unique != null);
                 objArr[1] = sessionID;
-                objArr[2] = chatterUnique != null ? chatterUnique.getLastSessionID() : null;
+                objArr[2] = unique != null ? unique.getLastSessionID() : null;
                 Debug.Printf("markNewSession: result has %b, cur %s, last %s", objArr);
             }
-            if (!z || chatterUnique == null || sessionID == null || !(!Objects.equal(sessionID, chatterUnique.getLastSessionID()))) {
+            if (!z || unique == null || sessionID == null) {
                 z2 = false;
-            } else {
-                boolean z3 = chatterUnique.getLastSessionID() != null;
-                chatterUnique.setLastSessionID(sessionID);
-                this.chatterDao.update(chatterUnique);
+            } else if (!Objects.equal(sessionID, unique.getLastSessionID())) {
+                boolean z3 = unique.getLastSessionID() != null;
+                unique.setLastSessionID(sessionID);
+                this.chatterDao.update(unique);
                 z2 = z3;
+            } else {
+                z2 = false;
             }
         }
         if (z2) {
             this.userManager.getDatabaseExecutor().execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$bC26PUjVA14BMgZPIZxiNFWFltI.6
                 private final /* synthetic */ void $m$0() {
-                    ((ActiveChattersManager) this).m282x2a955819((ChatterID) chatterID, (Chatter) chatterUnique);
+                    ActiveChattersManager.this.m282x2a955819((ChatterID) chatterID, (Chatter) unique);
                 }
 
                 @Override // java.lang.Runnable
@@ -441,7 +575,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
                 }
             });
         }
-        return chatterUnique;
+        return unique;
     }
 
     public ChatMessageLoader getMessageLoader(@Nonnull ChatterID chatterID, ChunkedListLoader.EventListener eventListener) {
@@ -480,12 +614,12 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
         return this.unreadCountsPool;
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_slproto_users_manager_ActiveChattersManager_10179, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_slproto_users_manager_ActiveChattersManager_10179, reason: not valid java name */
     /* synthetic */ void m282x2a955819(ChatterID chatterID, Chatter chatter) {
         makeSessionMark(chatterID, chatter.getId().longValue());
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_slproto_users_manager_ActiveChattersManager_25217, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_slproto_users_manager_ActiveChattersManager_25217, reason: not valid java name */
     /* synthetic */ void m286x2aa5b87a(ChatterID chatterID) {
         boolean z = false;
         if (chatterID == null || chatterID.getChatterType() == ChatterID.ChatterType.Local) {
@@ -506,7 +640,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     public void markChatterInactive(final ChatterID chatterID, final boolean z) {
         this.userManager.getDatabaseExecutor().execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$bC26PUjVA14BMgZPIZxiNFWFltI.7
             private final /* synthetic */ void $m$0() {
-                ((ActiveChattersManager) this).m285x2aa5b155((ChatterID) chatterID, z);
+                ActiveChattersManager.this.m285x2aa5b155((ChatterID) chatterID, z);
             }
 
             @Override // java.lang.Runnable
@@ -519,7 +653,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     public void notifyChatEventUpdated(final SLChatEvent sLChatEvent) {
         this.userManager.getDatabaseExecutor().execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$bC26PUjVA14BMgZPIZxiNFWFltI.3
             private final /* synthetic */ void $m$0() {
-                ((ActiveChattersManager) this).m287x2aa63116((SLChatEvent) sLChatEvent);
+                ActiveChattersManager.this.m287x2aa63116((SLChatEvent) sLChatEvent);
             }
 
             @Override // java.lang.Runnable
@@ -532,7 +666,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     public void notifyTeleportComplete(final String str) {
         this.userManager.getDatabaseExecutor().execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$bC26PUjVA14BMgZPIZxiNFWFltI.4
             private final /* synthetic */ void $m$0() {
-                ((ActiveChattersManager) this).m288x2aa63855((String) str);
+                ActiveChattersManager.this.m288x2aa63855((String) str);
             }
 
             @Override // java.lang.Runnable
@@ -544,13 +678,13 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
 
     @Override // com.lumiyaviewer.lumiya.slproto.users.manager.MessageSourceNameResolver.OnMessageSourcesResolvedListener
     public void onMessageSourcesResolved(Set<Long> set, UserName userName) {
-        ChatMessage chatMessageLoad;
+        ChatMessage load;
         for (Long l : set) {
-            if (l != null && (chatMessageLoad = this.chatMessageDao.load(l)) != null) {
-                chatMessageLoad.setSenderName(userName.getDisplayName());
-                chatMessageLoad.setSenderLegacyName(userName.getUserName());
-                this.chatMessageDao.update(chatMessageLoad);
-                onMessageUpdated(chatMessageLoad);
+            if (l != null && (load = this.chatMessageDao.load(l)) != null) {
+                load.setSenderName(userName.getDisplayName());
+                load.setSenderLegacyName(userName.getUserName());
+                this.chatMessageDao.update(load);
+                onMessageUpdated(load);
             }
         }
     }
@@ -583,7 +717,7 @@ public class ActiveChattersManager implements MessageSourceNameResolver.OnMessag
     public void unmuteChatter(final ChatterID chatterID) {
         this.userManager.getDatabaseExecutor().execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$bC26PUjVA14BMgZPIZxiNFWFltI.5
             private final /* synthetic */ void $m$0() {
-                ((ActiveChattersManager) this).m286x2aa5b87a((ChatterID) chatterID);
+                ActiveChattersManager.this.m286x2aa5b87a((ChatterID) chatterID);
             }
 
             @Override // java.lang.Runnable

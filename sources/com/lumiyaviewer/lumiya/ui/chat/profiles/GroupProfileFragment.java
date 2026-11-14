@@ -86,7 +86,7 @@ public class GroupProfileFragment extends ChatterReloadableFragment implements L
                 return fragment;
             } catch (IllegalAccessException e) {
                 return null;
-            } catch (InstantiationException e2) {
+            } catch (java.lang.InstantiationException e2) {
                 return null;
             }
         }
@@ -231,7 +231,7 @@ public class GroupProfileFragment extends ChatterReloadableFragment implements L
         } else if (this.adapter != null) {
             this.adapter.setTabs(null);
         }
-        Iterator<T> it = this.activeFragments.values().iterator();
+        Iterator it = this.activeFragments.values().iterator();
         while (it.hasNext()) {
             ComponentCallbacks componentCallbacks = (Fragment) ((WeakReference) it.next()).get();
             if (componentCallbacks instanceof ReloadableFragment) {

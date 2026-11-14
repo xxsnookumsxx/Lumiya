@@ -63,13 +63,13 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         this.lock.lock();
         boolean zAdd = false;
         try {
-            Iterator<T> it = collection.iterator();
+            Iterator it = collection.iterator();
             while (true) {
                 boolean z = zAdd;
                 if (!it.hasNext()) {
                     return z;
                 }
-                T next = it.next();
+                T next = (T) it.next();
                 int priority = getPriority(next);
                 Queue<T> queue = this.queues.get(Integer.valueOf(priority));
                 if (queue == null) {
@@ -113,13 +113,13 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         boolean z;
         this.lock.lock();
         try {
-            Iterator<T> it = collection.iterator();
+            Iterator it = collection.iterator();
             while (true) {
                 if (!it.hasNext()) {
                     z = true;
                     break;
                 }
-                T next = it.next();
+                T next = (T) it.next();
                 Queue<T> queue = this.queues.get(Integer.valueOf(getPriority(next)));
                 if (queue != null && !queue.contains(next)) {
                     z = false;
@@ -137,11 +137,11 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         this.lock.lock();
         int i = 0;
         try {
-            Iterator<T> it = this.queues.values().iterator();
+            Iterator it = this.queues.values().iterator();
             while (it.hasNext()) {
                 Queue queue = (Queue) it.next();
                 while (true) {
-                    Manifest manifest = (Object) queue.poll();
+                    T manifest = (T) queue.poll();
                     if (manifest != null) {
                         collection.add(manifest);
                         i++;
@@ -161,7 +161,7 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         this.lock.lock();
         int i3 = 0;
         try {
-            Iterator<T> it = this.queues.values().iterator();
+            Iterator it = this.queues.values().iterator();
             while (true) {
                 if (!it.hasNext()) {
                     i2 = i3;
@@ -169,7 +169,7 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
                 }
                 Queue queue = (Queue) it.next();
                 while (true) {
-                    Manifest manifest = (Object) queue.poll();
+                    T manifest = (T) queue.poll();
                     if (manifest == null || i3 >= i) {
                         break;
                     }
@@ -201,7 +201,7 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         boolean z;
         this.lock.lock();
         try {
-            Iterator<T> it = this.queues.values().iterator();
+            Iterator it = this.queues.values().iterator();
             while (true) {
                 if (!it.hasNext()) {
                     z = true;
@@ -237,7 +237,7 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
     public T peek() {
         this.lock.lock();
         try {
-            Iterator<T> it = this.queues.values().iterator();
+            Iterator it = this.queues.values().iterator();
             while (it.hasNext()) {
                 Queue<T> queue = (Queue) it.next();
                 if (!queue.isEmpty()) {
@@ -258,7 +258,7 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
     public T poll() {
         this.lock.lock();
         try {
-            Iterator<T> it = this.queues.values().iterator();
+            Iterator it = this.queues.values().iterator();
             while (it.hasNext()) {
                 Iterator it2 = ((Queue) it.next()).iterator();
                 while (it2.hasNext()) {
@@ -329,9 +329,11 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         this.lock.lock();
         boolean zRemove = false;
         try {
-            for (T t : collection) {
+            for (Object obj : collection) {
+                T t = (T) obj; {
                 Queue<T> queue = this.queues.get(Integer.valueOf(getPriority(t)));
                 zRemove = queue != null ? queue.remove(t) | zRemove : zRemove;
+            }
             }
             return zRemove;
         } finally {
@@ -344,7 +346,7 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         this.lock.lock();
         boolean zRetainAll = false;
         try {
-            Iterator<T> it = this.queues.values().iterator();
+            Iterator it = this.queues.values().iterator();
             while (true) {
                 boolean z = zRetainAll;
                 if (!it.hasNext()) {
@@ -362,7 +364,7 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         this.lock.lock();
         int size = 0;
         try {
-            Iterator<T> it = this.queues.values().iterator();
+            Iterator it = this.queues.values().iterator();
             while (true) {
                 int i = size;
                 if (!it.hasNext()) {
@@ -397,7 +399,7 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         this.lock.lock();
         try {
             ArrayList<Object[]> arrayList = new ArrayList();
-            Iterator<T> it = this.queues.values().iterator();
+            Iterator it = this.queues.values().iterator();
             int i = 0;
             while (it.hasNext()) {
                 Object[] array = ((Queue) it.next()).toArray();
@@ -423,7 +425,7 @@ public class PriorityBinQueue<T> implements BlockingQueue<T> {
         this.lock.lock();
         try {
             ArrayList<Object[]> arrayList = new ArrayList();
-            Iterator<T> it = this.queues.values().iterator();
+            Iterator it = this.queues.values().iterator();
             int i = 0;
             while (it.hasNext()) {
                 Object[] array = ((Queue) it.next()).toArray();

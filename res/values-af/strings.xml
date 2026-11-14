@@ -7,7 +7,7 @@
     <string name="abc_action_menu_overflow_description">Nog opsies</string>
     <string name="abc_action_mode_done">Klaar</string>
     <string name="abc_activity_chooser_view_see_all">Sien alles</string>
-    <string name="abc_activitychooserview_choose_application">Kies \'n program</string>
+    <string name="abc_activitychooserview_choose_application">"Kies 'n program"</string>
     <string name="abc_capital_off">AF</string>
     <string name="abc_capital_on">AAN</string>
     <string name="abc_search_hint">Soek …</string>
@@ -23,7 +23,7 @@
     <string name="cancel_button">Kanselleer</string>
     <string name="dialog_button_got_it">HET DIT</string>
     <string name="dialog_button_open_help_center">MAAK HULPSENTRUM OOP</string>
-    <string name="dialog_message_incompatible_phone">\'n Daydream-versoenbare foon word vereis. Besoek die Daydream-hulpsentrum vir meer inligting.</string>
+    <string name="dialog_message_incompatible_phone">"'n Daydream-versoenbare foon word vereis. Besoek die Daydream-hulpsentrum vir meer inligting."</string>
     <string name="dialog_message_no_cardboard">Kry die Cardboard-program om jou bekyker op te stel.</string>
     <string name="dialog_message_setup">Stel jou bekyker op vir die beste ervaring.</string>
     <string name="dialog_title">Stel op</string>
@@ -43,5 +43,5 @@
     <string name="setup_button">Opstelling</string>
     <string name="status_bar_notification_info_overflow">999+</string>
     <string name="switch_viewer_action">Skakel oor</string>
-    <string name="switch_viewer_prompt">Gebruik jy \'n ander bekyker?</string>
+    <string name="switch_viewer_prompt">"Gebruik jy 'n ander bekyker?"</string>
 </resources>

@@ -124,7 +124,7 @@ public class SLWearableData {
                                 i++;
                             }
                         } else {
-                            i2++;
+                            i = i2 + 1;
                         }
                         i2 = i;
                     }

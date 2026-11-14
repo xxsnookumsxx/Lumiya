@@ -39,7 +39,7 @@ public class ExportChatHistoryTask extends AsyncTask<ChatterID, Void, ExportResu
     private final AtomicReference<String> gotChatterName = new AtomicReference<>();
     private final ChatterNameRetriever.OnChatterNameUpdated onChatterNameUpdated = new ChatterNameRetriever.OnChatterNameUpdated() { // from class: com.lumiyaviewer.lumiya.ui.chat.-$Lambda$D705oXX7BTh_Xc4P_mIDvS9cOZI
         private final /* synthetic */ void $m$0(ChatterNameRetriever chatterNameRetriever) {
-            ((ExportChatHistoryTask) this).m431x863366ea(chatterNameRetriever);
+            ExportChatHistoryTask.this.m431x863366ea(chatterNameRetriever);
         }
 
         @Override // com.lumiyaviewer.lumiya.slproto.users.ChatterNameRetriever.OnChatterNameUpdated
@@ -76,117 +76,88 @@ public class ExportChatHistoryTask extends AsyncTask<ChatterID, Void, ExportResu
 
     /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.os.AsyncTask
-    public ExportResult doInBackground(ChatterID... chatterIDArr) throws Throwable {
+    public ExportResult doInBackground(ChatterID... chatterIDArr) {
         ChatterID chatterID;
         UserManager userManager;
         File file;
-        FileOutputStream fileOutputStream;
-        LazyList<ChatMessage> messages;
         if (chatterIDArr.length != 1 || (userManager = (chatterID = chatterIDArr[0]).getUserManager()) == null) {
             return null;
         }
         ChatterNameRetriever chatterNameRetriever = new ChatterNameRetriever(chatterID, this.onChatterNameUpdated, UIThreadExecutor.getInstance());
         try {
+            this.nameReadyLock.lock();
             try {
-                this.nameReadyLock.lock();
-                while (!this.isNameReady.get() && (!isCancelled())) {
+                while (!this.isNameReady.get() && !isCancelled()) {
                     this.nameReadyCondition.await();
                 }
+            } finally {
                 this.nameReadyLock.unlock();
-                chatterNameRetriever.dispose();
-                if (isCancelled()) {
-                    return null;
-                }
-                File file2 = new File(Environment.getExternalStoragePublicDirectory(Build.VERSION.SDK_INT >= 19 ? Environment.DIRECTORY_DOCUMENTS : Environment.DIRECTORY_DOWNLOADS), "Lumiya");
-                File file3 = new File(file2, "Chat Logs");
-                File file4 = new File(file3, sanitizeName(this.gotChatterName.get()) + ".txt");
-                DateFormat dateTimeInstance = DateFormat.getDateTimeInstance(3, 3);
+            }
+            chatterNameRetriever.dispose();
+            if (isCancelled()) {
+                return null;
+            }
+            File file2 = new File(Environment.getExternalStoragePublicDirectory(Build.VERSION.SDK_INT >= 19 ? Environment.DIRECTORY_DOCUMENTS : Environment.DIRECTORY_DOWNLOADS), "Lumiya");
+            File file3 = new File(file2, "Chat Logs");
+            File file4 = new File(file3, sanitizeName(this.gotChatterName.get()) + ".txt");
+            DateFormat dateTimeInstance = DateFormat.getDateTimeInstance(3, 3);
+            try {
+                file2.mkdirs();
+                file3.mkdirs();
+                FileOutputStream fileOutputStream = new FileOutputStream(file4, false);
                 try {
-                    file2.mkdirs();
-                    file3.mkdirs();
-                } catch (IOException e) {
-                    Debug.Warning(e);
-                    file = null;
-                } catch (SecurityException e2) {
-                    Debug.Warning(e2);
-                    file = null;
-                } catch (Exception e3) {
-                    Debug.Warning(e3);
-                    file = null;
-                }
-                try {
-                    fileOutputStream = new FileOutputStream(file4, false);
-                    try {
-                        messages = userManager.getChatterList().getActiveChattersManager().getMessages(chatterID);
-                        if (messages != null) {
-                            try {
-                                Iterator<ChatMessage> it = messages.iterator();
-                                while (it.hasNext()) {
-                                    SLChatEvent sLChatEventLoadFromDatabaseObject = SLChatEvent.loadFromDatabaseObject(it.next(), userManager.getUserID());
-                                    if (sLChatEventLoadFromDatabaseObject != null) {
-                                        fileOutputStream.write(("[" + dateTimeInstance.format(sLChatEventLoadFromDatabaseObject.getTimestamp()) + "] " + sLChatEventLoadFromDatabaseObject.getPlainTextMessage(this.context, userManager, false).toString() + "\n").getBytes());
-                                    }
-                                    if (isCancelled()) {
-                                        break;
-                                    }
+                    LazyList<ChatMessage> messages = userManager.getChatterList().getActiveChattersManager().getMessages(chatterID);
+                    if (messages != null) {
+                        try {
+                            for (ChatMessage chatMessage : messages) {
+                                SLChatEvent sLChatEventLoadFromDatabaseObject = SLChatEvent.loadFromDatabaseObject(chatMessage, userManager.getUserID());
+                                if (sLChatEventLoadFromDatabaseObject != null) {
+                                    fileOutputStream.write(("[" + dateTimeInstance.format(sLChatEventLoadFromDatabaseObject.getTimestamp()) + "] " + sLChatEventLoadFromDatabaseObject.getPlainTextMessage(this.context, userManager, false).toString() + "\n").getBytes());
                                 }
-                            } catch (Throwable th) {
-                                th = th;
-                                if (messages != null) {
-                                    messages.close();
+                                if (isCancelled()) {
+                                    break;
                                 }
-                                if (fileOutputStream != null) {
-                                    fileOutputStream.close();
-                                }
-                                throw th;
                             }
-                        }
-                        if (messages != null) {
+                        } finally {
                             messages.close();
                         }
-                        if (fileOutputStream != null) {
-                            fileOutputStream.close();
-                        }
-                        file = file4;
-                        if (!isCancelled()) {
-                            if (file != null) {
-                                return new ExportResult(file, null, null);
-                            }
-                            String str = sanitizeName(this.gotChatterName.get()) + ".txt";
-                            StringBuilder sb = new StringBuilder();
-                            LazyList<ChatMessage> messages2 = userManager.getChatterList().getActiveChattersManager().getMessages(chatterID);
-                            if (messages2 != null) {
-                                Iterator<ChatMessage> it2 = messages2.iterator();
-                                while (it2.hasNext()) {
-                                    SLChatEvent sLChatEventLoadFromDatabaseObject2 = SLChatEvent.loadFromDatabaseObject(it2.next(), userManager.getUserID());
-                                    if (sLChatEventLoadFromDatabaseObject2 != null) {
-                                        sb.append("[").append(dateTimeInstance.format(sLChatEventLoadFromDatabaseObject2.getTimestamp())).append("] ").append(sLChatEventLoadFromDatabaseObject2.getPlainTextMessage(this.context, userManager, false).toString()).append("\n");
-                                    }
-                                    if (isCancelled()) {
-                                        break;
-                                    }
-                                }
-                            }
-                            String string = sb.toString();
-                            if (!isCancelled()) {
-                                return new ExportResult(null, string, str);
-                            }
-                        }
-                        return null;
-                    } catch (Throwable th2) {
-                        th = th2;
-                        messages = null;
                     }
-                } catch (Throwable th3) {
-                    th = th3;
-                    fileOutputStream = null;
-                    messages = null;
+                } finally {
+                    fileOutputStream.close();
                 }
-            } catch (Throwable th4) {
-                this.nameReadyLock.unlock();
-                throw th4;
+                file = file4;
+            } catch (Exception e) {
+                Debug.Warning(e);
+                file = null;
             }
-        } catch (InterruptedException e4) {
+            if (!isCancelled()) {
+                if (file != null) {
+                    return new ExportResult(file, null, null);
+                }
+                String str = sanitizeName(this.gotChatterName.get()) + ".txt";
+                StringBuilder sb = new StringBuilder();
+                LazyList<ChatMessage> messages2 = userManager.getChatterList().getActiveChattersManager().getMessages(chatterID);
+                if (messages2 != null) {
+                    try {
+                        for (ChatMessage chatMessage2 : messages2) {
+                            SLChatEvent sLChatEventLoadFromDatabaseObject2 = SLChatEvent.loadFromDatabaseObject(chatMessage2, userManager.getUserID());
+                            if (sLChatEventLoadFromDatabaseObject2 != null) {
+                                sb.append("[").append(dateTimeInstance.format(sLChatEventLoadFromDatabaseObject2.getTimestamp())).append("] ").append(sLChatEventLoadFromDatabaseObject2.getPlainTextMessage(this.context, userManager, false).toString()).append("\n");
+                            }
+                            if (isCancelled()) {
+                                break;
+                            }
+                        }
+                    } finally {
+                        messages2.close();
+                    }
+                }
+                if (!isCancelled()) {
+                    return new ExportResult(null, sb.toString(), str);
+                }
+            }
+            return null;
+        } catch (Throwable e4) {
             return null;
         }
     }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -15,10 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import com.astuetz.PagerSlidingTabStrip;
+import com.google.common.base.Strings;
 import com.lumiyaviewer.lumiya.R;
 import com.lumiyaviewer.lumiya.StreamingMediaService;
+import com.lumiyaviewer.lumiya.react.Subscribable;
 import com.lumiyaviewer.lumiya.react.Subscription;
 import com.lumiyaviewer.lumiya.react.SubscriptionSingleDataPool;
+import com.lumiyaviewer.lumiya.react.SubscriptionSingleKey;
 import com.lumiyaviewer.lumiya.react.UIThreadExecutor;
 import com.lumiyaviewer.lumiya.slproto.users.ParcelData;
 import com.lumiyaviewer.lumiya.slproto.users.manager.CurrentLocationInfo;
@@ -32,7 +36,7 @@ import com.lumiyaviewer.lumiya.ui.common.ActivityUtils;
 import com.lumiyaviewer.lumiya.ui.common.DetailsActivity;
 import com.lumiyaviewer.lumiya.ui.render.CardboardActivity;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class ContactsFragment extends Fragment {
     private CurrentLocationInfo currentLocationInfo;
     private MenuItem itemLocationDetails = null;
@@ -45,7 +49,7 @@ public class ContactsFragment extends Fragment {
         Groups,
         Nearby;
 
-        /* JADX INFO: renamed from: values, reason: to resolve conflict with enum method */
+        /* renamed from: values, reason: to resolve conflict with enum method */
         public static ContactListType[] valuesCustom() {
             return values();
         }
@@ -53,12 +57,10 @@ public class ContactsFragment extends Fragment {
 
     private class ContactsPagerAdapter extends FragmentStatePagerAdapter {
 
-        /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-ui-chat-ContactsFragment$ContactListTypeSwitchesValues, reason: not valid java name */
-        private static final /* synthetic */ int[] f251x6907e542 = null;
-        final /* synthetic */ int[] $SWITCH_TABLE$com$lumiyaviewer$lumiya$ui$chat$ContactsFragment$ContactListType;
-
-        /* JADX INFO: renamed from: -getcom-lumiyaviewer-lumiya-ui-chat-ContactsFragment$ContactListTypeSwitchesValues, reason: not valid java name */
-        private static /* synthetic */ int[] m430x7c67181e() {
+        /* renamed from: -com-lumiyaviewer-lumiya-ui-chat-ContactsFragment$ContactListTypeSwitchesValues, reason: not valid java name */
+        private /* synthetic */ int[] f251x6907e542 = null;
+        /* renamed from: -getcom-lumiyaviewer-lumiya-ui-chat-ContactsFragment$ContactListTypeSwitchesValues, reason: not valid java name */
+        private /* synthetic */ int[] m430x7c67181e() {
             if (f251x6907e542 != null) {
                 return f251x6907e542;
             }
@@ -114,21 +116,21 @@ public class ContactsFragment extends Fragment {
             }
             if (nearbyUsersFragment != null) {
                 Bundle arguments = ContactsFragment.this.getArguments();
-                Bundle bundleMakeFragmentArguments = ActivityUtils.makeFragmentArguments(ActivityUtils.getActiveAgentID(arguments), null);
+                Bundle makeFragmentArguments = ActivityUtils.makeFragmentArguments(ActivityUtils.getActiveAgentID(arguments), null);
                 if (arguments.containsKey(CardboardActivity.VR_MODE_TAG)) {
-                    bundleMakeFragmentArguments.putBoolean(CardboardActivity.VR_MODE_TAG, arguments.getBoolean(CardboardActivity.VR_MODE_TAG));
+                    makeFragmentArguments.putBoolean(CardboardActivity.VR_MODE_TAG, arguments.getBoolean(CardboardActivity.VR_MODE_TAG));
                 }
-                nearbyUsersFragment.setArguments(bundleMakeFragmentArguments);
+                nearbyUsersFragment.setArguments(makeFragmentArguments);
             }
             return nearbyUsersFragment;
         }
 
         @Override // android.support.v4.view.PagerAdapter
         public CharSequence getPageTitle(int i) {
-            int iNearbyUsers;
+            int nearbyUsers;
             ContactListType contactListType = ContactListType.valuesCustom()[i];
-            String strName = contactListType.name();
-            return (contactListType != ContactListType.Nearby || ContactsFragment.this.currentLocationInfo == null || (iNearbyUsers = ContactsFragment.this.currentLocationInfo.nearbyUsers()) == 0) ? strName : strName + " (" + Integer.toString(iNearbyUsers) + ")";
+            String name = contactListType.name();
+            return (contactListType != ContactListType.Nearby || ContactsFragment.this.currentLocationInfo == null || (nearbyUsers = ContactsFragment.this.currentLocationInfo.nearbyUsers()) == 0) ? name : name + " (" + Integer.toString(nearbyUsers) + ")";
         }
 
         @Override // android.support.v4.app.FragmentStatePagerAdapter, android.support.v4.view.PagerAdapter
@@ -144,7 +146,7 @@ public class ContactsFragment extends Fragment {
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: onCurrentLocation, reason: merged with bridge method [inline-methods] */
+    /* renamed from: onCurrentLocation, reason: merged with bridge method [inline-methods] */
     public void m429com_lumiyaviewer_lumiya_ui_chat_ContactsFragmentmthref0(CurrentLocationInfo currentLocationInfo) {
         ViewPager viewPager;
         PagerAdapter adapter;
@@ -156,69 +158,42 @@ public class ContactsFragment extends Fragment {
         updateOptionsMenu();
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:29:0x0057  */
+    /* JADX WARN: Removed duplicated region for block: B:10:0x001b  */
+    /* JADX WARN: Removed duplicated region for block: B:23:0x0042  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
     private void updateOptionsMenu() {
-        /*
-            r4 = this;
-            r2 = 1
-            r1 = 0
-            com.lumiyaviewer.lumiya.slproto.users.manager.CurrentLocationInfo r0 = r4.currentLocationInfo
-            if (r0 == 0) goto L57
-            android.support.v4.app.FragmentActivity r0 = r4.getActivity()
-            boolean r3 = r0 instanceof com.lumiyaviewer.lumiya.ui.common.DetailsActivity
-            if (r3 == 0) goto L57
-            com.lumiyaviewer.lumiya.ui.common.DetailsActivity r0 = (com.lumiyaviewer.lumiya.ui.common.DetailsActivity) r0
-            android.support.v4.app.Fragment r0 = r0.getCurrentDetailsFragment()
-            if (r0 == 0) goto L18
-            if (r0 != r4) goto L40
-        L18:
-            r0 = r2
-        L19:
-            if (r0 == 0) goto L42
-            android.view.MenuItem r0 = r4.itemLocationDetails
-            if (r0 == 0) goto L24
-            android.view.MenuItem r0 = r4.itemLocationDetails
-            r0.setVisible(r2)
-        L24:
-            com.lumiyaviewer.lumiya.slproto.users.manager.CurrentLocationInfo r0 = r4.currentLocationInfo
-            com.lumiyaviewer.lumiya.slproto.users.ParcelData r0 = r0.parcelData()
-            if (r0 == 0) goto L55
-            java.lang.String r0 = r0.getMediaURL()
-            boolean r0 = com.google.common.base.Strings.isNullOrEmpty(r0)
-            r0 = r0 ^ 1
-        L36:
-            android.view.MenuItem r1 = r4.itemPlayMedia
-            if (r1 == 0) goto L3f
-            android.view.MenuItem r1 = r4.itemPlayMedia
-            r1.setVisible(r0)
-        L3f:
-            return
-        L40:
-            r0 = r1
-            goto L19
-        L42:
-            android.view.MenuItem r0 = r4.itemLocationDetails
-            if (r0 == 0) goto L4b
-            android.view.MenuItem r0 = r4.itemLocationDetails
-            r0.setVisible(r1)
-        L4b:
-            android.view.MenuItem r0 = r4.itemPlayMedia
-            if (r0 == 0) goto L3f
-            android.view.MenuItem r0 = r4.itemPlayMedia
-            r0.setVisible(r1)
-            goto L3f
-        L55:
-            r0 = r1
-            goto L36
-        L57:
-            r0 = r1
-            goto L19
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.ui.chat.ContactsFragment.updateOptionsMenu():void");
+        boolean z;
+        if (this.currentLocationInfo != null) {
+            FragmentActivity activity = getActivity();
+            if (activity instanceof DetailsActivity) {
+                Fragment currentDetailsFragment = ((DetailsActivity) activity).getCurrentDetailsFragment();
+                z = currentDetailsFragment == null || currentDetailsFragment == this;
+                if (z) {
+                    if (this.itemLocationDetails != null) {
+                        this.itemLocationDetails.setVisible(false);
+                    }
+                    if (this.itemPlayMedia != null) {
+                        this.itemPlayMedia.setVisible(false);
+                        return;
+                    }
+                    return;
+                }
+                if (this.itemLocationDetails != null) {
+                    this.itemLocationDetails.setVisible(true);
+                }
+                boolean z2 = this.currentLocationInfo.parcelData() != null ? !Strings.isNullOrEmpty(this.currentLocationInfo.parcelData().getMediaURL()) : false;
+                if (this.itemPlayMedia != null) {
+                    this.itemPlayMedia.setVisible(z2);
+                    return;
+                }
+                return;
+            }
+        }
+        z = false;
+        if (z) {
+        }
     }
 
     @Override // android.support.v4.app.Fragment
@@ -239,11 +214,11 @@ public class ContactsFragment extends Fragment {
     @Override // android.support.v4.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         super.onCreateView(layoutInflater, viewGroup, bundle);
-        View viewInflate = layoutInflater.inflate(R.layout.contacts, viewGroup, false);
-        ViewPager viewPager = (ViewPager) viewInflate.findViewById(R.id.contact_list_pager);
+        View inflate = layoutInflater.inflate(R.layout.contacts, viewGroup, false);
+        ViewPager viewPager = (ViewPager) inflate.findViewById(R.id.contact_list_pager);
         viewPager.setAdapter(new ContactsPagerAdapter(getChildFragmentManager()));
-        ((PagerSlidingTabStrip) viewInflate.findViewById(R.id.contact_list_tabs)).setViewPager(viewPager);
-        return viewInflate;
+        ((PagerSlidingTabStrip) inflate.findViewById(R.id.contact_list_tabs)).setViewPager(viewPager);
+        return inflate;
     }
 
     @Override // android.support.v4.app.Fragment
@@ -278,7 +253,7 @@ public class ContactsFragment extends Fragment {
         if (userManager != null) {
             this.subscription = userManager.getCurrentLocationInfo().subscribe(SubscriptionSingleDataPool.getSingleDataKey(), UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.chat.-$Lambda$zIl8cGSTO94X3h9h2afeKA4NC_s
                 private final /* synthetic */ void $m$0(Object obj) {
-                    ((ContactsFragment) this).m429com_lumiyaviewer_lumiya_ui_chat_ContactsFragmentmthref0((CurrentLocationInfo) obj);
+                    ContactsFragment.this.m429com_lumiyaviewer_lumiya_ui_chat_ContactsFragmentmthref0((CurrentLocationInfo) obj);
                 }
 
                 @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData

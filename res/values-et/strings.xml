@@ -31,8 +31,8 @@
     <string name="dialog_title_vr_core_not_enabled">Seadistamine on vajalik</string>
     <string name="dialog_title_vr_core_not_installed">Installimine on vajalik</string>
     <string name="dialog_title_warning">Hoiatus</string>
-    <string name="dialog_vr_core_not_enabled">See rakendus ei pruugi ilma Google\'i VR-teenuseid lubamata korralikult töötada. Enne jätkamist lubage VR-teenused telefoni menüüs Seaded.</string>
-    <string name="dialog_vr_core_not_installed">See rakendus ei pruugi ilma Google\'i VR-teenusteta korralikult töötada. Enne jätkamist installige Play poest Google\'i VR-teenused.</string>
+    <string name="dialog_vr_core_not_enabled">"See rakendus ei pruugi ilma Google'i VR-teenuseid lubamata korralikult töötada. Enne jätkamist lubage VR-teenused telefoni menüüs Seaded."</string>
+    <string name="dialog_vr_core_not_installed">"See rakendus ei pruugi ilma Google'i VR-teenusteta korralikult töötada. Enne jätkamist installige Play poest Google'i VR-teenused."</string>
     <string name="go_to_playstore_button">Ava Play pood</string>
     <string name="go_to_vr_listeners_settings_button">Ava menüü Seaded</string>
     <string name="no_browser_text">Veebisaidi avamiseks pole brauserit</string>

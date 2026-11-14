@@ -48,7 +48,7 @@ public class AvatarSkeleton extends SLDefaultSkeleton {
     AvatarSkeleton(@Nonnull AvatarShapeParams avatarShapeParams, @Nonnull MeshJointTranslations meshJointTranslations, boolean z) {
         this.hasExtendedBones = z;
         prepareSkeleton();
-        Iterator<T> it = this.bones.entrySet().iterator();
+        Iterator it = this.bones.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             int i = ((SLSkeletonBoneID) entry.getKey()).animatedIndex;
@@ -56,7 +56,7 @@ public class AvatarSkeleton extends SLDefaultSkeleton {
                 this.animatedBones[i] = (SLSkeletonBone) entry.getValue();
             }
         }
-        EnumMap enumMap = new EnumMap(SLSkeletonBoneID.class);
+        EnumMap<SLSkeletonBoneID, SLAvatarParams.SkeletonParamValue> enumMap = new EnumMap<>(SLSkeletonBoneID.class);
         SLBaseAvatar sLBaseAvatar = SLBaseAvatar.getInstance();
         applyJointTranslations(meshJointTranslations);
         this.pelvisOffset = meshJointTranslations.pelvisOffset;

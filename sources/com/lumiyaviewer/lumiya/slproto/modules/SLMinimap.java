@@ -14,6 +14,7 @@ import com.lumiyaviewer.lumiya.slproto.handler.SLEventQueueMessageHandler;
 import com.lumiyaviewer.lumiya.slproto.handler.SLMessageHandler;
 import com.lumiyaviewer.lumiya.slproto.llsd.LLSDException;
 import com.lumiyaviewer.lumiya.slproto.llsd.LLSDNode;
+import com.lumiyaviewer.lumiya.slproto.messages.CoarseLocationUpdate;
 import com.lumiyaviewer.lumiya.slproto.messages.ParcelOverlay;
 import com.lumiyaviewer.lumiya.slproto.modules.voice.SLVoice;
 import com.lumiyaviewer.lumiya.slproto.objects.SLObjectInfo;
@@ -21,10 +22,13 @@ import com.lumiyaviewer.lumiya.slproto.types.ImmutableVector;
 import com.lumiyaviewer.lumiya.slproto.types.LLVector3;
 import com.lumiyaviewer.lumiya.slproto.users.ChatterID;
 import com.lumiyaviewer.lumiya.slproto.users.ParcelData;
+import com.lumiyaviewer.lumiya.slproto.users.manager.ChatterListType;
 import com.lumiyaviewer.lumiya.slproto.users.manager.CurrentLocationInfo;
 import com.lumiyaviewer.lumiya.slproto.users.manager.UserManager;
+import com.lumiyaviewer.lumiya.utils.UUIDPool;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +37,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class SLMinimap extends SLModule {
     public static final float CHAT_RANGE = 20.0f;
     private static final int parcelBitmapSize = 256;
     public static final int parcelDataSize = 64;
-    private static final byte parcelOverlayFlagBorderSouth = -128;
+    private static final byte parcelOverlayFlagBorderSouth = Byte.MIN_VALUE;
     private static final byte parcelOverlayFlagBorderWest = 64;
     private static final byte parcelOverlayFlagPrivate = 32;
     private static final byte parcelOverlayTypeAuction = 5;
@@ -156,18 +160,18 @@ public class SLMinimap extends SLModule {
     }
 
     private int getParcelDataIndex(ImmutableVector immutableVector) {
-        int iFloor = (int) Math.floor((immutableVector.getX() * 64.0f) / 256.0f);
-        int iFloor2 = (int) Math.floor((immutableVector.getY() * 64.0f) / 256.0f);
-        if (iFloor < 0) {
-            iFloor = 0;
-        } else if (iFloor >= 64) {
-            iFloor = 63;
+        int floor = (int) Math.floor((immutableVector.getX() * 64.0f) / 256.0f);
+        int floor2 = (int) Math.floor((immutableVector.getY() * 64.0f) / 256.0f);
+        if (floor < 0) {
+            floor = 0;
+        } else if (floor >= 64) {
+            floor = 63;
         }
-        return ((iFloor2 >= 0 ? iFloor2 >= 64 ? 63 : iFloor2 : 0) * 64) + iFloor;
+        return ((floor2 >= 0 ? floor2 >= 64 ? 63 : floor2 : 0) * 64) + floor;
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: updateAvatarParcelData, reason: merged with bridge method [inline-methods] */
+    /* renamed from: updateAvatarParcelData, reason: merged with bridge method [inline-methods] */
     public void m222com_lumiyaviewer_lumiya_slproto_modules_SLMinimapmthref0() {
         ParcelData parcelData = this.myAvatarParcelDataIndex >= 0 ? this.parcels.get(Integer.valueOf(this.parcelIDs[this.myAvatarParcelDataIndex])) : null;
         if (parcelData != null && this.afterTeleport) {
@@ -189,98 +193,187 @@ public class SLMinimap extends SLModule {
         super.HandleCloseCircuit();
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:88:0x01df  */
-    @com.lumiyaviewer.lumiya.slproto.handler.SLMessageHandler
+    /* JADX WARN: Removed duplicated region for block: B:66:0x019a  */
+    /* JADX WARN: Removed duplicated region for block: B:68:0x01a7  */
+    /* JADX WARN: Removed duplicated region for block: B:75:0x01c0  */
+    /* JADX WARN: Removed duplicated region for block: B:85:0x013c  */
+    /* JADX WARN: Removed duplicated region for block: B:95:0x017b  */
+    /* JADX WARN: Removed duplicated region for block: B:98:0x0188  */
+    @SLMessageHandler
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
-    public void HandleCoarseLocationUpdate(com.lumiyaviewer.lumiya.slproto.messages.CoarseLocationUpdate r14) {
-        /*
-            Method dump skipped, instruction units count: 491
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.slproto.modules.SLMinimap.HandleCoarseLocationUpdate(com.lumiyaviewer.lumiya.slproto.messages.CoarseLocationUpdate):void");
+    public void HandleCoarseLocationUpdate(CoarseLocationUpdate coarseLocationUpdate) {
+        boolean z;
+        Iterator it;
+        int i;
+        boolean z2;
+        boolean z3 = false;
+        ParcelData parcelData = this.myAvatarParcelDataIndex >= 0 ? this.parcels.get(Integer.valueOf(this.parcelIDs[this.myAvatarParcelDataIndex])) : null;
+        HashSet hashSet = new HashSet(coarseLocationUpdate.Location_Fields.size());
+        ParcelData parcelData2 = parcelData;
+        HashSet hashSet2 = null;
+        boolean z4 = false;
+        boolean z5 = false;
+        for (int i2 = 0; i2 < coarseLocationUpdate.Location_Fields.size() && i2 < coarseLocationUpdate.AgentData_Fields.size(); i2++) {
+            CoarseLocationUpdate.Location location = coarseLocationUpdate.Location_Fields.get(i2);
+            ImmutableVector immutableVector = new ImmutableVector(location.X, location.Y, location.Z * 4);
+            if (i2 != coarseLocationUpdate.Index_Field.You) {
+                UUID uuid = coarseLocationUpdate.AgentData_Fields.get(i2).AgentID;
+                if (!UUIDPool.ZeroUUID.equals(uuid)) {
+                    UserLocation userLocation = this.userPositions.get(uuid);
+                    if (userLocation == null) {
+                        this.userPositions.put(uuid, new UserLocation(ChatterID.getUserChatterID(this.userManager.getUserID(), uuid), immutableVector));
+                        z2 = true;
+                        z5 = true;
+                    } else if (immutableVector.equals(userLocation.location)) {
+                        z2 = false;
+                    } else {
+                        userLocation.location = immutableVector;
+                        z2 = true;
+                    }
+                    if (z2) {
+                        if (hashSet2 == null) {
+                            hashSet2 = new HashSet();
+                        }
+                        hashSet2.add(uuid);
+                    }
+                    hashSet.add(uuid);
+                }
+            } else if (!Objects.equal(immutableVector, this.myAvatarPosition)) {
+                this.myAvatarPosition = immutableVector;
+                int parcelDataIndex = getParcelDataIndex(this.myAvatarPosition);
+                if (parcelDataIndex != this.myAvatarParcelDataIndex) {
+                    this.myAvatarParcelDataIndex = parcelDataIndex;
+                    parcelData2 = this.parcels.get(Integer.valueOf(this.parcelIDs[this.myAvatarParcelDataIndex]));
+                    z4 = true;
+                } else {
+                    z4 = true;
+                }
+            }
+        }
+        Iterator<UUID> it2 = this.userPositions.keySet().iterator();
+        while (it2.hasNext()) {
+            UUID next = it2.next();
+            if (!hashSet.contains(next)) {
+                it2.remove();
+                if (hashSet2 == null) {
+                    hashSet2 = new HashSet();
+                }
+                hashSet2.add(next);
+                z5 = true;
+            }
+        }
+        z = false;
+        if (this.myAvatarPosition != null) {
+            if (z4) {
+                for (UserLocation userLocation2 : this.userPositions.values()) {
+                    userLocation2.distance = this.myAvatarPosition.distanceTo(userLocation2.location);
+                }
+                z = true;
+            } else if (hashSet2 != null) {
+                Iterator it3 = hashSet2.iterator();
+                while (it3.hasNext()) {
+                    UserLocation userLocation3 = this.userPositions.get((UUID) it3.next());
+                    if (userLocation3 != null) {
+                        userLocation3.distance = this.myAvatarPosition.distanceTo(userLocation3.location);
+                    }
+                }
+                z = true;
+            }
+        }
+        if (z || z5) {
+            it = this.userPositions.values().iterator();
+            i = 0;
+            while (it.hasNext()) {
+                i = ((UserLocation) it.next()).distance <= 20.0f ? i + 1 : i;
+            }
+            if (i != this.chatRangeUsersCount) {
+                this.chatRangeUsersCount = i;
+                z3 = true;
+            }
+            if (this.nearbyUsersCount != this.userPositions.size()) {
+                this.nearbyUsersCount = this.userPositions.size();
+                z3 = true;
+            }
+        }
+        if (parcelData2 != parcelData || z3) {
+            requestUpdateAvatarParcelData();
+        }
+        if (z5) {
+            this.userManager.getChatterList().updateList(ChatterListType.Nearby);
+        }
+        if (z4) {
+            this.userManager.getChatterList().updateDistanceToAllUsers();
+        } else if (hashSet2 != null) {
+            Iterator it4 = hashSet2.iterator();
+            while (it4.hasNext()) {
+                this.userManager.getChatterList().updateDistanceToUser((UUID) it4.next());
+            }
+        }
+        if (z4 || hashSet2 != null) {
+            this.userManager.getUserLocationsPool().requestUpdate(SubscriptionSingleKey.Value);
+        }
     }
 
     @SLMessageHandler
     public void HandleParcelOverlay(ParcelOverlay parcelOverlay) {
-        int i;
         Debug.Log("ParcelOverlay: SequenceID = " + parcelOverlay.ParcelData_Field.SequenceID);
         byte[] bArr = parcelOverlay.ParcelData_Field.Data;
         int length = bArr.length / 64;
         int[] iArr = new int[length * 4 * 64 * 4];
-        int i2 = 0;
-        int i3 = 0;
-        while (i3 < length) {
+        int i = 0;
+        for (int i3 = 0; i3 < length; i3++) {
             int i4 = i3 + (parcelOverlay.ParcelData_Field.SequenceID * 16);
-            int i5 = 0;
-            while (true) {
-                int i6 = i5;
-                i = i2;
-                if (i6 < 64) {
-                    int iRgb = 0;
-                    switch ((byte) (bArr[i] & 15)) {
-                        case 0:
-                            iRgb = Color.rgb(0, 192, 0);
-                            break;
-                        case 1:
-                            iRgb = Color.rgb(32, 128, 32);
-                            break;
-                        case 2:
-                            iRgb = Color.rgb(0, 128, 128);
-                            break;
-                        case 3:
-                            iRgb = Color.rgb(0, 255, 255);
-                            break;
-                        case 4:
-                            iRgb = Color.rgb(128, 128, 0);
-                            break;
-                        case 5:
-                            iRgb = Color.rgb(255, 255, 0);
-                            break;
-                    }
-                    if ((bArr[i] & 32) != 0) {
-                        int iRed = Color.red(iRgb);
-                        int iGreen = Color.green(iRgb);
-                        int iBlue = Color.blue(iRgb);
-                        int i7 = iRed + 64;
-                        if (i7 >= 255) {
-                            int i8 = i7 - 255;
-                            i7 -= i8;
-                            iGreen -= i8;
-                            iBlue -= i8;
-                            if (iGreen < 0) {
-                                iGreen = 0;
-                            }
-                            if (iBlue < 0) {
-                                iBlue = 0;
-                            }
-                        }
-                        iRgb = Color.rgb(i7, iGreen, iBlue);
-                    }
-                    int i9 = 0;
-                    while (true) {
-                        int i10 = i9;
-                        if (i10 < 4) {
-                            int i11 = ((((length * 4) - 1) - ((i3 * 4) + i10)) * 256) + (i6 * 4);
-                            int i12 = 0;
-                            while (true) {
-                                int i13 = i12;
-                                if (i13 < 4) {
-                                    iArr[i11 + i13] = ((i10 != 0 || i4 == 0 || (bArr[i] & (-128)) == 0) && (i13 != 0 || i6 == 0 || (bArr[i] & 64) == 0)) ? iRgb : -1;
-                                    i12 = i13 + 1;
-                                }
-                            }
-                            i9 = i10 + 1;
-                        }
-                    }
-                    i2 = i + 1;
-                    i5 = i6 + 1;
+            for (int i6 = 0; i6 < 64; i6++) {
+                int i7 = 0;
+                switch ((byte) (bArr[i] & 15)) {
+                    case 0:
+                        i7 = Color.rgb(0, 192, 0);
+                        break;
+                    case 1:
+                        i7 = Color.rgb(32, 128, 32);
+                        break;
+                    case 2:
+                        i7 = Color.rgb(0, 128, 128);
+                        break;
+                    case 3:
+                        i7 = Color.rgb(0, 255, 255);
+                        break;
+                    case 4:
+                        i7 = Color.rgb(128, 128, 0);
+                        break;
+                    case 5:
+                        i7 = Color.rgb(255, 255, 0);
+                        break;
                 }
+                if ((bArr[i] & 32) != 0) {
+                    int red = Color.red(i7);
+                    int green = Color.green(i7);
+                    int blue = Color.blue(i7);
+                    int i8 = red + 64;
+                    if (i8 >= 255) {
+                        int i9 = i8 - 255;
+                        i8 -= i9;
+                        green -= i9;
+                        blue -= i9;
+                        if (green < 0) {
+                            green = 0;
+                        }
+                        if (blue < 0) {
+                            blue = 0;
+                        }
+                    }
+                    i7 = Color.rgb(i8, green, blue);
+                }
+                for (int i11 = 0; i11 < 4; i11++) {
+                    int i12 = ((((length * 4) - 1) - ((i3 * 4) + i11)) * 256) + (i6 * 4);
+                    for (int i14 = 0; i14 < 4; i14++) {
+                        iArr[i12 + i14] = ((i11 != 0 || i4 == 0 || (bArr[i] & Byte.MIN_VALUE) == 0) && (i14 != 0 || i6 == 0 || (bArr[i] & 64) == 0)) ? i7 : -1;
+                    }
+                }
+                i++;
             }
-            i3++;
-            i2 = i;
         }
         this.minimapBitmap = new MinimapBitmap(this.minimapBitmap, 0, (3 - parcelOverlay.ParcelData_Field.SequenceID) * 64, iArr);
         if (this.userManager != null) {
@@ -288,52 +381,36 @@ public class SLMinimap extends SLModule {
         }
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:36:0x0051  */
+    /* JADX WARN: Removed duplicated region for block: B:39:? A[RETURN, SYNTHETIC] */
     @SLEventQueueMessageHandler(eventName = SLCapEventQueue.CapsEventType.ParcelProperties)
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public void HandleParcelProperties(LLSDNode lLSDNode) {
-        boolean z;
-        boolean z2;
+        boolean z = false;
         try {
-            LLSDNode lLSDNodeByKey = lLSDNode.byKey("ParcelData");
-            int i = 0;
-            z = false;
-            while (i < lLSDNodeByKey.getCount()) {
+            LLSDNode byKey = lLSDNode.byKey("ParcelData");
+            for (int i = 0; i < byKey.getCount(); i++) {
                 try {
-                    try {
-                        ParcelData parcelData = new ParcelData(lLSDNodeByKey.byIndex(i));
-                        int parcelID = parcelData.getParcelID();
-                        this.parcels.put(Integer.valueOf(parcelID), parcelData);
-                        boolean[] parcelBitmap = parcelData.getParcelBitmap();
-                        z2 = z;
-                        for (int i2 = 0; i2 < 4096; i2++) {
-                            try {
-                                if (parcelBitmap[i2]) {
-                                    this.parcelIDs[i2] = parcelID;
-                                    if (i2 == this.myAvatarParcelDataIndex) {
-                                        z2 = true;
-                                    }
-                                }
-                            } catch (LLSDException e) {
-                                z = z2;
-                                e = e;
-                                Debug.Warning(e);
-                                z2 = z;
-                                i++;
-                                z = z2;
+                    ParcelData parcelData = new ParcelData(byKey.byIndex(i));
+                    int parcelID = parcelData.getParcelID();
+                    this.parcels.put(Integer.valueOf(parcelID), parcelData);
+                    boolean[] parcelBitmap = parcelData.getParcelBitmap();
+                    for (int i2 = 0; i2 < 4096; i2++) {
+                        if (parcelBitmap[i2]) {
+                            this.parcelIDs[i2] = parcelID;
+                            if (i2 == this.myAvatarParcelDataIndex) {
+                                z = true;
                             }
                         }
-                    } catch (LLSDException e2) {
-                        e = e2;
                     }
-                    i++;
-                    z = z2;
-                } catch (LLSDException e3) {
-                    e = e3;
-                    e.printStackTrace();
+                } catch (LLSDException e) {
+                    Debug.Warning(e);
                 }
             }
-        } catch (LLSDException e4) {
-            e = e4;
-            z = false;
+        } catch (LLSDException e2) {
+            e2.printStackTrace();
         }
         if (z) {
             requestUpdateAvatarParcelData();
@@ -362,7 +439,7 @@ public class SLMinimap extends SLModule {
 
     public List<ChatterID> getNearbyChatterList() {
         ArrayList arrayList = new ArrayList(this.userPositions.size());
-        Iterator<T> it = this.userPositions.values().iterator();
+        Iterator it = this.userPositions.values().iterator();
         while (it.hasNext()) {
             arrayList.add(((UserLocation) it.next()).chatterID);
         }
@@ -372,7 +449,7 @@ public class SLMinimap extends SLModule {
     public void requestUpdateAvatarParcelData() {
         this.agentCircuit.execute(new Runnable() { // from class: com.lumiyaviewer.lumiya.slproto.modules.-$Lambda$eaDiotW55nmaHN5_b1ikeJpLLsk
             private final /* synthetic */ void $m$0() {
-                ((SLMinimap) this).m222com_lumiyaviewer_lumiya_slproto_modules_SLMinimapmthref0();
+                SLMinimap.this.m222com_lumiyaviewer_lumiya_slproto_modules_SLMinimapmthref0();
             }
 
             @Override // java.lang.Runnable

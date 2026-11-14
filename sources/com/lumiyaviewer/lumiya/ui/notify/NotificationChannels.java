@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 public class NotificationChannels {
 
     /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-ui-settings-NotificationTypeSwitchesValues, reason: not valid java name */
-    private static final /* synthetic */ int[] f464x3582025 = null;
+    private static /* synthetic */ int[] f464x3582025 = null;
     public static final String MESSAGE_NOTIFICATION_GROUP = "messageNotifications";
     private final NotificationChannelManager channelManager;
 

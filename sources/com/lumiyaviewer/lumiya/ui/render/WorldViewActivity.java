@@ -101,7 +101,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class WorldViewActivity extends DetailsActivity implements View.OnTouchListener, ThemeMapper, ScriptDialogHandler, UnreadNotificationManager.NotifyCapture {
     private static final long BUTTONS_FADE_TIMEOUT_MILLIS = 7500;
     private static final String FROM_NOTIFICATION_TAG = "fromNotification";
@@ -245,7 +245,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     private boolean isDragging = false;
     private final SubscriptionData<UUID, SLAgentCircuit> agentCircuit = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.3
         private final /* synthetic */ void $m$0(Object obj) {
-            ((WorldViewActivity) this).m846com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref0((SLAgentCircuit) obj);
+            WorldViewActivity.this.m846com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref0((SLAgentCircuit) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -255,7 +255,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     });
     private final SubscriptionData<SubscriptionSingleKey, MyAvatarState> myAvatarState = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.4
         private final /* synthetic */ void $m$0(Object obj) {
-            ((WorldViewActivity) this).m847com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref1((MyAvatarState) obj);
+            WorldViewActivity.this.m847com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref1((MyAvatarState) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -265,7 +265,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     });
     private final SubscriptionData<Integer, SLObjectProfileData> selectedObjectProfile = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.5
         private final /* synthetic */ void $m$0(Object obj) {
-            ((WorldViewActivity) this).m848com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref2((SLObjectProfileData) obj);
+            WorldViewActivity.this.m848com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref2((SLObjectProfileData) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -275,7 +275,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     });
     private final SubscriptionData<SubscriptionSingleKey, CurrentLocationInfo> currentLocationInfo = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.6
         private final /* synthetic */ void $m$0(Object obj) {
-            ((WorldViewActivity) this).m849com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref3((CurrentLocationInfo) obj);
+            WorldViewActivity.this.m849com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref3((CurrentLocationInfo) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -285,7 +285,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     });
     private final SubscriptionData<SubscriptionSingleKey, ChatterID> voiceActiveChatter = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.7
         private final /* synthetic */ void $m$0(Object obj) {
-            ((WorldViewActivity) this).m850com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref4((ChatterID) obj);
+            WorldViewActivity.this.m850com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref4((ChatterID) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -295,7 +295,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     });
     private final SubscriptionData<ChatterID, VoiceChatInfo> voiceChatInfo = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.8
         private final /* synthetic */ void $m$0(Object obj) {
-            ((WorldViewActivity) this).m851com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref5((VoiceChatInfo) obj);
+            WorldViewActivity.this.m851com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref5((VoiceChatInfo) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -311,13 +311,13 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
             if (WorldViewActivity.this.detailsVisible() || !(!WorldViewActivity.this.isDragging)) {
                 return;
             }
-            long jUptimeMillis = (WorldViewActivity.this.lastObjectActivityTime + WorldViewActivity.OBJECT_DESELECT_TIMEOUT_MILLIS) - SystemClock.uptimeMillis();
-            Debug.Printf("ObjectDeselect: remaining %d", Long.valueOf(jUptimeMillis));
-            if (jUptimeMillis <= 0) {
+            long uptimeMillis = (WorldViewActivity.this.lastObjectActivityTime + WorldViewActivity.OBJECT_DESELECT_TIMEOUT_MILLIS) - SystemClock.uptimeMillis();
+            Debug.Printf("ObjectDeselect: remaining %d", Long.valueOf(uptimeMillis));
+            if (uptimeMillis <= 0) {
                 WorldViewActivity.this.handlePickedObject(null);
             } else {
                 WorldViewActivity.this.objectDeselectTimerStarted = true;
-                WorldViewActivity.this.mHandler.postDelayed(WorldViewActivity.this.objectDeselectTimerTask, jUptimeMillis);
+                WorldViewActivity.this.mHandler.postDelayed(WorldViewActivity.this.objectDeselectTimerTask, uptimeMillis);
             }
         }
     };
@@ -330,13 +330,13 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
                 if ((voiceChatInfo == null || voiceChatInfo.state != VoiceChatInfo.VoiceChatState.Active) ? false : voiceChatInfo.localMicActive) {
                     return;
                 }
-                long jUptimeMillis = (WorldViewActivity.this.lastActivityTime + WorldViewActivity.BUTTONS_FADE_TIMEOUT_MILLIS) - SystemClock.uptimeMillis();
-                Debug.Printf("ButtonsFade: remaining %d", Long.valueOf(jUptimeMillis));
-                if (jUptimeMillis <= 0) {
+                long uptimeMillis = (WorldViewActivity.this.lastActivityTime + WorldViewActivity.BUTTONS_FADE_TIMEOUT_MILLIS) - SystemClock.uptimeMillis();
+                Debug.Printf("ButtonsFade: remaining %d", Long.valueOf(uptimeMillis));
+                if (uptimeMillis <= 0) {
                     WorldViewActivity.this.startFadingButtons();
                 } else {
                     WorldViewActivity.this.buttonsFadeTimerStarted = true;
-                    WorldViewActivity.this.mHandler.postDelayed(WorldViewActivity.this.buttonsFadeTask, jUptimeMillis);
+                    WorldViewActivity.this.mHandler.postDelayed(WorldViewActivity.this.buttonsFadeTask, uptimeMillis);
                 }
             }
         }
@@ -374,11 +374,11 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
                 WorldViewActivity.this.mGLView.setIsInteracting(true);
             }
             WorldViewActivity.this.wasInScaling = WorldViewActivity.this.isInScaling;
-            boolean zOnTouchEvent = z | WorldViewActivity.this.scaleGestureDetector.onTouchEvent(motionEvent) | WorldViewActivity.this.gestureDetector.onTouchEvent(motionEvent);
+            boolean onTouchEvent = z | WorldViewActivity.this.scaleGestureDetector.onTouchEvent(motionEvent) | WorldViewActivity.this.gestureDetector.onTouchEvent(motionEvent);
             if (z2 && (!WorldViewActivity.this.isInteracting)) {
                 WorldViewActivity.this.mGLView.setIsInteracting(false);
             }
-            return zOnTouchEvent;
+            return onTouchEvent;
         }
     };
     private final GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() { // from class: com.lumiyaviewer.lumiya.ui.render.WorldViewActivity.6
@@ -406,7 +406,8 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
                 if (WorldViewActivity.this.isInScaling || !(!WorldViewActivity.this.wasInScaling)) {
                     return;
                 }
-                WorldViewActivity.this.worldViewHolder.getLocationOnScreen(new int[2]);
+                int[] r2 = new int[2];
+                WorldViewActivity.this.worldViewHolder.getLocationOnScreen(r2);
                 WorldViewActivity.this.mGLView.pickObjectHover(rawX - r2[0], rawY - r2[1]);
             }
         }
@@ -445,7 +446,8 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
             if (WorldViewActivity.this.isDragging) {
                 WorldViewActivity.this.dragSelectorSetRawPosition((int) motionEvent.getRawX(), (int) motionEvent.getRawY());
             } else if (WorldViewActivity.this.displayedHUDid != 0) {
-                WorldViewActivity.this.worldViewHolder.getLocationOnScreen(new int[2]);
+                int[] r0 = new int[2];
+                WorldViewActivity.this.worldViewHolder.getLocationOnScreen(r0);
                 WorldViewActivity.this.mGLView.touchHUD(motionEvent.getRawX() - r0[0], motionEvent.getRawY() - r0[1]);
             } else {
                 WorldViewActivity.this.handlePickedObject(null);
@@ -492,12 +494,12 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
         }
     };
 
-    /* JADX INFO: renamed from: com.lumiyaviewer.lumiya.ui.render.WorldViewActivity$1, reason: invalid class name */
+    /* renamed from: com.lumiyaviewer.lumiya.ui.render.WorldViewActivity$1, reason: invalid class name */
     class AnonymousClass1 {
         AnonymousClass1() {
         }
 
-        /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_render_WorldViewActivity$1_50098, reason: not valid java name */
+        /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_render_WorldViewActivity$1_50098, reason: not valid java name */
         /* synthetic */ void m856xad728e4a(ActiveChattersManager.ChatMessageEvent chatMessageEvent) {
             WorldViewActivity.this.handleChatEvent(chatMessageEvent);
         }
@@ -506,7 +508,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
         public void onChatMessage(final ActiveChattersManager.ChatMessageEvent chatMessageEvent) {
             WorldViewActivity.this.mHandler.post(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.11
                 private final /* synthetic */ void $m$0() {
-                    ((WorldViewActivity.AnonymousClass1) this).m856xad728e4a((ActiveChattersManager.ChatMessageEvent) chatMessageEvent);
+                    WorldViewActivity.AnonymousClass1.this.m856xad728e4a((ActiveChattersManager.ChatMessageEvent) chatMessageEvent);
                 }
 
                 @Override // java.lang.Runnable
@@ -573,9 +575,9 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
 
     /* JADX INFO: Access modifiers changed from: private */
     public boolean detailsVisible() {
-        Fragment fragmentFindFragmentById;
+        Fragment findFragmentById;
         FragmentManager supportFragmentManager = getSupportFragmentManager();
-        return (supportFragmentManager == null || (fragmentFindFragmentById = supportFragmentManager.findFragmentById(R.id.details)) == null || !fragmentFindFragmentById.isVisible()) ? false : true;
+        return (supportFragmentManager == null || (findFragmentById = supportFragmentManager.findFragmentById(R.id.details)) == null || !findFragmentById.isVisible()) ? false : true;
     }
 
     private void displayHUD(int i) {
@@ -650,16 +652,16 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
         this.voiceStatusView.setShowActiveChatterName(true);
         this.worldViewTouchReceiver.setOnTouchListener(this.worldViewTouchListener);
         this.objectControlsPanel.setVisibility(8);
-        View viewFindViewById = findViewById(R.id.offline_notify_status_layout);
-        if (viewFindViewById != null) {
-            viewFindViewById.setBackgroundColor(Color.argb(128, 0, 0, 0));
-            int iApplyDimension = (int) TypedValue.applyDimension(1, 10.0f, getResources().getDisplayMetrics());
-            viewFindViewById.setPadding(iApplyDimension, iApplyDimension, iApplyDimension, iApplyDimension);
+        View findViewById = findViewById(R.id.offline_notify_status_layout);
+        if (findViewById != null) {
+            findViewById.setBackgroundColor(Color.argb(128, 0, 0, 0));
+            int applyDimension = (int) TypedValue.applyDimension(1, 10.0f, getResources().getDisplayMetrics());
+            findViewById.setPadding(applyDimension, applyDimension, applyDimension, applyDimension);
         }
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: onAgentCircuit, reason: merged with bridge method [inline-methods] */
+    /* renamed from: onAgentCircuit, reason: merged with bridge method [inline-methods] */
     public void m846com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref0(SLAgentCircuit sLAgentCircuit) {
         if (sLAgentCircuit != null) {
             this.avatarControl = sLAgentCircuit.getModules().avatarControl;
@@ -682,7 +684,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: onCurrentLocation, reason: merged with bridge method [inline-methods] */
+    /* renamed from: onCurrentLocation, reason: merged with bridge method [inline-methods] */
     public void m849com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref3(CurrentLocationInfo currentLocationInfo) {
         ParcelData parcelData = currentLocationInfo != null ? currentLocationInfo.parcelData() : null;
         String name = parcelData != null ? parcelData.getName() : null;
@@ -693,13 +695,13 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: onMyAvatarState, reason: merged with bridge method [inline-methods] */
+    /* renamed from: onMyAvatarState, reason: merged with bridge method [inline-methods] */
     public void m847com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref1(MyAvatarState myAvatarState) {
         updateObjectPanel();
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: onPickedAvatarNameUpdated, reason: merged with bridge method [inline-methods] */
+    /* renamed from: onPickedAvatarNameUpdated, reason: merged with bridge method [inline-methods] */
     public void m852com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref6(ChatterNameRetriever chatterNameRetriever) {
         if (chatterNameRetriever == this.pickedAvatarNameRetriever) {
             updateObjectPanel();
@@ -707,7 +709,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: onSelectedObjectProfile, reason: merged with bridge method [inline-methods] */
+    /* renamed from: onSelectedObjectProfile, reason: merged with bridge method [inline-methods] */
     public void m848com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref2(SLObjectProfileData sLObjectProfileData) {
         Debug.Printf("got selected object profile: %s", sLObjectProfileData);
         updateObjectPanel();
@@ -720,7 +722,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: onVoiceActiveChatter, reason: merged with bridge method [inline-methods] */
+    /* renamed from: onVoiceActiveChatter, reason: merged with bridge method [inline-methods] */
     public void m850com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref4(ChatterID chatterID) {
         if (this.voiceStatusView != null) {
             this.voiceStatusView.setChatterID(chatterID);
@@ -733,7 +735,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     }
 
     /* JADX INFO: Access modifiers changed from: private */
-    /* JADX INFO: renamed from: onVoiceChatInfo, reason: merged with bridge method [inline-methods] */
+    /* renamed from: onVoiceChatInfo, reason: merged with bridge method [inline-methods] */
     public void m851com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref5(VoiceChatInfo voiceChatInfo) {
     }
 
@@ -743,7 +745,8 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
         this.dragPointerLayout.getLocationOnScreen(iArr);
         int width = iArr[0] + (this.dragPointer.getWidth() / 2) + i;
         int height = iArr[1] + (this.dragPointer.getHeight() / 2) + i2;
-        this.worldViewHolder.getLocationOnScreen(new int[2]);
+        int[] r2 = new int[2];
+        this.worldViewHolder.getLocationOnScreen(r2);
         this.mGLView.pickObjectHover(width - r2[0], height - r2[1]);
     }
 
@@ -777,7 +780,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
             builder.setTitle(R.string.select_hud_title);
             builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.10
                 private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i2) {
-                    ((WorldViewActivity) this).m855x5cf6cbb8((List) arrayList, dialogInterface, i2);
+                    WorldViewActivity.this.m855x5cf6cbb8((List) arrayList, dialogInterface, i2);
                 }
 
                 @Override // android.content.DialogInterface.OnClickListener
@@ -858,21 +861,134 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
         }
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:120:0x017e  */
-    /* JADX WARN: Removed duplicated region for block: B:33:0x0094  */
-    /* JADX WARN: Removed duplicated region for block: B:36:0x009a  */
-    /* JADX WARN: Removed duplicated region for block: B:46:0x00b1  */
-    /* JADX WARN: Removed duplicated region for block: B:49:0x00b7  */
+    /* JADX WARN: Code restructure failed: missing block: B:165:0x00af, code lost:
+    
+        if ((!(!r12.camButtonEnabled ? r12.manualCamMode : false)) != false) goto L49;
+     */
+    /* JADX WARN: Code restructure failed: missing block: B:172:0x0092, code lost:
+    
+        if ((!(r12.camButtonEnabled ? r12.manualCamMode : false)) == false) goto L33;
+     */
+    /* JADX WARN: Removed duplicated region for block: B:151:0x017b  */
+    /* JADX WARN: Removed duplicated region for block: B:163:0x00ab  */
+    /* JADX WARN: Removed duplicated region for block: B:166:0x0169  */
+    /* JADX WARN: Removed duplicated region for block: B:60:0x00f7  */
+    /* JADX WARN: Removed duplicated region for block: B:63:0x00fd  */
+    /* JADX WARN: Removed duplicated region for block: B:66:0x0107  */
+    /* JADX WARN: Removed duplicated region for block: B:75:0x0121  */
+    /* JADX WARN: Removed duplicated region for block: B:84:0x0137  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
     private void updateObjectPanel() {
-        /*
-            Method dump skipped, instruction units count: 614
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.ui.render.WorldViewActivity.updateObjectPanel():void");
+        int i;
+        int i2;
+        int i3;
+        String orNull;
+        MyAvatarState data = this.myAvatarState.getData();
+        SLAgentCircuit data2 = this.agentCircuit.getData();
+        boolean z = data2 != null;
+        boolean isSitting = data != null ? data.isSitting() : false;
+        boolean hasHUDs = data != null ? data.hasHUDs() : false;
+        boolean isFlying = data != null ? data.isFlying() : false;
+        boolean canStandUp = data2 != null ? data2.getModules().rlvController.canStandUp() : false;
+        boolean canSit = data2 != null ? data2.getModules().rlvController.canSit() : false;
+        boolean z2 = this.pickedObject != null;
+        Debug.Printf("isSitting %b, isFlying %b, hasHUDs %b, isDragging %b", Boolean.valueOf(isSitting), Boolean.valueOf(isFlying), Boolean.valueOf(hasHUDs), Boolean.valueOf(this.isDragging));
+        this.dragPointerLayout.setVisibility(this.isDragging ? 0 : 4);
+        this.dragPointer.setVisibility(this.isDragging ? 0 : 4);
+        LinearLayout linearLayout = this.flyButtonsLayout;
+        if (isSitting || (!z)) {
+        }
+        if (!this.isDragging && !z2) {
+            i = 0;
+            linearLayout.setVisibility(i);
+            View view = this.moveButtonsLayout;
+            if (!isSitting || (!z)) {
+            }
+            if (!this.isDragging && !z2) {
+                i2 = 0;
+                view.setVisibility(i2);
+                this.buttonStandUp.setVisibility((!canStandUp && isSitting && (this.isDragging ^ true)) ? 0 : 8);
+                this.buttonHUD.setVisibility((!hasHUDs && (this.isDragging ^ true) && z) ? 0 : 8);
+                this.buttonFlyDownward.setVisibility(((isFlying || !z) && !(this.camButtonEnabled && this.manualCamMode)) ? 8 : 0);
+                ImageButton imageButton = this.buttonStopFlying;
+                if (isFlying && z) {
+                    if (!(!this.camButtonEnabled ? this.manualCamMode : false)) {
+                        i3 = 0;
+                        imageButton.setVisibility(i3);
+                        this.buttonCamOn.setVisibility((!this.camButtonEnabled && (this.manualCamMode ^ true) && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
+                        this.buttonCamOff.setVisibility((!this.camButtonEnabled && this.manualCamMode && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
+                        if (this.pickedObject != null || (!z)) {
+                            this.objectControlsPanel.setVisibility(8);
+                            return;
+                        }
+                        this.objectControlsPanel.setVisibility(0);
+                        boolean isTouchable = this.pickedObject.isTouchable();
+                        if (this.pickedObject.isAvatar()) {
+                            isTouchable |= this.pickedObject.hasTouchableChildren();
+                        }
+                        this.objectTouchButton.setVisibility(isTouchable ? 0 : 8);
+                        boolean isAvatar = this.pickedObject.isAvatar();
+                        boolean z3 = isSitting && this.pickedObject.localID == data.sittingOn();
+                        boolean z4 = !isAvatar ? !z3 : false;
+                        if (isAvatar) {
+                            z3 = false;
+                        }
+                        this.objectSitButton.setVisibility((z4 && canSit) ? 0 : 8);
+                        this.objectStandButton.setVisibility((z3 && canStandUp) ? 0 : 8);
+                        this.objectChatButton.setVisibility(isAvatar ? 0 : 8);
+                        this.avatarIconView.setVisibility(isAvatar ? 0 : 8);
+                        this.objectPayButton.setVisibility((this.pickedObject.isPayable() || this.pickedObject.saleType != 0) ? 0 : 8);
+                        if (this.pickedObject.isAvatar()) {
+                            orNull = this.pickedAvatarNameRetriever != null ? this.pickedAvatarNameRetriever.getResolvedName() : null;
+                        } else {
+                            SLObjectProfileData data3 = this.selectedObjectProfile.getData();
+                            orNull = (data3 == null || !Objects.equal(data3.objectUUID(), this.pickedObject.getId())) ? null : data3.name().orNull();
+                            if (orNull == null) {
+                                orNull = this.pickedObject.name;
+                            }
+                        }
+                        if (orNull == null) {
+                            orNull = getString(R.string.object_name_loading);
+                        }
+                        this.objectNameTextView.setText(orNull);
+                        return;
+                    }
+                }
+                i3 = 8;
+                imageButton.setVisibility(i3);
+                this.buttonCamOn.setVisibility((!this.camButtonEnabled && (this.manualCamMode ^ true) && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
+                this.buttonCamOff.setVisibility((!this.camButtonEnabled && this.manualCamMode && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
+                if (this.pickedObject != null) {
+                }
+                this.objectControlsPanel.setVisibility(8);
+                return;
+            }
+            i2 = 4;
+            view.setVisibility(i2);
+            this.buttonStandUp.setVisibility((!canStandUp && isSitting && (this.isDragging ^ true)) ? 0 : 8);
+            this.buttonHUD.setVisibility((!hasHUDs && (this.isDragging ^ true) && z) ? 0 : 8);
+            this.buttonFlyDownward.setVisibility(((isFlying || !z) && !(this.camButtonEnabled && this.manualCamMode)) ? 8 : 0);
+            ImageButton imageButton2 = this.buttonStopFlying;
+            if (isFlying) {
+                if (!(!this.camButtonEnabled ? this.manualCamMode : false)) {
+                }
+            }
+            i3 = 8;
+            imageButton2.setVisibility(i3);
+            this.buttonCamOn.setVisibility((!this.camButtonEnabled && (this.manualCamMode ^ true) && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
+            this.buttonCamOff.setVisibility((!this.camButtonEnabled && this.manualCamMode && (this.isDragging ^ true) && (z2 ^ true)) ? 0 : 8);
+            if (this.pickedObject != null) {
+            }
+            this.objectControlsPanel.setVisibility(8);
+            return;
+        }
+        i = 8;
+        linearLayout.setVisibility(i);
+        View view2 = this.moveButtonsLayout;
+        if (!isSitting) {
+        }
     }
 
     private void updateSimTimeOverride() {
@@ -883,13 +999,13 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     }
 
     private void updateSplitScreenLayout() {
-        Fragment fragmentFindFragmentById = getSupportFragmentManager().findFragmentById(R.id.details);
+        Fragment findFragmentById = getSupportFragmentManager().findFragmentById(R.id.details);
         Object[] objArr = new Object[3];
         objArr[0] = Boolean.valueOf(this.isSplitScreen);
-        objArr[1] = Boolean.valueOf(fragmentFindFragmentById != null);
-        objArr[2] = Boolean.valueOf(fragmentFindFragmentById != null ? fragmentFindFragmentById.isDetached() : false);
+        objArr[1] = Boolean.valueOf(findFragmentById != null);
+        objArr[2] = Boolean.valueOf(findFragmentById != null ? findFragmentById.isDetached() : false);
         Debug.Printf("updateSplitScreenLayout: isSplitScreen now %b details has %b detached %b", objArr);
-        if (fragmentFindFragmentById == null || !(!fragmentFindFragmentById.isDetached())) {
+        if (findFragmentById == null || !(!findFragmentById.isDetached())) {
             this.worldOverlaysContainer.setVisibility(0);
         } else {
             this.detailsContainer.setVisibility(0);
@@ -906,59 +1022,83 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
         switch (keyEvent.getKeyCode()) {
             case 19:
                 if (this.avatarControl != null) {
-                    if (keyEvent.getAction() == 0) {
+                    if (keyEvent.getAction() != 0) {
+                        if (keyEvent.getAction() == 1) {
+                            this.avatarControl.StopAgentMotion();
+                            break;
+                        }
+                    } else {
                         this.avatarControl.stopCamming();
                         this.avatarControl.StartAgentMotion(2);
-                    } else if (keyEvent.getAction() == 1) {
-                        this.avatarControl.StopAgentMotion();
+                        break;
                     }
                 }
                 break;
             case 20:
                 if (this.avatarControl != null) {
-                    if (keyEvent.getAction() == 0) {
+                    if (keyEvent.getAction() != 0) {
+                        if (keyEvent.getAction() == 1) {
+                            this.avatarControl.StopAgentMotion();
+                            break;
+                        }
+                    } else {
                         this.avatarControl.stopCamming();
                         this.avatarControl.StartAgentMotion(4);
-                    } else if (keyEvent.getAction() == 1) {
-                        this.avatarControl.StopAgentMotion();
+                        break;
                     }
                 }
                 break;
             case 21:
                 if (this.avatarControl != null) {
-                    if (keyEvent.getAction() == 0) {
+                    if (keyEvent.getAction() != 0) {
+                        if (keyEvent.getAction() == 1) {
+                            this.avatarControl.stopTurning();
+                            break;
+                        }
+                    } else {
                         this.avatarControl.startTurning(TURNING_SPEED);
-                    } else if (keyEvent.getAction() == 1) {
-                        this.avatarControl.stopTurning();
+                        break;
                     }
                 }
                 break;
             case 22:
                 if (this.avatarControl != null) {
-                    if (keyEvent.getAction() == 0) {
+                    if (keyEvent.getAction() != 0) {
+                        if (keyEvent.getAction() == 1) {
+                            this.avatarControl.stopTurning();
+                            break;
+                        }
+                    } else {
                         this.avatarControl.startTurning(-50.0f);
-                    } else if (keyEvent.getAction() == 1) {
-                        this.avatarControl.stopTurning();
+                        break;
                     }
                 }
                 break;
             case 92:
                 if (this.avatarControl != null) {
-                    if (keyEvent.getAction() == 0) {
+                    if (keyEvent.getAction() != 0) {
+                        if (keyEvent.getAction() == 1) {
+                            this.avatarControl.StopAgentMotion();
+                            break;
+                        }
+                    } else {
                         this.avatarControl.stopCamming();
                         this.avatarControl.StartAgentMotion(8);
-                    } else if (keyEvent.getAction() == 1) {
-                        this.avatarControl.StopAgentMotion();
+                        break;
                     }
                 }
                 break;
             case 93:
                 if (this.avatarControl != null) {
-                    if (keyEvent.getAction() == 0) {
+                    if (keyEvent.getAction() != 0) {
+                        if (keyEvent.getAction() == 1) {
+                            this.avatarControl.StopAgentMotion();
+                            break;
+                        }
+                    } else {
                         this.avatarControl.stopCamming();
                         this.avatarControl.StartAgentMotion(16);
-                    } else if (keyEvent.getAction() == 1) {
-                        this.avatarControl.StopAgentMotion();
+                        break;
                     }
                 }
                 break;
@@ -993,7 +1133,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
                     }
                     this.pickedAvatarNameRetriever = new ChatterNameRetriever(userChatterID, new ChatterNameRetriever.OnChatterNameUpdated() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.9
                         private final /* synthetic */ void $m$0(ChatterNameRetriever chatterNameRetriever) {
-                            ((WorldViewActivity) this).m852com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref6(chatterNameRetriever);
+                            WorldViewActivity.this.m852com_lumiyaviewer_lumiya_ui_render_WorldViewActivitymthref6(chatterNameRetriever);
                         }
 
                         @Override // com.lumiyaviewer.lumiya.slproto.users.ChatterNameRetriever.OnChatterNameUpdated
@@ -1024,12 +1164,12 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
         return cls == ContactsFragment.class || cls == ChatFragment.class || cls == ObjectDetailsFragment.class || cls == OutfitsFragment.class || cls == UserProfileFragment.class;
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_render_WorldViewActivity_10269, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_render_WorldViewActivity_10269, reason: not valid java name */
     /* synthetic */ void m853x5cc8da9f(ValueAnimator valueAnimator) {
         this.insetsBackground.setAlpha(1.0f - valueAnimator.getAnimatedFraction());
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_render_WorldViewActivity_43183, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_render_WorldViewActivity_43183, reason: not valid java name */
     /* synthetic */ void m854x5cf47ab6(DialogInterface dialogInterface, int i) {
         SLAgentCircuit activeAgentCircuit;
         if (this.userManager != null && (activeAgentCircuit = this.userManager.getActiveAgentCircuit()) != null && this.pickedObject != null) {
@@ -1038,7 +1178,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
         dialogInterface.dismiss();
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_render_WorldViewActivity_48476, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_render_WorldViewActivity_48476, reason: not valid java name */
     /* synthetic */ void m855x5cf6cbb8(List list, DialogInterface dialogInterface, int i) {
         if (i < 0 || i >= list.size()) {
             return;
@@ -1133,7 +1273,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
             this.buttonsFadeAnimator.setDuration(1000L);
             this.buttonsFadeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.1
                 private final /* synthetic */ void $m$0(ValueAnimator valueAnimator) {
-                    ((WorldViewActivity) this).m853x5cc8da9f(valueAnimator);
+                    WorldViewActivity.this.m853x5cc8da9f(valueAnimator);
                 }
 
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
@@ -1237,7 +1377,7 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(String.format(getString(R.string.object_buy_confirm), name, Integer.valueOf(this.pickedObject.salePrice))).setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$YnTWxJEMPymM_sHfAdAKQ7gcDf8.2
                     private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                        ((WorldViewActivity) this).m854x5cf47ab6(dialogInterface, i);
+                        WorldViewActivity.this.m854x5cf47ab6(dialogInterface, i);
                     }
 
                     @Override // android.content.DialogInterface.OnClickListener
@@ -1347,9 +1487,9 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
 
     @Override // android.app.Activity
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem menuItemFindItem = menu.findItem(R.id.item_cardboard_view);
-        if (menuItemFindItem != null) {
-            menuItemFindItem.setVisible(Build.VERSION.SDK_INT >= 23);
+        MenuItem findItem = menu.findItem(R.id.item_cardboard_view);
+        if (findItem != null) {
+            findItem.setVisible(Build.VERSION.SDK_INT >= 23);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -1422,58 +1562,82 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Code restructure failed: missing block: B:3:0x000e, code lost:
+    
+        return false;
+     */
     @Override // android.view.View.OnTouchListener
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (view.getId()) {
             case R.id.button_move_forward /* 2131755260 */:
                 moveTouchEvent(2, motionEvent);
-                return false;
+                break;
             case R.id.button_turn_left /* 2131755261 */:
                 if (!this.arrowsToTurn) {
                     moveTouchEvent(32, motionEvent);
+                    break;
                 } else if (this.avatarControl != null) {
-                    if (this.manualCamMode && this.camButtonEnabled) {
-                        if (motionEvent.getActionMasked() == 0) {
-                            this.avatarControl.startCameraManualControl(TURNING_SPEED, 0.0f, 0.0f, 0.0f);
-                        } else if (motionEvent.getActionMasked() == 1) {
-                            this.avatarControl.stopCameraManualControl();
+                    if (!this.manualCamMode || !this.camButtonEnabled) {
+                        if (motionEvent.getActionMasked() != 0) {
+                            if (motionEvent.getActionMasked() == 1) {
+                                this.avatarControl.stopTurning();
+                                break;
+                            }
+                        } else {
+                            this.avatarControl.startTurning(TURNING_SPEED);
+                            break;
                         }
-                    } else if (motionEvent.getActionMasked() == 0) {
-                        this.avatarControl.startTurning(TURNING_SPEED);
-                    } else if (motionEvent.getActionMasked() == 1) {
-                        this.avatarControl.stopTurning();
+                    } else if (motionEvent.getActionMasked() != 0) {
+                        if (motionEvent.getActionMasked() == 1) {
+                            this.avatarControl.stopCameraManualControl();
+                            break;
+                        }
+                    } else {
+                        this.avatarControl.startCameraManualControl(TURNING_SPEED, 0.0f, 0.0f, 0.0f);
+                        break;
                     }
                 }
-                return false;
+                break;
             case R.id.button_move_backward /* 2131755262 */:
                 moveTouchEvent(4, motionEvent);
-                return false;
+                break;
             case R.id.button_turn_right /* 2131755263 */:
                 if (!this.arrowsToTurn) {
                     moveTouchEvent(64, motionEvent);
+                    break;
                 } else if (this.avatarControl != null) {
-                    if (this.manualCamMode && this.camButtonEnabled) {
-                        if (motionEvent.getActionMasked() == 0) {
-                            this.avatarControl.startCameraManualControl(-50.0f, 0.0f, 0.0f, 0.0f);
-                        } else if (motionEvent.getActionMasked() == 1) {
-                            this.avatarControl.stopCameraManualControl();
+                    if (!this.manualCamMode || !this.camButtonEnabled) {
+                        if (motionEvent.getActionMasked() != 0) {
+                            if (motionEvent.getActionMasked() == 1) {
+                                this.avatarControl.stopTurning();
+                                break;
+                            }
+                        } else {
+                            this.avatarControl.startTurning(-50.0f);
+                            break;
                         }
-                    } else if (motionEvent.getActionMasked() == 0) {
-                        this.avatarControl.startTurning(-50.0f);
-                    } else if (motionEvent.getActionMasked() == 1) {
-                        this.avatarControl.stopTurning();
+                    } else if (motionEvent.getActionMasked() != 0) {
+                        if (motionEvent.getActionMasked() == 1) {
+                            this.avatarControl.stopCameraManualControl();
+                            break;
+                        }
+                    } else {
+                        this.avatarControl.startCameraManualControl(-50.0f, 0.0f, 0.0f, 0.0f);
+                        break;
                     }
                 }
-                return false;
+                break;
             case R.id.button_fly_upward /* 2131755756 */:
                 moveTouchEvent(8, motionEvent);
-                return false;
+                break;
             case R.id.button_fly_downward /* 2131755757 */:
                 moveTouchEvent(16, motionEvent);
-                return false;
-            default:
-                return false;
+                break;
         }
+        return false;
     }
 
     @Override // android.app.Activity
@@ -1519,9 +1683,9 @@ public class WorldViewActivity extends DetailsActivity implements View.OnTouchLi
     @SuppressLint({"CommitPrefEdits"})
     void rendererShaderCompileError() {
         Toast.makeText(this, "Advanced rendering is not available on your hardware. Falling back to basic rendering.", 1).show();
-        SharedPreferences.Editor editorEdit = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-        editorEdit.putBoolean("advanced_rendering", false);
-        editorEdit.commit();
+        SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+        edit.putBoolean("advanced_rendering", false);
+        edit.commit();
         finish();
         startActivity(new Intent(this, (Class<?>) getClass()));
     }

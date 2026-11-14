@@ -15,11 +15,12 @@ import com.lumiyaviewer.lumiya.slproto.users.manager.assets.AssetKey;
 import com.lumiyaviewer.lumiya.slproto.users.manager.assets.AssetResponseCacher;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class AnimationCache extends ResourceMemoryCache<UUID, AnimationData> {
     private final ImmutableSet<String> assetAnimations;
     private final AtomicReference<AssetResponseCacher> assetResponseCacher;
@@ -43,103 +44,37 @@ public class AnimationCache extends ResourceMemoryCache<UUID, AnimationData> {
             LoaderExecutor.getInstance().execute(this);
         }
 
-        /* JADX WARN: Removed duplicated region for block: B:45:0x0070 A[EXC_TOP_SPLITTER, SYNTHETIC] */
+        /* JADX WARN: Removed duplicated region for block: B:39:0x0070 A[EXC_TOP_SPLITTER, SYNTHETIC] */
         @Override // java.lang.Runnable
         /*
             Code decompiled incorrectly, please refer to instructions dump.
-            To view partially-correct code enable 'Show inconsistent code' option in preferences
         */
-        public void run() throws java.lang.Throwable {
-            /*
-                r6 = this;
-                r2 = 0
-                android.content.res.AssetManager r0 = com.lumiyaviewer.lumiya.LumiyaApp.getAssetManager()
-                if (r0 == 0) goto L87
-                java.lang.StringBuilder r1 = new java.lang.StringBuilder     // Catch: java.io.IOException -> L5c java.lang.Throwable -> L6c
-                r1.<init>()     // Catch: java.io.IOException -> L5c java.lang.Throwable -> L6c
-                java.lang.String r3 = "anims/"
-                java.lang.StringBuilder r1 = r1.append(r3)     // Catch: java.io.IOException -> L5c java.lang.Throwable -> L6c
-                java.lang.String r3 = r6.assetName     // Catch: java.io.IOException -> L5c java.lang.Throwable -> L6c
-                java.lang.StringBuilder r1 = r1.append(r3)     // Catch: java.io.IOException -> L5c java.lang.Throwable -> L6c
-                java.lang.String r1 = r1.toString()     // Catch: java.io.IOException -> L5c java.lang.Throwable -> L6c
-                java.io.InputStream r3 = r0.open(r1)     // Catch: java.io.IOException -> L5c java.lang.Throwable -> L6c
-                if (r3 == 0) goto L85
-                com.lumiyaviewer.lumiya.render.avatar.AnimationData r1 = new com.lumiyaviewer.lumiya.render.avatar.AnimationData     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L7e
-                java.lang.Object r0 = r6.getParams()     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L7e
-                java.util.UUID r0 = (java.util.UUID) r0     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L7e
-                r1.<init>(r0, r3)     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L7e
-                int r0 = r1.getPriority()     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L82
-                r2 = 6
-                if (r0 < r2) goto L4e
-                java.lang.String r0 = "Animation: priority %d loaded from asset %s"
-                r2 = 2
-                java.lang.Object[] r2 = new java.lang.Object[r2]     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L82
-                int r4 = r1.getPriority()     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L82
-                java.lang.Integer r4 = java.lang.Integer.valueOf(r4)     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L82
-                r5 = 0
-                r2[r5] = r4     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L82
-                java.lang.String r4 = r6.assetName     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L82
-                r5 = 1
-                r2[r5] = r4     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L82
-                com.lumiyaviewer.lumiya.Debug.Printf(r0, r2)     // Catch: java.lang.Throwable -> L79 java.io.IOException -> L82
-            L4e:
-                if (r3 == 0) goto L53
-                r3.close()     // Catch: java.io.IOException -> L57
-            L53:
-                r6.completeRequest(r1)
-                return
-            L57:
-                r0 = move-exception
-                com.lumiyaviewer.lumiya.Debug.Warning(r0)
-                goto L53
-            L5c:
-                r0 = move-exception
-                r1 = r2
-            L5e:
-                com.lumiyaviewer.lumiya.Debug.Warning(r0)     // Catch: java.lang.Throwable -> L7b
-                if (r2 == 0) goto L53
-                r2.close()     // Catch: java.io.IOException -> L67
-                goto L53
-            L67:
-                r0 = move-exception
-                com.lumiyaviewer.lumiya.Debug.Warning(r0)
-                goto L53
-            L6c:
-                r0 = move-exception
-                r3 = r2
-            L6e:
-                if (r3 == 0) goto L73
-                r3.close()     // Catch: java.io.IOException -> L74
-            L73:
-                throw r0
-            L74:
-                r1 = move-exception
-                com.lumiyaviewer.lumiya.Debug.Warning(r1)
-                goto L73
-            L79:
-                r0 = move-exception
-                goto L6e
-            L7b:
-                r0 = move-exception
-                r3 = r2
-                goto L6e
-            L7e:
-                r0 = move-exception
-                r1 = r2
-                r2 = r3
-                goto L5e
-            L82:
-                r0 = move-exception
-                r2 = r3
-                goto L5e
-            L85:
-                r1 = r2
-                goto L4e
-            L87:
-                r1 = r2
-                goto L53
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.res.anim.AnimationCache.AssetLoadRequest.run():void");
+        public void run() {
+            AnimationData animationData = null;
+            AssetManager assetManager = LumiyaApp.getAssetManager();
+            if (assetManager != null) {
+                InputStream inputStream = null;
+                try {
+                    inputStream = assetManager.open("anims/" + this.assetName);
+                    if (inputStream != null) {
+                        animationData = new AnimationData(getParams(), inputStream);
+                        if (animationData.getPriority() >= 6) {
+                            Debug.Printf("Animation: priority %d loaded from asset %s", Integer.valueOf(animationData.getPriority()), this.assetName);
+                        }
+                    }
+                } catch (IOException e) {
+                    Debug.Warning(e);
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e2) {
+                            Debug.Warning(e2);
+                        }
+                    }
+                }
+            }
+            completeRequest(animationData);
         }
     }
 
@@ -188,15 +123,15 @@ public class AnimationCache extends ResourceMemoryCache<UUID, AnimationData> {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(assetData.getData());
             try {
                 animationData = new AnimationData(getParams(), byteArrayInputStream);
-            } catch (IOException e) {
-                e = e;
-                animationData = null;
-            }
-            try {
-                byteArrayInputStream.close();
+                try {
+                    byteArrayInputStream.close();
+                } catch (IOException e) {
+                    Debug.Warning(e);
+                    completeRequest(animationData);
+                }
             } catch (IOException e2) {
-                e = e2;
-                Debug.Warning(e);
+                Exception e = e2;
+                animationData = null;
             }
             completeRequest(animationData);
         }
@@ -239,14 +174,11 @@ public class AnimationCache extends ResourceMemoryCache<UUID, AnimationData> {
         return InstanceHolder.Instance;
     }
 
-    @Override // com.lumiyaviewer.lumiya.res.ResourceManager
-    protected /* bridge */ /* synthetic */ ResourceRequest CreateNewRequest(Object obj, ResourceManager resourceManager) {
-        return CreateNewRequest((UUID) obj, (ResourceManager<UUID, AnimationData>) resourceManager);
-    }
+    
 
     protected ResourceRequest<UUID, AnimationData> CreateNewRequest(UUID uuid, ResourceManager<UUID, AnimationData> resourceManager) {
-        String string = uuid.toString();
-        return this.assetAnimations.contains(string) ? new AssetLoadRequest(uuid, resourceManager, string) : new DownloadRequest(uuid, resourceManager);
+        String uuid2 = uuid.toString();
+        return this.assetAnimations.contains(uuid2) ? new AssetLoadRequest(uuid, resourceManager, uuid2) : new DownloadRequest(uuid, resourceManager);
     }
 
     public void setAssetResponseCacher(AssetResponseCacher assetResponseCacher) {

@@ -23,7 +23,7 @@
     <string name="cancel_button">ਰੱਦ ਕਰੋ</string>
     <string name="dialog_button_got_it">ਸਮਝ ਗਿਆ</string>
     <string name="dialog_button_open_help_center">ਮਦਦ ਕੇਂਦਰ ਖੋਲ੍ਹੋ</string>
-    <string name="dialog_message_incompatible_phone">ਇੱਕ Daydream-ਸਮਰਥਿਤ ਫ਼ੋਨ ਲੋੜੀਂਦਾ ਹੈ। ਹੋਰ ਜਾਣਕਾਰੀ ਲਈ Daydream ਮਦਦ ਕੇਂਦਰ \'ਤੇ ਜਾਓ।</string>
+    <string name="dialog_message_incompatible_phone">"ਇੱਕ Daydream-ਸਮਰਥਿਤ ਫ਼ੋਨ ਲੋੜੀਂਦਾ ਹੈ। ਹੋਰ ਜਾਣਕਾਰੀ ਲਈ Daydream ਮਦਦ ਕੇਂਦਰ 'ਤੇ ਜਾਓ।"</string>
     <string name="dialog_message_no_cardboard">ਆਪਣੇ ਵਿਊਅਰ ਦਾ ਸੰਰੂਪਣ ਕਰਨ ਲਈ Cardboard ਐਪ ਪ੍ਰਾਪਤ ਕਰੋ।</string>
     <string name="dialog_message_setup">ਸਰਵੋਤਮ ਅਨੁਭਵ ਲਈ ਆਪਣਾ ਵਿਊਅਰ ਸਥਾਪਤ ਕਰੋ।</string>
     <string name="dialog_title">ਸੰਰੂਪਣ ਕਰੋ</string>
@@ -33,8 +33,8 @@
     <string name="dialog_title_warning">ਚੇਤਾਵਨੀ</string>
     <string name="dialog_vr_core_not_enabled">ਹੋ ਸਕਦਾ ਹੈ ਕਿ Google VR ਸੇਵਾਵਾਂ ਯੋਗ ਬਣਾਏ ਜਾਣ ਬਿਨਾਂ ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਚੰਗੀ ਤਰ੍ਹਾਂ ਕੰਮ ਨਾ ਕਰੇ। ਜਾਰੀ ਰੱਖਣ ਤੋਂ ਪਹਿਲਾਂ ਕਿਰਪਾ ਕਰਕੇ ਫ਼ੋਨ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਇਸ ਨੂੰ ਯੋਗ ਬਣਾਓ।</string>
     <string name="dialog_vr_core_not_installed">ਹੋ ਸਕਦਾ ਹੈ ਕਿ Google VR ਸੇਵਾਵਾਂ ਦੇ ਬਿਨਾਂ ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਚੰਗੀ ਤਰ੍ਹਾਂ ਕੰਮ ਨਾ ਕਰੇ। ਜਾਰੀ ਰੱਖਣ ਤੋਂ ਪਹਿਲਾਂ ਕਿਰਪਾ ਕਰਕੇ Play ਸਟੋਰ ਤੋਂ Google VR ਸੇਵਾਵਾਂ ਸਥਾਪਤ ਕਰੋ।</string>
-    <string name="go_to_playstore_button">Play ਸਟੋਰ \'ਤੇ ਜਾਓ</string>
-    <string name="go_to_vr_listeners_settings_button">ਸੈਟਿੰਗਾਂ \'ਤੇ ਜਾਓ</string>
+    <string name="go_to_playstore_button">"Play ਸਟੋਰ 'ਤੇ ਜਾਓ"</string>
+    <string name="go_to_vr_listeners_settings_button">"ਸੈਟਿੰਗਾਂ 'ਤੇ ਜਾਓ"</string>
     <string name="no_browser_text">ਵੈੱਬਸਾਈਟ ਖੋਲ੍ਹਣ ਲਈ ਕੋਈ ਬ੍ਰਾਊਜ਼ਰ ਨਹੀਂ ਹੈ</string>
     <string name="place_your_phone_into_cardboard">ਆਪਣੇ ਫ਼ੋਨ ਨੂੰ ਆਪਣੇ Cardboard ਵਿਊਅਰ ਵਿੱਚ ਰੱਖੋ</string>
     <string name="place_your_viewer_into_viewer_format">ਆਪਣੇ ਫ਼ੋਨ ਨੂੰ ਆਪਣੇ %s ਵਿਊਅਰ ਵਿੱਚ ਰੱਖੋ</string>

@@ -40,7 +40,7 @@ import com.lumiyaviewer.lumiya.utils.UUIDPool;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class GroupRoleDetailsFragment extends ChatterFragment implements LoadableMonitor.OnLoadableDataChangedListener, BackButtonHandler {
     private static final String ROLE_ID_KEY = "role_id";
     private static final ImmutableList<RolePermission> rolePermissions;
@@ -71,7 +71,7 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
     };
     private final View.OnClickListener permCheckboxClickListener = new View.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.chat.profiles.-$Lambda$oqvWEi5fLgnwnCXV95inckWtW-E.3
         private final /* synthetic */ void $m$0(View view) {
-            ((GroupRoleDetailsFragment) this).m496x4277c5d5(view);
+            GroupRoleDetailsFragment.this.m496x4277c5d5(view);
         }
 
         @Override // android.view.View.OnClickListener
@@ -102,7 +102,7 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
     private boolean anyChanges() {
         String str;
         String str2;
-        long defaultPowers;
+        long j;
         String str3;
         View view = getView();
         if (view == null) {
@@ -111,22 +111,22 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
         if (this.RoleID == null) {
             str = "";
             str2 = "";
-            defaultPowers = getDefaultPowers();
+            j = getDefaultPowers();
             str3 = "";
         } else {
             GroupRoleDataReply.RoleData selectedRoleData = getSelectedRoleData();
             if (selectedRoleData == null) {
                 return false;
             }
-            String strStringFromVariableOEM = SLMessage.stringFromVariableOEM(selectedRoleData.Name);
-            String strStringFromVariableOEM2 = SLMessage.stringFromVariableOEM(selectedRoleData.Title);
-            String strStringFromVariableOEM3 = SLMessage.stringFromVariableOEM(selectedRoleData.Description);
-            str = strStringFromVariableOEM;
-            str2 = strStringFromVariableOEM2;
-            defaultPowers = selectedRoleData.Powers;
-            str3 = strStringFromVariableOEM3;
+            String stringFromVariableOEM = SLMessage.stringFromVariableOEM(selectedRoleData.Name);
+            String stringFromVariableOEM2 = SLMessage.stringFromVariableOEM(selectedRoleData.Title);
+            String stringFromVariableOEM3 = SLMessage.stringFromVariableOEM(selectedRoleData.Description);
+            str = stringFromVariableOEM;
+            str2 = stringFromVariableOEM2;
+            j = selectedRoleData.Powers;
+            str3 = stringFromVariableOEM3;
         }
-        return (Objects.equal(str, ((TextView) view.findViewById(R.id.role_name_edit)).getText().toString()) && Objects.equal(str2, ((TextView) view.findViewById(R.id.role_title_edit)).getText().toString()) && Objects.equal(str3, ((TextView) view.findViewById(R.id.role_description_edit)).getText().toString()) && defaultPowers == getSelectedPowers(defaultPowers, (ViewGroup) view.findViewById(R.id.role_permission_list_layout))) ? false : true;
+        return (Objects.equal(str, ((TextView) view.findViewById(R.id.role_name_edit)).getText().toString()) && Objects.equal(str2, ((TextView) view.findViewById(R.id.role_title_edit)).getText().toString()) && Objects.equal(str3, ((TextView) view.findViewById(R.id.role_description_edit)).getText().toString()) && j == getSelectedPowers(j, (ViewGroup) view.findViewById(R.id.role_permission_list_layout))) ? false : true;
     }
 
     private void askForSavingChanges(final Runnable runnable) {
@@ -137,14 +137,14 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
         }
         GroupRoleDataReply.RoleData selectedRoleData = getSelectedRoleData();
         long defaultPowers = selectedRoleData == null ? getDefaultPowers() : selectedRoleData.Powers;
-        final String string = ((TextView) view.findViewById(R.id.role_name_edit)).getText().toString();
-        final String string2 = ((TextView) view.findViewById(R.id.role_title_edit)).getText().toString();
-        final String string3 = ((TextView) view.findViewById(R.id.role_description_edit)).getText().toString();
+        final String charSequence = ((TextView) view.findViewById(R.id.role_name_edit)).getText().toString();
+        final String charSequence2 = ((TextView) view.findViewById(R.id.role_title_edit)).getText().toString();
+        final String charSequence3 = ((TextView) view.findViewById(R.id.role_description_edit)).getText().toString();
         final long selectedPowers = getSelectedPowers(defaultPowers, (ViewGroup) view.findViewById(R.id.role_permission_list_layout));
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(getString(R.string.save_changes_question)).setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.chat.profiles.-$Lambda$oqvWEi5fLgnwnCXV95inckWtW-E.6
             private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                ((GroupRoleDetailsFragment) this).m499x4287a0c8((String) string, (String) string2, (String) string3, selectedPowers, (Runnable) runnable, dialogInterface, i);
+                GroupRoleDetailsFragment.this.m499x4287a0c8((String) charSequence, (String) charSequence2, (String) charSequence3, selectedPowers, (Runnable) runnable, dialogInterface, i);
             }
 
             @Override // android.content.DialogInterface.OnClickListener
@@ -169,7 +169,7 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(getString(R.string.delete_role_question)).setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.chat.profiles.-$Lambda$oqvWEi5fLgnwnCXV95inckWtW-E.2
                 private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                    ((GroupRoleDetailsFragment) this).m497x4286a828(dialogInterface, i);
+                    GroupRoleDetailsFragment.this.m497x4286a828(dialogInterface, i);
                 }
 
                 @Override // android.content.DialogInterface.OnClickListener
@@ -192,13 +192,13 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
 
     private void createPermEntries(LayoutInflater layoutInflater, ViewGroup viewGroup) {
         for (RolePermission rolePermission : rolePermissions) {
-            View viewInflate = layoutInflater.inflate(R.layout.group_role_perm_item, viewGroup, false);
-            ((CheckedTextView) viewInflate).setText(rolePermission.permName);
-            viewInflate.setTag(R.id.perm_checkbox_mask, Long.valueOf(rolePermission.permMask));
-            viewInflate.setEnabled(true);
-            viewInflate.setClickable(true);
-            viewInflate.setOnClickListener(this.permCheckboxClickListener);
-            viewGroup.addView(viewInflate);
+            View inflate = layoutInflater.inflate(R.layout.group_role_perm_item, viewGroup, false);
+            ((CheckedTextView) inflate).setText(rolePermission.permName);
+            inflate.setTag(R.id.perm_checkbox_mask, Long.valueOf(rolePermission.permMask));
+            inflate.setEnabled(true);
+            inflate.setClickable(true);
+            inflate.setOnClickListener(this.permCheckboxClickListener);
+            viewGroup.addView(inflate);
         }
     }
 
@@ -238,50 +238,27 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
         return 0L;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:14:0x0036  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
-    private long getSelectedPowers(long r10, android.view.ViewGroup r12) {
-        /*
-            r9 = this;
-            int r5 = r12.getChildCount()
-            r0 = 0
-            r4 = r0
-            r2 = r10
-        L7:
-            if (r4 >= r5) goto L35
-            android.view.View r1 = r12.getChildAt(r4)
-            boolean r0 = r1 instanceof android.widget.CheckedTextView
-            if (r0 == 0) goto L36
-            r0 = 2131755044(0x7f100024, float:1.9140956E38)
-            java.lang.Object r0 = r1.getTag(r0)
-            boolean r6 = r0 instanceof java.lang.Long
-            if (r6 == 0) goto L36
-            java.lang.Long r0 = (java.lang.Long) r0
-            long r6 = r0.longValue()
-            r0 = r1
-            android.widget.CheckedTextView r0 = (android.widget.CheckedTextView) r0
-            boolean r0 = r0.isChecked()
-            if (r0 == 0) goto L32
-            long r0 = r2 | r6
-        L2d:
-            int r2 = r4 + 1
-            r4 = r2
-            r2 = r0
-            goto L7
-        L32:
-            long r0 = ~r6
-            long r0 = r0 & r2
-            goto L2d
-        L35:
-            return r2
-        L36:
-            r0 = r2
-            goto L2d
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.ui.chat.profiles.GroupRoleDetailsFragment.getSelectedPowers(long, android.view.ViewGroup):long");
+    private long getSelectedPowers(long j, ViewGroup viewGroup) {
+        long j2;
+        int childCount = viewGroup.getChildCount();
+        int i = 0;
+        long j3 = j;
+        while (i < childCount) {
+            View childAt = viewGroup.getChildAt(i);
+            if (childAt instanceof CheckedTextView) {
+                Object tag = childAt.getTag(R.id.perm_checkbox_mask);
+                if (tag instanceof Long) {
+                    long longValue = ((Long) tag).longValue();
+                    j2 = ((CheckedTextView) childAt).isChecked() ? j3 | longValue : (~longValue) & j3;
+                    i++;
+                    j3 = j2;
+                }
+            }
+            j2 = j3;
+            i++;
+            j3 = j2;
+        }
+        return j3;
     }
 
     @Nullable
@@ -301,29 +278,29 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
         }
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_26404, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_26404, reason: not valid java name */
     static /* synthetic */ void m495x4288106b(Runnable runnable, DialogInterface dialogInterface, int i) {
         dialogInterface.cancel();
         runnable.run();
     }
 
     public static Bundle makeSelection(ChatterID chatterID, @Nullable UUID uuid) {
-        Bundle bundleMakeSelection = ChatterFragment.makeSelection(chatterID);
+        Bundle makeSelection = ChatterFragment.makeSelection(chatterID);
         if (uuid != null) {
-            bundleMakeSelection.putString(ROLE_ID_KEY, uuid.toString());
+            makeSelection.putString(ROLE_ID_KEY, uuid.toString());
         }
-        return bundleMakeSelection;
+        return makeSelection;
     }
 
     private void setLoadedValues() {
         GroupRoleDataReply.RoleData selectedRoleData = getSelectedRoleData();
         long myGroupPowers = getMyGroupPowers();
         boolean z = (64 & myGroupPowers) != 0;
-        boolean zEqual = Objects.equal(this.RoleID, UUIDPool.ZeroUUID);
+        boolean equal = Objects.equal(this.RoleID, UUIDPool.ZeroUUID);
         GroupProfileReply data = this.groupProfile.getData();
-        boolean zEqual2 = data != null ? Objects.equal(data.GroupData_Field.OwnerRole, this.RoleID) : false;
+        boolean equal2 = data != null ? Objects.equal(data.GroupData_Field.OwnerRole, this.RoleID) : false;
         if (this.deleteMenuItem != null) {
-            this.deleteMenuItem.setVisible((this.RoleID == null || (myGroupPowers & 32) == 0 || !(zEqual2 ^ true)) ? false : !zEqual);
+            this.deleteMenuItem.setVisible((this.RoleID == null || (myGroupPowers & 32) == 0 || !(equal2 ^ true)) ? false : !equal);
         }
         View view = getView();
         if (view != null) {
@@ -374,9 +351,9 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
 
     /* JADX INFO: Access modifiers changed from: private */
     public void updateUnsavedChanges() {
-        boolean zAnyChanges = anyChanges();
-        if (zAnyChanges != this.hasChanged) {
-            this.hasChanged = zAnyChanges;
+        boolean anyChanges = anyChanges();
+        if (anyChanges != this.hasChanged) {
+            this.hasChanged = anyChanges;
             if (this.undoMenuItem != null) {
                 this.undoMenuItem.setVisible(this.hasChanged);
             }
@@ -384,9 +361,9 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
     }
 
     /* JADX WARN: Multi-variable type inference failed */
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_11905, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_11905, reason: not valid java name */
     /* synthetic */ void m496x4277c5d5(View view) {
-        if ((getMyGroupPowers() & 1024) != 0 ? !(this.groupProfile.getData() != null ? Objects.equal(r0.GroupData_Field.OwnerRole, this.RoleID) : false) : false) {
+        if ((getMyGroupPowers() & 1024) != 0 ? !(this.groupProfile.getData() != null ? Objects.equal(this.groupProfile.getData().GroupData_Field.OwnerRole, this.RoleID) : false) : false) {
             if (view instanceof Checkable) {
                 ((Checkable) view).toggle();
             }
@@ -394,7 +371,7 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
         }
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_23112, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_23112, reason: not valid java name */
     /* synthetic */ void m497x4286a828(DialogInterface dialogInterface, int i) {
         dialogInterface.dismiss();
         try {
@@ -409,7 +386,7 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
         }
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_24146, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_24146, reason: not valid java name */
     /* synthetic */ void m498x42871ce8() {
         FragmentActivity activity = getActivity();
         if (activity instanceof DetailsActivity) {
@@ -417,7 +394,7 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
         }
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_25587, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_25587, reason: not valid java name */
     /* synthetic */ void m499x4287a0c8(String str, String str2, String str3, long j, Runnable runnable, DialogInterface dialogInterface, int i) {
         dialogInterface.dismiss();
         try {
@@ -429,7 +406,7 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
         runnable.run();
     }
 
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_9928, reason: not valid java name */
+    /* renamed from: lambda$-com_lumiyaviewer_lumiya_ui_chat_profiles_GroupRoleDetailsFragment_9928, reason: not valid java name */
     /* synthetic */ void m500x12acc68f(View view) {
         if (this.RoleID != null) {
             if (this.RoleID.equals(UUIDPool.ZeroUUID)) {
@@ -447,7 +424,7 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
         }
         askForSavingChanges(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.chat.profiles.-$Lambda$oqvWEi5fLgnwnCXV95inckWtW-E.5
             private final /* synthetic */ void $m$0() {
-                ((GroupRoleDetailsFragment) this).m498x42871ce8();
+                GroupRoleDetailsFragment.this.m498x42871ce8();
             }
 
             @Override // java.lang.Runnable
@@ -477,17 +454,17 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
     @Override // android.support.v4.app.Fragment
     @Nullable
     public View onCreateView(LayoutInflater layoutInflater, @Nullable ViewGroup viewGroup, @Nullable Bundle bundle) {
-        View viewInflate = layoutInflater.inflate(R.layout.group_role_details_layout, viewGroup, false);
-        ((LoadingLayout) viewInflate.findViewById(R.id.loading_layout)).setSwipeRefreshLayout((SwipeRefreshLayout) viewInflate.findViewById(R.id.swipe_refresh_layout));
-        this.loadableMonitor.setLoadingLayout((LoadingLayout) viewInflate.findViewById(R.id.loading_layout), getString(R.string.no_group_selected), getString(R.string.group_profile_fail));
-        this.loadableMonitor.setSwipeRefreshLayout((SwipeRefreshLayout) viewInflate.findViewById(R.id.swipe_refresh_layout));
-        ((TextView) viewInflate.findViewById(R.id.role_name_edit)).addTextChangedListener(this.textChangedListener);
-        ((TextView) viewInflate.findViewById(R.id.role_title_edit)).addTextChangedListener(this.textChangedListener);
-        ((TextView) viewInflate.findViewById(R.id.role_description_edit)).addTextChangedListener(this.textChangedListener);
-        createPermEntries(layoutInflater, (ViewGroup) viewInflate.findViewById(R.id.role_permission_list_layout));
-        viewInflate.findViewById(R.id.button_view_role_members).setOnClickListener(new View.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.chat.profiles.-$Lambda$oqvWEi5fLgnwnCXV95inckWtW-E.4
+        View inflate = layoutInflater.inflate(R.layout.group_role_details_layout, viewGroup, false);
+        ((LoadingLayout) inflate.findViewById(R.id.loading_layout)).setSwipeRefreshLayout((SwipeRefreshLayout) inflate.findViewById(R.id.swipe_refresh_layout));
+        this.loadableMonitor.setLoadingLayout((LoadingLayout) inflate.findViewById(R.id.loading_layout), getString(R.string.no_group_selected), getString(R.string.group_profile_fail));
+        this.loadableMonitor.setSwipeRefreshLayout((SwipeRefreshLayout) inflate.findViewById(R.id.swipe_refresh_layout));
+        ((TextView) inflate.findViewById(R.id.role_name_edit)).addTextChangedListener(this.textChangedListener);
+        ((TextView) inflate.findViewById(R.id.role_title_edit)).addTextChangedListener(this.textChangedListener);
+        ((TextView) inflate.findViewById(R.id.role_description_edit)).addTextChangedListener(this.textChangedListener);
+        createPermEntries(layoutInflater, (ViewGroup) inflate.findViewById(R.id.role_permission_list_layout));
+        inflate.findViewById(R.id.button_view_role_members).setOnClickListener(new View.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.chat.profiles.-$Lambda$oqvWEi5fLgnwnCXV95inckWtW-E.4
             private final /* synthetic */ void $m$0(View view) {
-                ((GroupRoleDetailsFragment) this).m500x12acc68f(view);
+                GroupRoleDetailsFragment.this.m500x12acc68f(view);
             }
 
             @Override // android.view.View.OnClickListener
@@ -495,7 +472,7 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
                 $m$0(view);
             }
         });
-        return viewInflate;
+        return inflate;
     }
 
     @Override // com.lumiyaviewer.lumiya.ui.common.loadmon.LoadableMonitor.OnLoadableDataChangedListener

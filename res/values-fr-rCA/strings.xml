@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="abc_action_bar_home_description">Revenir à l\'accueil</string>
+    <string name="abc_action_bar_home_description">"Revenir à l'accueil"</string>
     <string name="abc_action_bar_home_description_format">%1$s, %2$s</string>
     <string name="abc_action_bar_home_subtitle_description_format">%1$s, %2$s, %3$s</string>
     <string name="abc_action_bar_up_description">Revenir en haut de la page</string>
-    <string name="abc_action_menu_overflow_description">Plus d\'options</string>
+    <string name="abc_action_menu_overflow_description">"Plus d'options"</string>
     <string name="abc_action_mode_done">Terminé</string>
     <string name="abc_activity_chooser_view_see_all">Voir toutes les chaînes</string>
     <string name="abc_activitychooserview_choose_application">Sélectionnez une application</string>
@@ -22,9 +22,9 @@
     <string name="back_button_content_description">précédent</string>
     <string name="cancel_button">Annuler</string>
     <string name="dialog_button_got_it">OK</string>
-    <string name="dialog_button_open_help_center">OUVRIR LE CENTRE D\'AIDE</string>
-    <string name="dialog_message_incompatible_phone">Un téléphone compatible avec Daydream est requis. Consultez le Centre d\'aide Daydream pour en savoir plus.</string>
-    <string name="dialog_message_no_cardboard">Téléchargez l\'application Cardboard pour configurer votre visionneuse.</string>
+    <string name="dialog_button_open_help_center">"OUVRIR LE CENTRE D'AIDE"</string>
+    <string name="dialog_message_incompatible_phone">"Un téléphone compatible avec Daydream est requis. Consultez le Centre d'aide Daydream pour en savoir plus."</string>
+    <string name="dialog_message_no_cardboard">"Téléchargez l'application Cardboard pour configurer votre visionneuse."</string>
     <string name="dialog_message_setup">Configurez votre visionneuse pour une expérience optimale.</string>
     <string name="dialog_title">Configurer</string>
     <string name="dialog_title_incompatible_phone">Téléphone incompatible</string>
@@ -41,7 +41,7 @@
     <string name="search_menu_title">Rechercher</string>
     <string name="settings_button_content_description">paramètres</string>
     <string name="setup_button">Configurer</string>
-    <string name="status_bar_notification_info_overflow">&gt;999</string>
+    <string name="status_bar_notification_info_overflow">>999</string>
     <string name="switch_viewer_action">Changer</string>
     <string name="switch_viewer_prompt">Changer de visionneuse?</string>
 </resources>

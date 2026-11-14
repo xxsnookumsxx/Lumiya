@@ -39,31 +39,30 @@ public class SLTextureUploadRequest implements Runnable {
 
     @Override // java.lang.Runnable
     public void run() {
-        Response responseExecute;
         try {
             String strAsString = new LLSDXMLRequest().PerformRequest(this.capURL, new LLSDUndefined()).byKey("uploader").asString();
             Debug.Log("TextureUploader: uploader URL = " + strAsString);
-            responseExecute = SLHTTPSConnection.getOkHttpClient().newCall(new Request.Builder().url(strAsString).header(HttpHeaders.ACCEPT, "application/llsd+xml").post(RequestBody.create(MEDIA_TYPE_JP2, this.sourceFile)).build()).execute();
+            Response responseExecute = SLHTTPSConnection.getOkHttpClient().newCall(new Request.Builder().url(strAsString).header(HttpHeaders.ACCEPT, "application/llsd+xml").post(RequestBody.create(MEDIA_TYPE_JP2, this.sourceFile)).build()).execute();
+            if (responseExecute == null) {
+                throw new IOException("Null response");
+            }
+            try {
+                if (!responseExecute.isSuccessful()) {
+                    throw new IOException("Error code " + responseExecute.code());
+                }
+                LLSDNode xml = LLSDNode.parseXML(responseExecute.body().byteStream(), null);
+                Debug.Log("TextureUploader: LLSD response = " + xml.serializeToXML());
+                this.textureID = xml.byKey("new_asset").asUUID();
+            } finally {
+                responseExecute.close();
+            }
         } catch (LLSDException e) {
             Debug.Warning(e);
         } catch (IOException e2) {
             Debug.Warning(e2);
         }
-        if (responseExecute == null) {
-            throw new IOException("Null response");
-        }
-        try {
-            if (!responseExecute.isSuccessful()) {
-                throw new IOException("Error code " + responseExecute.code());
-            }
-            LLSDNode xml = LLSDNode.parseXML(responseExecute.body().byteStream(), null);
-            Debug.Log("TextureUploader: LLSD response = " + xml.serializeToXML());
-            this.textureID = xml.byKey("new_asset").asUUID();
-            if (this.onUploadComplete != null) {
-                this.onUploadComplete.OnTextureUploadComplete(this);
-            }
-        } finally {
-            responseExecute.close();
+        if (this.onUploadComplete != null) {
+            this.onUploadComplete.OnTextureUploadComplete(this);
         }
     }
 

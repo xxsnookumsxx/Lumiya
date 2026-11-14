@@ -423,6 +423,7 @@ public class PrimProfile {
                                     break;
                             }
                         }
+                        break;
                     } else {
                         this.Profile.get(i10).z *= 3.0f;
                         i9 = i10 + 1;

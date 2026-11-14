@@ -170,7 +170,7 @@ public class SLGroupManager extends SLModule {
                         }
                     }
                     if (lLSDNodeByKey3 instanceof LLSDMap) {
-                        Iterator<T> it = ((LLSDMap) lLSDNodeByKey3).entrySet().iterator();
+                        Iterator it = ((LLSDMap) lLSDNodeByKey3).entrySet().iterator();
                         int i2 = 0;
                         while (it.hasNext()) {
                             Map.Entry entry = (Map.Entry) it.next();

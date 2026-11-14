@@ -27,8 +27,8 @@ public class ChatEventViewHolder extends RecyclerView.ViewHolder {
 
     /* JADX WARN: Multi-variable type inference failed */
     public ChatEventViewHolder(View view, RecyclerView.Adapter adapter) {
-        View.OnClickListener userPicClickListener;
         super(view);
+        View.OnClickListener userPicClickListener;
         this.updateTimestamp = 0L;
         this.adapter = new WeakReference<>(adapter);
         this.timestampView = (TextView) view.findViewById(R.id.chatMessageTimestamp);

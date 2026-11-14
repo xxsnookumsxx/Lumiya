@@ -460,7 +460,7 @@ public class LoginActivity extends ThemedActivity implements View.OnClickListene
         });
         findViewById(R.id.whatsnewText).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() { // from class: com.lumiyaviewer.lumiya.ui.login.-$Lambda$U_ZFuxgsYW8weMauiDTqAtaKePI
             private final /* synthetic */ void $m$0() {
-                ((LoginActivity) this).m646lambda$com_lumiyaviewer_lumiya_ui_login_LoginActivity_5985();
+                LoginActivity.this.m646lambda$com_lumiyaviewer_lumiya_ui_login_LoginActivity_5985();
             }
 
             @Override // android.view.ViewTreeObserver.OnGlobalLayoutListener

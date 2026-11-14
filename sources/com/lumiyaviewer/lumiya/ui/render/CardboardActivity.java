@@ -103,7 +103,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 public class CardboardActivity extends DetailsActivity implements ObjectPopupsManager.ObjectPopupListener {
 
     /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-ui-render-MoveControlSwitchesValues, reason: not valid java name */
-    private static final /* synthetic */ int[] f580comlumiyaviewerlumiyauirenderMoveControlSwitchesValues = null;
+    private static /* synthetic */ int[] f580comlumiyaviewerlumiyauirenderMoveControlSwitchesValues = null;
     private static final int DEFAULT_FONT_SIZE_SP = 16;
     private static final int LISTVIEW_SCROLL_DURATION = 500;
     private static final int LISTVIEW_SCROLL_OFFSET = 100;
@@ -220,7 +220,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     private boolean voiceEnabled = false;
     private final SubscriptionData<UUID, SLAgentCircuit> agentCircuit = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.11
         private final /* synthetic */ void $m$0(Object obj) {
-            ((CardboardActivity) this).m764com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref0((SLAgentCircuit) obj);
+            CardboardActivity.this.m764com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref0((SLAgentCircuit) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -230,7 +230,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     });
     private final SubscriptionData<SubscriptionSingleKey, MyAvatarState> myAvatarState = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.12
         private final /* synthetic */ void $m$0(Object obj) {
-            ((CardboardActivity) this).m765com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref1((MyAvatarState) obj);
+            CardboardActivity.this.m765com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref1((MyAvatarState) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -240,7 +240,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     });
     private final SubscriptionData<SubscriptionSingleKey, Boolean> voiceLoggedIn = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.14
         private final /* synthetic */ void $m$0(Object obj) {
-            ((CardboardActivity) this).m774com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref2((Boolean) obj);
+            CardboardActivity.this.m774com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref2((Boolean) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -250,7 +250,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     });
     private final SubscriptionData<SubscriptionSingleKey, CurrentLocationInfo> currentLocationInfo = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.15
         private final /* synthetic */ void $m$0(Object obj) {
-            ((CardboardActivity) this).m775com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref3((CurrentLocationInfo) obj);
+            CardboardActivity.this.m775com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref3((CurrentLocationInfo) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -260,7 +260,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     });
     private final SubscriptionData<SubscriptionSingleKey, ChatterID> voiceActiveChatter = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.16
         private final /* synthetic */ void $m$0(Object obj) {
-            ((CardboardActivity) this).m776com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref4((ChatterID) obj);
+            CardboardActivity.this.m776com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref4((ChatterID) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -270,7 +270,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     });
     private final SubscriptionData<ChatterID, VoiceChatInfo> voiceChatInfo = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.17
         private final /* synthetic */ void $m$0(Object obj) {
-            ((CardboardActivity) this).m777com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref5((VoiceChatInfo) obj);
+            CardboardActivity.this.m777com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref5((VoiceChatInfo) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -288,7 +288,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     private final AtomicInteger controllerConnectionState = new AtomicInteger(0);
     private final ImmutableMap<ControlsPage, View.OnTouchListener> outsideTouchListeners = ImmutableMap.of(ControlsPage.pageSpeech, new View.OnTouchListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.3
         private final /* synthetic */ boolean $m$0(View view, MotionEvent motionEvent) {
-            return ((CardboardActivity) this).m778com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref6(view, motionEvent);
+            return CardboardActivity.this.m778com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref6(view, motionEvent);
         }
 
         @Override // android.view.View.OnTouchListener
@@ -297,7 +297,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         }
     }, ControlsPage.pageObject, new View.OnTouchListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.4
         private final /* synthetic */ boolean $m$0(View view, MotionEvent motionEvent) {
-            return ((CardboardActivity) this).m779com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref7(view, motionEvent);
+            return CardboardActivity.this.m779com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref7(view, motionEvent);
         }
 
         @Override // android.view.View.OnTouchListener
@@ -306,7 +306,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         }
     }, ControlsPage.pageScriptDialog, new View.OnTouchListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.5
         private final /* synthetic */ boolean $m$0(View view, MotionEvent motionEvent) {
-            return ((CardboardActivity) this).m780com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref8(view, motionEvent);
+            return CardboardActivity.this.m780com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref8(view, motionEvent);
         }
 
         @Override // android.view.View.OnTouchListener
@@ -315,7 +315,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         }
     }, ControlsPage.pageYesNo, new View.OnTouchListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.6
         private final /* synthetic */ boolean $m$0(View view, MotionEvent motionEvent) {
-            return ((CardboardActivity) this).m781com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref9(view, motionEvent);
+            return CardboardActivity.this.m781com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref9(view, motionEvent);
         }
 
         @Override // android.view.View.OnTouchListener
@@ -324,7 +324,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         }
     }, ControlsPage.pageDetails, new View.OnTouchListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.2
         private final /* synthetic */ boolean $m$0(View view, MotionEvent motionEvent) {
-            return ((CardboardActivity) this).m766com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref10(view, motionEvent);
+            return CardboardActivity.this.m766com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref10(view, motionEvent);
         }
 
         @Override // android.view.View.OnTouchListener
@@ -357,7 +357,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     private final AtomicReference<ObjectIntersectInfo> pickedObject = new AtomicReference<>();
     private final SubscriptionData<Integer, SLObjectProfileData> selectedObjectProfile = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.13
         private final /* synthetic */ void $m$0(Object obj) {
-            ((CardboardActivity) this).m767com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref11((SLObjectProfileData) obj);
+            CardboardActivity.this.m767com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref11((SLObjectProfileData) obj);
         }
 
         @Override // com.lumiyaviewer.lumiya.react.Subscription.OnData
@@ -389,7 +389,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     };
     private final View.OnHoverListener onHoverListener = new View.OnHoverListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.1
         private final /* synthetic */ boolean $m$0(View view, MotionEvent motionEvent) {
-            return ((CardboardActivity) this).m784xd3567aba(view, motionEvent);
+            return CardboardActivity.this.m784xd3567aba(view, motionEvent);
         }
 
         @Override // android.view.View.OnHoverListener
@@ -577,7 +577,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
     private final Object chatEventHandler = new AnonymousClass5();
     private final View.OnClickListener onVoiceCallButtonListener = new View.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA
         private final /* synthetic */ void $m$0(View view) {
-            ((CardboardActivity) this).m785xd399c564(view);
+            CardboardActivity.this.m785xd399c564(view);
         }
 
         @Override // android.view.View.OnClickListener
@@ -616,7 +616,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         public void onChatMessage(final ActiveChattersManager.ChatMessageEvent chatMessageEvent) {
             CardboardActivity.this.runOnUiThread(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.26
                 private final /* synthetic */ void $m$0() {
-                    ((CardboardActivity.AnonymousClass5) this).m786x4829a1cd((ActiveChattersManager.ChatMessageEvent) chatMessageEvent);
+                    CardboardActivity.AnonymousClass5.this.m786x4829a1cd((ActiveChattersManager.ChatMessageEvent) chatMessageEvent);
                 }
 
                 @Override // java.lang.Runnable
@@ -681,13 +681,13 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         @Override // com.google.vr.sdk.controller.Controller.EventListener
         public void onUpdate() {
             final MoveControl moveControl;
-            final float f = 0.0f;
+            float fTemp = 0.0f;
             super.onUpdate();
             CardboardActivity.this.controller.update();
             if (CardboardActivity.this.controller.appButtonState && (!this.appButtonPressed)) {
                 CardboardActivity.this.runOnUiThread(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.20
                     private final /* synthetic */ void $m$0() {
-                        ((CardboardActivity.AnonymousClass7) this).m787xb2042f3a();
+                        CardboardActivity.AnonymousClass7.this.m787xb2042f3a();
                     }
 
                     @Override // java.lang.Runnable
@@ -698,7 +698,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
             } else if (!CardboardActivity.this.controller.appButtonState && this.appButtonPressed) {
                 CardboardActivity.this.runOnUiThread(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.21
                     private final /* synthetic */ void $m$0() {
-                        ((CardboardActivity.AnonymousClass7) this).m788xb2043377();
+                        CardboardActivity.AnonymousClass7.this.m788xb2043377();
                     }
 
                     @Override // java.lang.Runnable
@@ -713,7 +713,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
                     final MoveControl moveControl2 = this.activeMoveControl;
                     CardboardActivity.this.runOnUiThread(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.28
                         private final /* synthetic */ void $m$0() {
-                            ((CardboardActivity.AnonymousClass7) this).m792xb20f0dd0((MoveControl) moveControl2);
+                            CardboardActivity.AnonymousClass7.this.m792xb20f0dd0((MoveControl) moveControl2);
                         }
 
                         @Override // java.lang.Runnable
@@ -736,28 +736,29 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
             }
             if (Math.abs(f2) >= Math.abs(f3)) {
                 if (f2 > 0.0f) {
-                    f = f2 * 2.0f;
+                    fTemp = f2 * 2.0f;
                     moveControl = MoveControl.Right;
                 } else if (f2 < 0.0f) {
-                    f = (-f2) * 2.0f;
+                    fTemp = (-f2) * 2.0f;
                     moveControl = MoveControl.Left;
                 } else {
                     moveControl = null;
                 }
             } else if (f3 > 0.0f) {
                 moveControl = MoveControl.Forward;
-                f = f3 * 2.0f;
+                fTemp = f3 * 2.0f;
             } else if (f3 < 0.0f) {
                 moveControl = MoveControl.Backward;
-                f = (-f3) * 2.0f;
+                fTemp = (-f3) * 2.0f;
             } else {
                 moveControl = null;
             }
+            final float f = fTemp;
             if (moveControl == this.activeMoveControl) {
                 if (moveControl != null) {
                     CardboardActivity.this.runOnUiThread(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.30
                         private final /* synthetic */ void $m$0() {
-                            ((CardboardActivity.AnonymousClass7) this).m791xb20efe54((MoveControl) moveControl, f);
+                            CardboardActivity.AnonymousClass7.this.m791xb20efe54((MoveControl) moveControl, f);
                         }
 
                         @Override // java.lang.Runnable
@@ -770,7 +771,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
                 this.activeMoveControl = moveControl;
                 CardboardActivity.this.runOnUiThread(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.29
                     private final /* synthetic */ void $m$0() {
-                        ((CardboardActivity.AnonymousClass7) this).m789xb20ea03e((MoveControl) moveControl, f);
+                        CardboardActivity.AnonymousClass7.this.m789xb20ea03e((MoveControl) moveControl, f);
                     }
 
                     @Override // java.lang.Runnable
@@ -782,7 +783,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
                 final MoveControl moveControl3 = this.activeMoveControl;
                 CardboardActivity.this.runOnUiThread(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.27
                     private final /* synthetic */ void $m$0() {
-                        ((CardboardActivity.AnonymousClass7) this).m790xb20ea7da((MoveControl) moveControl3);
+                        CardboardActivity.AnonymousClass7.this.m790xb20ea7da((MoveControl) moveControl3);
                     }
 
                     @Override // java.lang.Runnable
@@ -891,7 +892,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
                 }
                 CardboardActivity.this.runOnUiThread(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.22
                     private final /* synthetic */ void $m$0() {
-                        ((CardboardActivity.WorldStereoRenderer) this).m793x10c82f4f();
+                        CardboardActivity.WorldStereoRenderer.this.m793x10c82f4f();
                     }
 
                     @Override // java.lang.Runnable
@@ -1008,7 +1009,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
             this.headTransformCompat.neutralYawValid = false;
             CardboardActivity.this.runOnUiThread(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.23
                 private final /* synthetic */ void $m$0() {
-                    ((CardboardActivity.WorldStereoRenderer) this).m794x44e02702();
+                    CardboardActivity.WorldStereoRenderer.this.m794x44e02702();
                 }
 
                 @Override // java.lang.Runnable
@@ -1192,7 +1193,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
                 }
                 this.pickedAvatarNameRetriever = new ChatterNameRetriever(userChatterID, new ChatterNameRetriever.OnChatterNameUpdated() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.18
                     private final /* synthetic */ void $m$0(ChatterNameRetriever chatterNameRetriever) {
-                        ((CardboardActivity) this).m773com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref17(chatterNameRetriever);
+                        CardboardActivity.this.m773com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref17(chatterNameRetriever);
                     }
 
                     @Override // com.lumiyaviewer.lumiya.slproto.users.ChatterNameRetriever.OnChatterNameUpdated
@@ -1325,7 +1326,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
             this.onScreenControlsLayout.dispatchGenericMotionEvent(motionEventObtain3);
             if (this.currentControlsPage != ControlsPage.pageDetails || (viewFindMatchingView = findMatchingView(this.cardboardDetailsPage, i, i2, 0, 0, new Predicate() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.10
                 private final /* synthetic */ boolean $m$0(Object obj) {
-                    return ((CardboardActivity) this).m772com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref16((View) obj);
+                    return CardboardActivity.this.m772com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref16((View) obj);
                 }
 
                 @Override // com.google.common.base.Predicate
@@ -1406,7 +1407,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         Debug.Printf("Cardboard: posting draw views", new Object[0]);
         this.handler.post(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.25
             private final /* synthetic */ void $m$0() {
-                ((CardboardActivity) this).m771com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref15();
+                CardboardActivity.this.m771com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref15();
             }
 
             @Override // java.lang.Runnable
@@ -1767,7 +1768,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         this.onScreenControlsLayout = (ViewGroup) getLayoutInflater().inflate(R.layout.cardboard_controls, (ViewGroup) cardboardControlsPlaceholder, true);
         cardboardControlsPlaceholder.setOnViewInvalidateListener(new CardboardControlsPlaceholder.OnViewInvalidateListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.19
             private final /* synthetic */ void $m$0() {
-                ((CardboardActivity) this).m768com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref12();
+                CardboardActivity.this.m768com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref12();
             }
 
             @Override // com.lumiyaviewer.lumiya.ui.render.CardboardControlsPlaceholder.OnViewInvalidateListener
@@ -1790,7 +1791,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         ((FrameLayout) findViewById(R.id.vr_view_placeholder)).addView(this.gvrView, new FrameLayout.LayoutParams(-1, -1));
         this.gvrView.setOnCardboardTriggerListener(new Runnable() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.24
             private final /* synthetic */ void $m$0() {
-                ((CardboardActivity) this).m769com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref13();
+                CardboardActivity.this.m769com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref13();
             }
 
             @Override // java.lang.Runnable
@@ -1828,7 +1829,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         setControlsPage(ControlsPage.pageDefault);
         this.speechRecognitionResults.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.8
             private final /* synthetic */ void $m$0() {
-                ((CardboardActivity) this).m782xd3478a38();
+                CardboardActivity.this.m782xd3478a38();
             }
 
             @Override // android.view.ViewTreeObserver.OnGlobalLayoutListener
@@ -1838,7 +1839,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         });
         this.cardboardPrimaryControls.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.9
             private final /* synthetic */ void $m$0() {
-                ((CardboardActivity) this).m783xd347f25d();
+                CardboardActivity.this.m783xd347f25d();
             }
 
             @Override // android.view.ViewTreeObserver.OnGlobalLayoutListener
@@ -1848,7 +1849,7 @@ public class CardboardActivity extends DetailsActivity implements ObjectPopupsMa
         });
         this.gvrView.setOnTouchListener(new View.OnTouchListener() { // from class: com.lumiyaviewer.lumiya.ui.render.-$Lambda$yhBpPTpVtOAhPHTLXL5B0hI4gXA.7
             private final /* synthetic */ boolean $m$0(View view2, MotionEvent motionEvent) {
-                return ((CardboardActivity) this).m770com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref14(view2, motionEvent);
+                return CardboardActivity.this.m770com_lumiyaviewer_lumiya_ui_render_CardboardActivitymthref14(view2, motionEvent);
             }
 
             @Override // android.view.View.OnTouchListener

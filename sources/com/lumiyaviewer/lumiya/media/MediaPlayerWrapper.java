@@ -3,7 +3,7 @@ package com.lumiyaviewer.lumiya.media;
 import android.media.MediaPlayer;
 import com.lumiyaviewer.lumiya.Debug;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class MediaPlayerWrapper implements Runnable, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnPreparedListener {
     private MediaPlayer mediaPlayer = null;
     private Thread workingThread = null;
@@ -36,13 +36,13 @@ public class MediaPlayerWrapper implements Runnable, MediaPlayer.OnErrorListener
             }
             this.mustPlay = true;
             this.mustExit = false;
-            String strTrim = str.trim();
-            if (strTrim.toLowerCase().startsWith("http://")) {
-                strTrim = "http://" + strTrim.substring(7);
-            } else if (strTrim.toLowerCase().startsWith("https://")) {
-                strTrim = "https://" + strTrim.substring(8);
+            String trim = str.trim();
+            if (trim.toLowerCase().startsWith("http://")) {
+                trim = "http://" + trim.substring(7);
+            } else if (trim.toLowerCase().startsWith("https://")) {
+                trim = "https://" + trim.substring(8);
             }
-            this.mediaURL = strTrim;
+            this.mediaURL = trim;
             if (this.workingThread == null) {
                 this.workingThread = new Thread(this);
                 this.workingThread.start();
@@ -61,19 +61,57 @@ public class MediaPlayerWrapper implements Runnable, MediaPlayer.OnErrorListener
         }
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:30:0x00cf  */
-    /* JADX WARN: Removed duplicated region for block: B:43:? A[RETURN, SYNTHETIC] */
     @Override // java.lang.Runnable
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
     public void run() {
-        /*
-            Method dump skipped, instruction units count: 218
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.media.MediaPlayerWrapper.run():void");
+        Debug.Log("MediaPlayerWrapper: working thread started");
+        while (!this.mustExit) {
+            if (this.mustPlay) {
+                Debug.Log("MediaPlayerWrapper: working thread must play, URL = " + this.mediaURL);
+                if (this.mediaPlayer != null) {
+                    this.mediaPlayer.release();
+                    this.mediaPlayer = null;
+                }
+                this.mediaPlayer = new MediaPlayer();
+                this.mediaPlayer.setAudioStreamType(3);
+                this.mediaPlayer.setOnErrorListener(this);
+                this.mediaPlayer.setOnInfoListener(this);
+                this.mediaPlayer.setOnPreparedListener(this);
+                try {
+                    this.mediaPlayer.setDataSource(this.mediaURL);
+                } catch (Exception e) {
+                    Debug.Log("MediaPlayerWrapper: Failed to set data source to " + this.mediaURL);
+                    e.printStackTrace();
+                    this.mustPlay = false;
+                }
+                try {
+                    this.mediaPlayer.prepareAsync();
+                } catch (Exception e2) {
+                    Debug.Log("MediaPlayerWrapper: PrepareAsync exception while playing " + this.mediaURL);
+                    e2.printStackTrace();
+                    this.mustPlay = false;
+                }
+            } else {
+                Debug.Log("MediaPlayerWrapper: working thread must stop playing");
+                if (this.mediaPlayer != null) {
+                    this.mediaPlayer.release();
+                    this.mediaPlayer = null;
+                }
+            }
+            Debug.Log("MediaPlayerWrapper: working thread waiting");
+            synchronized (this) {
+                try {
+                    wait();
+                } catch (InterruptedException e3) {
+                    e3.printStackTrace();
+                }
+            }
+            Debug.Log("MediaPlayerWrapper: working thread wake up");
+        }
+        Debug.Log("MediaPlayerWrapper: working thread exiting");
+        if (this.mediaPlayer != null) {
+            this.mediaPlayer.release();
+            this.mediaPlayer = null;
+        }
     }
 
     public void stop() {

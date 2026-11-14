@@ -36,8 +36,5 @@ public class DrawableTextCache extends ResourceMemoryCache<DrawableTextParams, D
         return new TextGenRequest(drawableTextParams, this.fontSize, resourceManager);
     }
 
-    @Override // com.lumiyaviewer.lumiya.res.ResourceManager
-    protected /* bridge */ /* synthetic */ ResourceRequest CreateNewRequest(Object obj, ResourceManager resourceManager) {
-        return CreateNewRequest((DrawableTextParams) obj, (ResourceManager<DrawableTextParams, DrawableTextBitmap>) resourceManager);
-    }
+    
 }

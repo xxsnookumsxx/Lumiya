@@ -36,7 +36,7 @@ public class ChatterList {
     private final SubscriptionPool<UUID, Boolean> typingUsersPool = new SubscriptionPool<>();
     private final OnListUpdated onNearbyListUpdated = new OnListUpdated() { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.-$Lambda$vvo1Hidt87pwA0OrMywwrJjt1rU
         private final /* synthetic */ void $m$0() {
-            ((ChatterList) this).m305xfc0863d4();
+            ChatterList.this.m305xfc0863d4();
         }
 
         @Override // com.lumiyaviewer.lumiya.slproto.users.manager.OnListUpdated
@@ -78,11 +78,9 @@ public class ChatterList {
         new RequestFinalProcessor<ChatterListType, ImmutableList<ChatterDisplayData>>(this.chatterListPool, userManager.getDatabaseExecutor()) { // from class: com.lumiyaviewer.lumiya.slproto.users.manager.ChatterList.3
 
             /* JADX INFO: renamed from: -com-lumiyaviewer-lumiya-slproto-users-manager-ChatterListTypeSwitchesValues, reason: not valid java name */
-            private static final /* synthetic */ int[] f225x521388d7 = null;
-            final /* synthetic */ int[] $SWITCH_TABLE$com$lumiyaviewer$lumiya$slproto$users$manager$ChatterListType;
-
+            private /* synthetic */ int[] f225x521388d7 = null;
             /* JADX INFO: renamed from: -getcom-lumiyaviewer-lumiya-slproto-users-manager-ChatterListTypeSwitchesValues, reason: not valid java name */
-            private static /* synthetic */ int[] m306x49b0a37b() {
+            private /* synthetic */ int[] m306x49b0a37b() {
                 if (f225x521388d7 != null) {
                     return f225x521388d7;
                 }

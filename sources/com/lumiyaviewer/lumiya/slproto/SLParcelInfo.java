@@ -3,6 +3,7 @@ package com.lumiyaviewer.lumiya.slproto;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.lumiyaviewer.lumiya.Debug;
+import com.lumiyaviewer.lumiya.react.SubscriptionSingleKey;
 import com.lumiyaviewer.lumiya.render.spatial.DrawListObjectEntry;
 import com.lumiyaviewer.lumiya.slproto.messages.AvatarAnimation;
 import com.lumiyaviewer.lumiya.slproto.messages.AvatarAppearance;
@@ -38,7 +39,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 
-/* JADX INFO: loaded from: classes.dex */
+/* loaded from: classes.dex */
 public class SLParcelInfo {
     private volatile UserManager userManager;
     private float drawDistance = 0.0f;
@@ -55,7 +56,9 @@ public class SLParcelInfo {
     public final Map<UUID, SLObjectInfo> objectNamesQueue = Collections.synchronizedMap(new LinkedHashMap());
     private final Comparator<SLObjectDisplayInfo> objectDisplayInfoComparator = new Comparator() { // from class: com.lumiyaviewer.lumiya.slproto.-$Lambda$1YF5tPpIlUnjvWeNVttYc5eIlFY
         private final /* synthetic */ int $m$0(Object obj, Object obj2) {
-            return Float.compare(((SLObjectDisplayInfo) obj).distance, ((SLObjectDisplayInfo) obj2).distance);
+            int compare;
+            compare = Float.compare(((SLObjectDisplayInfo) obj).distance, ((SLObjectDisplayInfo) obj2).distance);
+            return compare;
         }
 
         @Override // java.util.Comparator
@@ -66,55 +69,55 @@ public class SLParcelInfo {
 
     @Nullable
     private ArrayList<SLObjectDisplayInfo> addDisplayObjects(Iterable<SLObjectInfo> iterable, SLObjectFilterInfo sLObjectFilterInfo, ImmutableVector immutableVector, boolean z, MultipleChatterNameRetriever multipleChatterNameRetriever, Set<UUID> set, boolean z2) {
-        ArrayList<SLObjectDisplayInfo> arrayListAddDisplayObjects;
+        ArrayList<SLObjectDisplayInfo> arrayList;
         boolean z3;
-        ArrayList<SLObjectDisplayInfo> arrayList = null;
+        ArrayList<SLObjectDisplayInfo> arrayList2 = null;
         Iterator<SLObjectInfo> it = iterable.iterator();
         while (true) {
-            ArrayList<SLObjectDisplayInfo> arrayList2 = arrayList;
+            ArrayList<SLObjectDisplayInfo> arrayList3 = arrayList2;
             if (!it.hasNext()) {
-                return arrayList2;
+                return arrayList3;
             }
             SLObjectInfo next = it.next();
             if (next != null) {
                 LinkedTreeNode<SLObjectInfo> linkedTreeNode = next.treeNode;
                 if (linkedTreeNode.hasChildren()) {
-                    arrayListAddDisplayObjects = addDisplayObjects(linkedTreeNode, sLObjectFilterInfo, immutableVector, false, multipleChatterNameRetriever, set, !next.isAvatar() ? z2 : true);
+                    arrayList = addDisplayObjects(linkedTreeNode, sLObjectFilterInfo, immutableVector, false, multipleChatterNameRetriever, set, !next.isAvatar() ? z2 : true);
                 } else {
-                    arrayListAddDisplayObjects = null;
+                    arrayList = null;
                 }
                 LLVector3 absolutePosition = next.getAbsolutePosition();
-                float fDistanceTo = immutableVector.distanceTo(absolutePosition.x, absolutePosition.y, absolutePosition.z);
-                boolean z4 = arrayListAddDisplayObjects != null ? !arrayListAddDisplayObjects.isEmpty() : false;
-                boolean zObjectMatches = sLObjectFilterInfo.objectMatches(next, fDistanceTo, z2);
-                if (z4 || zObjectMatches) {
+                float distanceTo = immutableVector.distanceTo(absolutePosition.x, absolutePosition.y, absolutePosition.z);
+                boolean z4 = arrayList != null ? !arrayList.isEmpty() : false;
+                boolean objectMatches = sLObjectFilterInfo.objectMatches(next, distanceTo, z2);
+                if (z4 || objectMatches) {
                     String knownName = getKnownName(next, multipleChatterNameRetriever, set);
-                    boolean zNameMatches = sLObjectFilterInfo.nameMatches(knownName);
-                    if (z4 || zNameMatches) {
+                    boolean nameMatches = sLObjectFilterInfo.nameMatches(knownName);
+                    if (z4 || nameMatches) {
                         if (z4) {
-                            z3 = !(zObjectMatches ? zNameMatches : false);
+                            z3 = !(objectMatches ? nameMatches : false);
                         } else {
                             z3 = false;
                         }
-                        if (arrayList2 == null) {
-                            arrayList2 = new ArrayList<>();
+                        if (arrayList3 == null) {
+                            arrayList3 = new ArrayList<>();
                         }
                         if (!z) {
-                            arrayList2.add(next.isAvatar() ? new SLAvatarObjectDisplayInfo(knownName, next, fDistanceTo, ImmutableList.of(), z3) : new SLPrimObjectDisplayInfo(next, fDistanceTo));
-                            if (arrayListAddDisplayObjects != null) {
-                                arrayList2.addAll(arrayListAddDisplayObjects);
+                            arrayList3.add(next.isAvatar() ? new SLAvatarObjectDisplayInfo(knownName, next, distanceTo, ImmutableList.of(), z3) : new SLPrimObjectDisplayInfo(next, distanceTo));
+                            if (arrayList != null) {
+                                arrayList3.addAll(arrayList);
                             }
                         } else if (next.isAvatar()) {
-                            arrayList2.add(new SLAvatarObjectDisplayInfo(knownName, next, fDistanceTo, arrayListAddDisplayObjects != null ? ImmutableList.copyOf((Collection) arrayListAddDisplayObjects) : ImmutableList.of(), z3));
-                        } else if (arrayListAddDisplayObjects == null || arrayListAddDisplayObjects.isEmpty()) {
-                            arrayList2.add(new SLPrimObjectDisplayInfo(next, fDistanceTo));
+                            arrayList3.add(new SLAvatarObjectDisplayInfo(knownName, next, distanceTo, arrayList != null ? ImmutableList.copyOf((Collection) arrayList) : ImmutableList.of(), z3));
+                        } else if (arrayList == null || arrayList.isEmpty()) {
+                            arrayList3.add(new SLPrimObjectDisplayInfo(next, distanceTo));
                         } else {
-                            arrayList2.add(new SLPrimObjectDisplayInfoWithChildren(next, fDistanceTo, ImmutableList.copyOf((Collection) arrayListAddDisplayObjects), z3));
+                            arrayList3.add(new SLPrimObjectDisplayInfoWithChildren(next, distanceTo, ImmutableList.copyOf((Collection) arrayList), z3));
                         }
                     }
                 }
             }
-            arrayList = arrayList2;
+            arrayList2 = arrayList3;
         }
     }
 
@@ -180,9 +183,9 @@ public class SLParcelInfo {
             } else {
                 this.rootObjects.put(Integer.valueOf(sLObjectInfo.localID), sLObjectInfo);
             }
-            LinkedList<SLObjectInfo> linkedListRemove = this.orphanObjects.remove(Integer.valueOf(sLObjectInfo.localID));
-            if (linkedListRemove != null) {
-                for (SLObjectInfo sLObjectInfo3 : linkedListRemove) {
+            LinkedList<SLObjectInfo> remove = this.orphanObjects.remove(Integer.valueOf(sLObjectInfo.localID));
+            if (remove != null) {
+                for (SLObjectInfo sLObjectInfo3 : remove) {
                     sLObjectInfo3.hierLevel = sLObjectInfo.hierLevel + 1;
                     sLObjectInfo3.setIsAttachmentAll(!sLObjectInfo.isAttachment ? sLObjectInfo.isAttachment : true);
                     sLObjectInfo.addChild(sLObjectInfo3);
@@ -207,23 +210,23 @@ public class SLParcelInfo {
     }
 
     public ObjectsManager.ObjectDisplayList getDisplayObjects(ImmutableVector immutableVector, SLObjectFilterInfo sLObjectFilterInfo, MultipleChatterNameRetriever multipleChatterNameRetriever) {
-        ArrayList<SLObjectDisplayInfo> arrayListAddDisplayObjects;
+        ArrayList<SLObjectDisplayInfo> addDisplayObjects;
         int size;
         HashSet hashSet = new HashSet();
         synchronized (this) {
-            arrayListAddDisplayObjects = addDisplayObjects(this.rootObjects.values(), sLObjectFilterInfo, immutableVector, true, multipleChatterNameRetriever, hashSet, false);
+            addDisplayObjects = addDisplayObjects(this.rootObjects.values(), sLObjectFilterInfo, immutableVector, true, multipleChatterNameRetriever, hashSet, false);
             size = this.objectNamesQueue.size();
         }
         multipleChatterNameRetriever.retainChatters(hashSet);
         Object[] objArr = new Object[2];
-        objArr[0] = arrayListAddDisplayObjects != null ? Integer.toString(arrayListAddDisplayObjects.size()) : "null";
+        objArr[0] = addDisplayObjects != null ? Integer.toString(addDisplayObjects.size()) : "null";
         objArr[1] = Integer.valueOf(size);
         Debug.Printf("getDisplayObjects: objectList is %s, load queue %d", objArr);
-        if (arrayListAddDisplayObjects == null) {
+        if (addDisplayObjects == null) {
             return new ObjectsManager.ObjectDisplayList(ImmutableList.of(), size != 0);
         }
-        Collections.sort(arrayListAddDisplayObjects, this.objectDisplayInfoComparator);
-        return new ObjectsManager.ObjectDisplayList(ImmutableList.copyOf((Collection) arrayListAddDisplayObjects), size != 0);
+        Collections.sort(addDisplayObjects, this.objectDisplayInfoComparator);
+        return new ObjectsManager.ObjectDisplayList(ImmutableList.copyOf((Collection) addDisplayObjects), size != 0);
     }
 
     @Nullable
@@ -235,34 +238,18 @@ public class SLParcelInfo {
         return this.allObjectsNearby.get(uuid);
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:13:0x0015  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
-    */
-    public int getObjectLocalID(@javax.annotation.Nullable java.util.UUID r3) {
-        /*
-            r2 = this;
-            r1 = -1
-            monitor-enter(r2)
-            if (r3 == 0) goto L15
-            java.util.Map<java.util.UUID, com.lumiyaviewer.lumiya.slproto.objects.SLObjectInfo> r0 = r2.allObjectsNearby     // Catch: java.lang.Throwable -> L12
-            java.lang.Object r0 = r0.get(r3)     // Catch: java.lang.Throwable -> L12
-            com.lumiyaviewer.lumiya.slproto.objects.SLObjectInfo r0 = (com.lumiyaviewer.lumiya.slproto.objects.SLObjectInfo) r0     // Catch: java.lang.Throwable -> L12
-            if (r0 == 0) goto L15
-            int r0 = r0.localID     // Catch: java.lang.Throwable -> L12
-        L10:
-            monitor-exit(r2)
-            return r0
-        L12:
-            r0 = move-exception
-            monitor-exit(r2)
-            throw r0
-        L15:
-            r0 = r1
-            goto L10
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.slproto.SLParcelInfo.getObjectLocalID(java.util.UUID):int");
+    public int getObjectLocalID(@Nullable UUID uuid) {
+        int i;
+        synchronized (this) {
+            if (uuid != null) {
+                SLObjectInfo sLObjectInfo = this.allObjectsNearby.get(uuid);
+                if (sLObjectInfo != null) {
+                    i = sLObjectInfo.localID;
+                }
+            }
+            i = -1;
+        }
+        return i;
     }
 
     @Nullable
@@ -309,7 +296,7 @@ public class SLParcelInfo {
 
     public synchronized void initSpatialIndex() {
         try {
-            Iterator<T> it = this.rootObjects.values().iterator();
+            Iterator it = this.rootObjects.values().iterator();
             while (it.hasNext()) {
                 ((SLObjectInfo) it.next()).updateSpatialIndex(true);
             }
@@ -333,17 +320,81 @@ public class SLParcelInfo {
         return false;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:71:0x011c  */
+    /* JADX WARN: Removed duplicated region for block: B:46:0x00f1  */
+    /* JADX WARN: Removed duplicated region for block: B:50:0x00f7  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
-        To view partially-correct code enable 'Show inconsistent code' option in preferences
     */
-    boolean killObject(com.lumiyaviewer.lumiya.slproto.SLAgentCircuit r11, int r12) {
-        /*
-            Method dump skipped, instruction units count: 286
-            To view this dump change 'Code comments level' option to 'DEBUG'
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.lumiyaviewer.lumiya.slproto.SLParcelInfo.killObject(com.lumiyaviewer.lumiya.slproto.SLAgentCircuit, int):boolean");
+    boolean killObject(SLAgentCircuit sLAgentCircuit, int i) {
+        boolean z = false;
+        boolean z2 = false;
+        LinkedList<SLObjectInfo> linkedList2 = null;
+        synchronized (this) {
+            UUID remove = this.uuidsNearby.remove(Integer.valueOf(i));
+            if (remove != null) {
+                z2 = true;
+                this.objectNamesQueue.remove(remove);
+                SLObjectInfo remove2 = this.allObjectsNearby.remove(remove);
+                if (remove2 != null) {
+                    remove2.isDead = true;
+                    if (remove2.parentID == 0) {
+                        this.rootObjects.remove(Integer.valueOf(i));
+                    } else {
+                        UUID uuid = this.uuidsNearby.get(Integer.valueOf(remove2.parentID));
+                        SLObjectInfo sLObjectInfo = uuid != null ? this.allObjectsNearby.get(uuid) : null;
+                        if (sLObjectInfo != null) {
+                            sLObjectInfo.removeChild(remove2);
+                            if (sLObjectInfo instanceof SLObjectAvatarInfo) {
+                                SLObjectAvatarInfo sLObjectAvatarInfo = (SLObjectAvatarInfo) sLObjectInfo;
+                                if (sLObjectAvatarInfo.isMyAvatar()) {
+                                    sLAgentCircuit.processMyAttachmentUpdate(sLObjectAvatarInfo);
+                                }
+                            }
+                        } else {
+                            LinkedList<SLObjectInfo> linkedList3 = this.orphanObjects.get(Integer.valueOf(remove2.parentID));
+                            if (linkedList3 != null) {
+                                linkedList3.remove(remove2);
+                                if (linkedList3.isEmpty()) {
+                                    this.orphanObjects.remove(Integer.valueOf(remove2.parentID));
+                                }
+                            }
+                        }
+                    }
+                    try {
+                        for (SLObjectInfo sLObjectInfo2 : remove2.treeNode) {
+                            if (sLObjectInfo2.isAvatar()) {
+                                if (linkedList2 == null) {
+                                    linkedList2 = new LinkedList<>();
+                                }
+                                linkedList2.add(sLObjectInfo2);
+                            } else {
+                                killObject(sLAgentCircuit, sLObjectInfo2.localID);
+                            }
+                        }
+                        if (linkedList2 != null) {
+                            for (SLObjectInfo sLObjectInfo3 : linkedList2) {
+                                remove2.removeChild(sLObjectInfo3);
+                                sLObjectInfo3.parentID = 0;
+                                if ((sLObjectInfo3 instanceof SLObjectAvatarInfo) && ((SLObjectAvatarInfo) sLObjectInfo3).isMyAvatar()) {
+                                    z = true;
+                                }
+                                this.rootObjects.put(Integer.valueOf(sLObjectInfo3.localID), sLObjectInfo3);
+                            }
+                        }
+                    } catch (NoSuchElementException e) {
+                        Debug.Warning(e);
+                    }
+                    remove2.removeFromSpatialIndex();
+                }
+            }
+        }
+        if (this.userManager != null) {
+            this.userManager.getObjectsManager().requestObjectProfileUpdate(i);
+            if (z) {
+                this.userManager.getObjectsManager().myAvatarState().requestUpdate(SubscriptionSingleKey.Value);
+            }
+        }
+        return z2;
     }
 
     public synchronized void reset(UserManager userManager) {

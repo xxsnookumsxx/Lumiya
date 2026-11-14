@@ -98,7 +98,7 @@ public class SwipeDismissTouchListener implements OnInterceptTouchEventListener 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // com.lumiyaviewer.lumiya.ui.common.OnInterceptTouchEventListener
     public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
-        boolean z;
+        boolean z = true;
         boolean z2;
         float f;
         float f2;
