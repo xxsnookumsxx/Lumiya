@@ -104,6 +104,7 @@ public class UIThreadExecutor implements Executor {
                         Debug.Warning(e);
                     }
                 } finally {
+                    this.lock.lock();
                 }
             }
         } finally {
