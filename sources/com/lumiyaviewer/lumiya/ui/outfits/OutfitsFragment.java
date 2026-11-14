@@ -195,6 +195,13 @@ public class OutfitsFragment extends FragmentWithTitle implements ReloadableFrag
         setTitle(inventoryEntryList.getTitle(), null);
         if (this.adapter != null) {
             this.adapter.setData(inventoryEntryList);
+            View view = getView();
+            if (view != null) {
+                ListView listView = (ListView) view.findViewById(R.id.item_list);
+                if (listView != null) {
+                    listView.setAdapter((ListAdapter) this.adapter);
+                }
+            }
         }
         updateLoadingStatus();
     }

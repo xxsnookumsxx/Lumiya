@@ -134,21 +134,15 @@ public class InventoryFolderAdapter extends BaseAdapter implements View.OnClickL
                     Object whatIsItemWornOn = sLInventoryEntry.whatIsItemWornOn(this.wornAttachments, this.wornWearables, false);
                     boolean z2 = whatIsItemWornOn != null;
                     boolean isBodyPart = whatIsItemWornOn instanceof SLWearableType ? ((SLWearableType) whatIsItemWornOn).isBodyPart() : false;
-                    if (this.avatarAppearance != null) {
-                        if (z2) {
-                            if (!sLInventoryEntry.isWearable()) {
-                                z = this.avatarAppearance.canDetachItem(sLInventoryEntry);
-                            } else if (this.avatarAppearance.canTakeItemOff(sLInventoryEntry)) {
-                                z = !isBodyPart;
-                            }
+                    if (this.avatarAppearance == null) {
+                        z = false;
+                    } else if (z2) {
+                        if (!sLInventoryEntry.isWearable()) {
+                            z = this.avatarAppearance.canDetachItem(sLInventoryEntry);
+                        } else if (this.avatarAppearance.canTakeItemOff(sLInventoryEntry)) {
+                            z = !isBodyPart;
                         }
-                        view.findViewById(R.id.item_worn_checkbox).setVisibility(0);
-                        view.findViewById(R.id.item_worn_checkbox).setTag(R.id.tag_outfit_object, item);
-                        ((CheckBox) view.findViewById(R.id.item_worn_checkbox)).setChecked(z2);
-                        view.findViewById(R.id.item_worn_checkbox).setEnabled(z);
-                        view.findViewById(R.id.item_worn_checkbox).setOnClickListener(this);
                     }
-                    z = false;
                     view.findViewById(R.id.item_worn_checkbox).setVisibility(0);
                     view.findViewById(R.id.item_worn_checkbox).setTag(R.id.tag_outfit_object, item);
                     ((CheckBox) view.findViewById(R.id.item_worn_checkbox)).setChecked(z2);
