@@ -33,6 +33,8 @@
         android:icon="@mipmap/ic_lumiya_launcher"
         android:name="com.lumiyaviewer.lumiya.LumiyaApp"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
         android:installLocation="auto"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"

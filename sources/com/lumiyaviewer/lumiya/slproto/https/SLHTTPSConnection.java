@@ -22,6 +22,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
 import okhttp3.Dns;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -48,12 +49,20 @@ public class SLHTTPSConnection {
         }
     };
     private static TrustManager[] trustAllCerts = {trustEverythingManager};
-    private static final OkHttpClient okHttpClient = new OkHttpClient.Builder().proxy(Proxy.NO_PROXY).dns(new SLDNS()).connectionPool(new ConnectionPool(8, 5, TimeUnit.MINUTES)).connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).hostnameVerifier(new HostnameVerifier() { // from class: com.lumiyaviewer.lumiya.slproto.https.SLHTTPSConnection.2
+    private static final Dispatcher httpDispatcher = createHttpDispatcher();
+    private static final OkHttpClient okHttpClient = new OkHttpClient.Builder().proxy(Proxy.NO_PROXY).dispatcher(httpDispatcher).dns(new SLDNS()).connectionPool(new ConnectionPool(32, 5, TimeUnit.MINUTES)).connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).hostnameVerifier(new HostnameVerifier() { // from class: com.lumiyaviewer.lumiya.slproto.https.SLHTTPSConnection.2
         @Override // javax.net.ssl.HostnameVerifier
         public boolean verify(String str, SSLSession sSLSession) {
             return true;
         }
     }).addNetworkInterceptor(new CharsetStripInterceptor()).sslSocketFactory(getSocketFactory(), trustEverythingManager).build();
+
+    private static Dispatcher createHttpDispatcher() {
+        Dispatcher dispatcher = new Dispatcher();
+        dispatcher.setMaxRequests(64);
+        dispatcher.setMaxRequestsPerHost(32);
+        return dispatcher;
+    }
 
     static class CharsetStripInterceptor implements Interceptor {
         CharsetStripInterceptor() {

@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /* loaded from: classes.dex */
 public class SLTextureFetcher extends SLModule implements SLIdleHandler {
-    private static final int MAX_UDP_TRANSFERS = 4;
+    private static final int MAX_UDP_TRANSFERS = 8;
     private String agentAppearanceService;
     private String capURL;
     private long lastCheckForStalls;

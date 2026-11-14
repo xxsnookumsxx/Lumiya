@@ -7,15 +7,18 @@ import com.lumiyaviewer.lumiya.res.ResourceConsumer;
 import com.lumiyaviewer.lumiya.res.ResourceManager;
 import com.lumiyaviewer.lumiya.res.ResourceMemoryCache;
 import com.lumiyaviewer.lumiya.res.ResourceRequest;
-import com.lumiyaviewer.lumiya.res.executors.PrimComputeExecutor;
+import com.lumiyaviewer.lumiya.res.executors.GeometryComputeExecutor;
 import com.lumiyaviewer.lumiya.slproto.prims.PrimDrawParams;
+import com.lumiyaviewer.lumiya.utils.HasPriority;
+import java.util.concurrent.Future;
 
 /* JADX INFO: loaded from: classes.dex */
 public class PrimCache extends ResourceMemoryCache<PrimDrawParams, DrawablePrim> {
     private final GeometryCache geometryCache;
     private final GLTextureCache textureCache;
 
-    private static class PrimRequest extends ResourceRequest<PrimDrawParams, DrawablePrim> implements Runnable, ResourceConsumer {
+    private static class PrimRequest extends ResourceRequest<PrimDrawParams, DrawablePrim> implements Runnable, ResourceConsumer, HasPriority {
+        private volatile Future<?> computeFuture;
         private volatile DrawableGeometry geometry;
         private final GeometryCache geometryCache;
         private final GLTextureCache glTextureCache;
@@ -32,13 +35,16 @@ public class PrimCache extends ResourceMemoryCache<PrimDrawParams, DrawablePrim>
                 completeRequest(null);
             } else {
                 this.geometry = (DrawableGeometry) obj;
-                PrimComputeExecutor.getInstance().execute(this);
+                this.computeFuture = GeometryComputeExecutor.getInstance().submit(this);
             }
         }
 
         @Override // com.lumiyaviewer.lumiya.res.ResourceRequest
         public void cancelRequest() {
-            PrimComputeExecutor.getInstance().remove(this);
+            Future<?> future = this.computeFuture;
+            if (future != null) {
+                future.cancel(false);
+            }
             this.geometryCache.CancelRequest(this);
             super.cancelRequest();
         }
@@ -46,6 +52,11 @@ public class PrimCache extends ResourceMemoryCache<PrimDrawParams, DrawablePrim>
         @Override // com.lumiyaviewer.lumiya.res.ResourceRequest
         public void execute() {
             this.geometryCache.RequestResource(getParams().getVolumeParams(), this);
+        }
+
+        @Override // com.lumiyaviewer.lumiya.utils.HasPriority
+        public int getPriority() {
+            return getParams().getVolumeParams().isMesh() ? 0 : 1;
         }
 
         @Override // java.lang.Runnable

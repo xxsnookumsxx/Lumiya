@@ -242,6 +242,9 @@ public class PrimVolumeFace {
         ArrayList<LLVector3> arrayList = primVolume.Profile.Profile;
         ArrayList<PrimPath.PathPoint> arrayList2 = primVolume.Path.Path;
         int i6 = primVolume.Profile.Total;
+        if (arrayList.isEmpty() || arrayList2.isEmpty() || i6 <= 0 || this.NumS < 1 || this.NumT < 1 || this.BeginS < 0 || this.BeginS >= arrayList.size() || this.BeginT < 0 || this.BeginT + this.NumT > arrayList2.size()) {
+            return false;
+        }
         int i7 = (this.NumS - 1) * (this.NumT - 1) * 6;
         resizeVertices(this.NumS * this.NumT);
         resizeIndices(i7);

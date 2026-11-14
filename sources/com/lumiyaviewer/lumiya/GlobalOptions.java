@@ -352,11 +352,11 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
                 edit.putBoolean("high_quality_textures", true);
             }
             edit.putString("texture_memory_limit", Integer.toString(totalMemory != 0 ? totalMemory <= 262144 ? 32 : totalMemory <= 524288 ? 64 : 128 : 64));
-            int i2 = 2;
+            int i2 = 8;
             if (availableProcessors >= 4 && totalMemory > 524288) {
-                i2 = 8;
+                i2 = 10;
             } else if (availableProcessors >= 2) {
-                i2 = 4;
+                i2 = 8;
             }
             edit.putString("max_texture_downloads", Integer.toString(i2));
             edit.putBoolean("system_defaults_set", true);
@@ -379,12 +379,12 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
         this.cloudSyncEnabled = sharedPreferences.getBoolean("sync_to_gdrive", false);
         this.voiceEnabled = sharedPreferences.getBoolean("enableVoice", false) ? VoicePluginServiceConnection.isPluginSupported() : false;
         try {
-            i = Integer.parseInt(sharedPreferences.getString("max_texture_downloads", "2"));
+            i = Integer.parseInt(sharedPreferences.getString("max_texture_downloads", "10"));
             if (i < 1) {
                 i = 1;
             }
         } catch (Exception e) {
-            i = 2;
+            i = 10;
         }
         if (i != this.maxTextureDownloads) {
             this.maxTextureDownloads = i;

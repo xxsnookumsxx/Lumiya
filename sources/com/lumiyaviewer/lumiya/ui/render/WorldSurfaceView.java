@@ -69,9 +69,6 @@ public class WorldSurfaceView extends GLSurfaceView {
         this.activity = worldViewActivity;
         int iApplyDimension = (int) TypedValue.applyDimension(2, 16.0f, getResources().getDisplayMetrics());
         this.supportsGL20 = ((ActivityManager) getContext().getSystemService("activity")).getDeviceConfigurationInfo().reqGlEsVersion >= 131072;
-        if (Debug.isDebugBuild()) {
-            setDebugFlags(3);
-        }
         this.wantGL20 = getWantGL20();
         Object[] objArr = new Object[2];
         objArr[0] = Integer.valueOf(Build.VERSION.SDK_INT);

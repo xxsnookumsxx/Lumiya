@@ -30,8 +30,8 @@ public class TextureCache extends ResourceMemoryCache<DrawableTextureParams, Ope
     private final Object cacheDirLock = new Object();
     private final AtomicBoolean isLowMemory = new AtomicBoolean(false);
     private final TextureCompressedCache textureCompressedCache = new TextureCompressedCache();
-    private final ExecutorService decompressorExecutor = new WeakExecutor("TextureDecompressor", 2, new PriorityBlockingQueue());
-    private final StartingExecutor memoryAwareExecutor = new StartingExecutor();
+    private final ExecutorService decompressorExecutor = new WeakExecutor("TextureDecompressor", 3, new PriorityBlockingQueue());
+    private final StartingExecutor memoryAwareExecutor = new StartingExecutor(3);
 
     private static class InstanceHolder {
         private static final TextureCache Instance = new TextureCache();

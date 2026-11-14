@@ -96,6 +96,9 @@ public class PrimProfile {
     }
 
     private void genNGon(PrimProfileParams primProfileParams, int i, float f, float f2, float f3, int i2) {
+        if (i < 1) {
+            i = 1;
+        }
         float f4;
         float f5;
         float f6 = primProfileParams.Begin;
@@ -299,6 +302,10 @@ public class PrimProfile {
         }
         this.Profile.clear();
         this.Faces.clear();
+        this.TotalOut = 0;
+        this.Total = 0;
+        this.Open = false;
+        this.Concave = false;
         float f2 = primProfileParams.Begin;
         float f3 = primProfileParams.End;
         float f4 = primProfileParams.Hollow;
@@ -482,12 +489,18 @@ public class PrimProfile {
         if (!this.Open) {
             return true;
         }
-        addFace(this.Total - 1, 2, 0.5f, (short) 8, true);
+        if (this.Total >= 1) {
+            addFace(this.Total - 1, 2, 0.5f, (short) 8, true);
+        }
         if (f4 != 0.0f) {
-            addFace(this.TotalOut - 1, 2, 0.5f, (short) 16, true);
+            if (this.TotalOut >= 1) {
+                addFace(this.TotalOut - 1, 2, 0.5f, (short) 16, true);
+            }
             return true;
         }
-        addFace(this.Total - 2, 2, 0.5f, (short) 16, true);
+        if (this.Total >= 2) {
+            addFace(this.Total - 2, 2, 0.5f, (short) 16, true);
+        }
         return true;
     }
 }

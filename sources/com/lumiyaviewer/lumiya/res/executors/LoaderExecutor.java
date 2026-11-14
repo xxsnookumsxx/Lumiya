@@ -11,7 +11,7 @@ public class LoaderExecutor extends WeakExecutor {
     }
 
     private LoaderExecutor() {
-        super("ResourceLoader", 1);
+        super("ResourceLoader", 4);
     }
 
     /* synthetic */ LoaderExecutor(LoaderExecutor loaderExecutor) {

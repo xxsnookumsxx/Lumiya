@@ -7,9 +7,10 @@ import com.lumiyaviewer.lumiya.GlobalOptions;
 import com.lumiyaviewer.lumiya.res.ResourceFileCache;
 import com.lumiyaviewer.lumiya.res.ResourceManager;
 import com.lumiyaviewer.lumiya.res.ResourceRequest;
-import com.lumiyaviewer.lumiya.res.executors.HTTPFetchExecutor;
+import com.lumiyaviewer.lumiya.res.executors.MeshFetchExecutor;
 import com.lumiyaviewer.lumiya.slproto.https.SLHTTPSConnection;
 import com.lumiyaviewer.lumiya.slproto.mesh.MeshData;
+import com.lumiyaviewer.lumiya.utils.HasPriority;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,12 +22,12 @@ import okhttp3.Response;
 
 /* JADX INFO: loaded from: classes.dex */
 public class MeshCache extends ResourceFileCache<UUID, MeshData> {
-    private static final int MAX_ATTEMPTS = 2;
+    private static final int MAX_ATTEMPTS = 3;
     private static volatile File baseDir;
     private final Object capURLlock = new Object();
     private volatile String capURL = null;
 
-    private class MeshDownloadRequest extends ResourceRequest<UUID, MeshData> implements Runnable {
+    private class MeshDownloadRequest extends ResourceRequest<UUID, MeshData> implements Runnable, HasPriority {
         private volatile Future<?> downloadTask;
         private final File outputFile;
 
@@ -46,7 +47,12 @@ public class MeshCache extends ResourceFileCache<UUID, MeshData> {
 
         @Override // com.lumiyaviewer.lumiya.res.ResourceRequest
         public void execute() {
-            this.downloadTask = HTTPFetchExecutor.getInstance().submit(this);
+            this.downloadTask = MeshFetchExecutor.getInstance().submit(this);
+        }
+
+        @Override // com.lumiyaviewer.lumiya.utils.HasPriority
+        public int getPriority() {
+            return 0;
         }
 
         @Override // java.lang.Runnable
@@ -70,7 +76,7 @@ public class MeshCache extends ResourceFileCache<UUID, MeshData> {
             File file = new File(this.outputFile.getAbsolutePath() + ".tmp");
             String str2 = str + (str.contains("?") ? "&" : (str.endsWith("/") ? "?" : "/?")) + "mesh_id=" + getParams().toString();
             Debug.Printf("Fetching mesh: %s", str2);
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < MAX_ATTEMPTS; i++) {
                 try {
                     Response responseExecute = SLHTTPSConnection.getOkHttpClient().newCall(new Request.Builder().url(str2).header(HttpHeaders.ACCEPT, "application/octet-stream").build()).execute();
                     if (responseExecute == null) {

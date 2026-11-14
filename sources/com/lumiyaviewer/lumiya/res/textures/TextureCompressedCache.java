@@ -31,7 +31,7 @@ import okhttp3.Response;
 
 /* loaded from: classes.dex */
 public class TextureCompressedCache extends ResourceManager<DrawableTextureParams, File> {
-    private final StartingExecutor downloadExecutor = new StartingExecutor(GlobalOptions.getInstance().getMaxTextureDownloads());
+    private final StartingExecutor downloadExecutor = new StartingExecutor(HTTPFetchExecutor.getBoundedTexturePoolSize(GlobalOptions.getInstance().getMaxTextureDownloads()));
     private final Object lock = new Object();
     private volatile SLTextureFetcher fetcher = null;
 
@@ -264,9 +264,10 @@ public class TextureCompressedCache extends ResourceManager<DrawableTextureParam
 
     public void setMaxTextureDownloads(int i) {
         if (i > 0) {
-            this.downloadExecutor.setMaxConcurrentTasks(i);
-            HTTPFetchExecutor.getInstance().setCorePoolSize(i);
-            HTTPFetchExecutor.getInstance().setMaximumPoolSize(i);
+            int boundedPool = HTTPFetchExecutor.getBoundedTexturePoolSize(i);
+            this.downloadExecutor.setMaxConcurrentTasks(boundedPool);
+            HTTPFetchExecutor.getInstance().setMaximumPoolSize(boundedPool);
+            HTTPFetchExecutor.getInstance().setCorePoolSize(boundedPool);
         }
     }
 }

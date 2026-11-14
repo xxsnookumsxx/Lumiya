@@ -14,7 +14,11 @@ public class HTTPFetchExecutor extends WeakExecutor {
     }
 
     private HTTPFetchExecutor() {
-        super("ResourceHTTPFetch", GlobalOptions.getInstance().getMaxTextureDownloads(), new PriorityBlockingQueue());
+        super("ResourceHTTPFetch", getBoundedTexturePoolSize(GlobalOptions.getInstance().getMaxTextureDownloads()), new PriorityBlockingQueue());
+    }
+
+    public static int getBoundedTexturePoolSize(int requested) {
+        return Math.max(8, Math.min(10, requested));
     }
 
     /* synthetic */ HTTPFetchExecutor(HTTPFetchExecutor hTTPFetchExecutor) {
