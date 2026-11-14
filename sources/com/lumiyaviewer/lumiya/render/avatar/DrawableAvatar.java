@@ -236,7 +236,7 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
         DrawableHUD drawableHUD2 = null;
         while (firstChild != null) {
             SLObjectInfo dataObject = firstChild.getDataObject();
-            if (!dataObject.isDead) {
+            if (dataObject != null && !dataObject.isDead) {
                 int i3 = dataObject.attachmentID;
                 if (i3 < 0 || i3 >= 56) {
                     drawableHUD = drawableHUD2;
@@ -255,12 +255,9 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
                         drawableHUD = drawableHUD2;
                     }
                 }
-                firstChild = firstChild.getNextChild();
                 drawableHUD2 = drawableHUD;
             }
-            drawableHUD = drawableHUD2;
             firstChild = firstChild.getNextChild();
-            drawableHUD2 = drawableHUD;
         }
         synchronized (this.deadAttachmentsLock) {
             if (this.deadAttachmentsList.isEmpty()) {
@@ -288,14 +285,10 @@ public class DrawableAvatar extends DrawableAvatarStub implements IntersectPicka
                 if ((drawListPrimEntry instanceof DrawListPrimEntry) && (drawableObject = ((DrawListPrimEntry) drawListPrimEntry).getDrawableObject()) != null) {
                     newSetFromMap.remove(drawableObject);
                     if (this.riggedMeshes.remove(drawableObject)) {
-                        z = true;
-                        i++;
-                        z2 = z;
+                        z2 = true;
                     }
                 }
-                z = z2;
                 i++;
-                z2 = z;
             }
         }
         for (DrawableObject drawableObject3 : this.riggedMeshes) {

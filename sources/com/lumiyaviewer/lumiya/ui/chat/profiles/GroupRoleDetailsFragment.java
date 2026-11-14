@@ -249,14 +249,10 @@ public class GroupRoleDetailsFragment extends ChatterFragment implements Loadabl
                 Object tag = childAt.getTag(R.id.perm_checkbox_mask);
                 if (tag instanceof Long) {
                     long longValue = ((Long) tag).longValue();
-                    j2 = ((CheckedTextView) childAt).isChecked() ? j3 | longValue : (~longValue) & j3;
-                    i++;
-                    j3 = j2;
+                    j3 = ((CheckedTextView) childAt).isChecked() ? j3 | longValue : (~longValue) & j3;
                 }
             }
-            j2 = j3;
             i++;
-            j3 = j2;
         }
         return j3;
     }

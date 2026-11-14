@@ -201,13 +201,10 @@ public class BakeLayer {
                             z7 = z5;
                         }
                     }
-                    i++;
                     z8 = z4;
                 }
             }
-            z4 = z8;
             i++;
-            z8 = z4;
         }
         z2 = false;
         if (this.localTexture != null) {
