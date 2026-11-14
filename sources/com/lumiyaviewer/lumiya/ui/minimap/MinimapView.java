@@ -302,6 +302,9 @@ public class MinimapView extends View {
                 break;
             case 2:
                 int findPointerIndex = motionEvent.findPointerIndex(this.activePointerId);
+                if (findPointerIndex < 0) {
+                    break;
+                }
                 float x = motionEvent.getX(findPointerIndex);
                 float y = motionEvent.getY(findPointerIndex);
                 if (!this.scaleGestureDetector.isInProgress()) {

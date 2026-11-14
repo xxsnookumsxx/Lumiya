@@ -845,7 +845,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
             GLES10.glMatrixMode(5889);
             GLES10.glLoadIdentity();
         }
-        renderContext.aspectRatio = i / i2;
+        renderContext.aspectRatio = i2 > 0 ? ((float) i) / ((float) i2) : 1.0f;
         renderContext.FOVAngle = 60.0f;
         float fTan = (float) Math.tan((((double) renderContext.FOVAngle) * 3.141592653589793d) / 360.0d);
         renderContext.getClass();
