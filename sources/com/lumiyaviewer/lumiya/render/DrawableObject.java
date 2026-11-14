@@ -323,6 +323,14 @@ public class DrawableObject implements IntersectPickable, ResourceConsumer {
         return false;
     }
 
+    final DrawablePrim getDrawablePrim() {
+        return this.drawablePrim;
+    }
+
+    final boolean isOcclusionInvisible() {
+        return this.isInvisible;
+    }
+
     final boolean hasDrawablePrim() {
         return this.drawablePrim != null;
     }

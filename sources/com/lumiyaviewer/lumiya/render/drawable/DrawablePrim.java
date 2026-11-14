@@ -265,8 +265,12 @@ public class DrawablePrim {
         int iDrawFaceFast20 = 0;
         DrawableGeometry drawableGeometry = this.volumeGeometry;
         float[] matrices = primFlexibleInfo != null ? primFlexibleInfo.getMatrices() : null;
-        boolean z2 = i == 1;
-        PrimProgram primProgram = (this.isRiggedMesh && this.riggingFitsGL20) ? renderContext.riggedMeshProgram : matrices != null ? z2 ? renderContext.flexiPrimOpaqueProgram : renderContext.flexiPrimProgram : z2 ? renderContext.primOpaqueProgram : renderContext.primProgram;
+        boolean isOpaquePass = i == 1;
+        PrimProgram primProgram = (this.isRiggedMesh && this.riggingFitsGL20)
+                ? renderContext.riggedMeshProgram
+                : matrices != null
+                        ? (isOpaquePass ? renderContext.flexiPrimOpaqueProgram : renderContext.flexiPrimProgram)
+                        : (isOpaquePass ? renderContext.primOpaqueProgram : renderContext.primProgram);
         if (renderContext.curPrimProgram != primProgram) {
             renderContext.curPrimProgram = primProgram;
             GLES20.glUseProgram(renderContext.curPrimProgram.getHandle());
@@ -274,9 +278,10 @@ public class DrawablePrim {
         }
         renderContext.glObjWorldApplyMatrix(renderContext.curPrimProgram.uObjWorldMatrix);
         renderContext.glObjScaleApplyVector(renderContext.curPrimProgram.uObjCoordScale);
-        if (matrices != null) {
-            GLES20.glUniform1i(renderContext.flexiPrimProgram.uNumSectionMatrices, matrices.length / 16);
-            GLES20.glUniformMatrix4fv(renderContext.flexiPrimProgram.uSectionMatrices, matrices.length / 16, false, matrices, 0);
+        if (matrices != null && (renderContext.curPrimProgram instanceof FlexiPrimProgram)) {
+            FlexiPrimProgram flexiProgram = (FlexiPrimProgram) renderContext.curPrimProgram;
+            GLES20.glUniform1i(flexiProgram.uNumSectionMatrices, matrices.length / 16);
+            GLES20.glUniformMatrix4fv(flexiProgram.uSectionMatrices, matrices.length / 16, false, matrices, 0);
         }
         drawableGeometry.GLBindBuffers20(renderContext);
         if (this.isSingleFace) {

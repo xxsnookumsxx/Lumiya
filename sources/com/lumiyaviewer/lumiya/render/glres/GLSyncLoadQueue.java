@@ -8,9 +8,9 @@ import javax.annotation.Nonnull;
 
 /* loaded from: classes.dex */
 public class GLSyncLoadQueue extends GLLoadQueue implements GLLoadQueue.GLLoadHandler {
-    private static final int MAX_LOADS_PER_FRAME = 16;
-    private static final int MAX_SIZE_PER_FRAME = 4194304;
-    private static final int WAIT_FRAMES_AFTER_LOAD = 3;
+    private static final int MAX_LOADS_PER_FRAME = 32;
+    private static final int MAX_SIZE_PER_FRAME = 8388608;
+    private static final int WAIT_FRAMES_AFTER_LOAD = 1;
     private int framesWait = 0;
 
     @Override // com.lumiyaviewer.lumiya.render.glres.GLLoadQueue.GLLoadHandler

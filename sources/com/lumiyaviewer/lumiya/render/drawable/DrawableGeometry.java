@@ -332,11 +332,12 @@ public final class DrawableGeometry implements GLCleanable {
             return;
         }
         if (!this.facesCombined) {
-            this.VertexBuffer.Bind20(renderContext, renderContext.curPrimProgram.vPosition, 3, 5126, 24, this.FaceVertexStartsCounts[i * 2] * 24);
-            this.VertexBuffer.Bind20(renderContext, renderContext.curPrimProgram.vNormal, 3, 5126, 24, (this.FaceVertexStartsCounts[i * 2] * 24) + 12);
-            this.TexCoordsBuffer.Bind20(renderContext, renderContext.curPrimProgram.vTexCoord, 2, 5126, 8, this.FaceVertexStartsCounts[i * 2] * 4 * 2);
+            int i3 = this.FaceVertexStartsCounts[i * 2];
+            this.VertexBuffer.Bind20(renderContext, renderContext.curPrimProgram.vPosition, 3, 5126, 24, i3 * 24);
+            this.VertexBuffer.Bind20(renderContext, renderContext.curPrimProgram.vNormal, 3, 5126, 24, (i3 * 24) + 12);
+            this.TexCoordsBuffer.Bind20(renderContext, renderContext.curPrimProgram.vTexCoord, 2, 5126, 8, i3 * 4 * 2);
             if (this.isRiggedMesh && this.meshData != null) {
-                this.meshData.PrepareInfluencesForFace(renderContext, this.FaceVertexStartsCounts[i * 2]);
+                this.meshData.PrepareInfluencesForFace(renderContext, i3);
             }
         }
         this.IndexBuffer.DrawElements20(4, this.FaceIndexStartsCounts[i2 + 2], 5123, this.FaceIndexStartsCounts[i2 + 1] * 2);
@@ -439,6 +440,22 @@ public final class DrawableGeometry implements GLCleanable {
 
     public final int getVertexCount() {
         return this.VertexCount;
+    }
+
+    public final int getIndexCount() {
+        return this.IndexCount;
+    }
+
+    public final int getFaceIndexCount(int i) {
+        int off = (i * 3) + 2;
+        if (this.FaceIndexStartsCounts == null || i < 0 || off >= this.FaceIndexStartsCounts.length) {
+            return 0;
+        }
+        return this.FaceIndexStartsCounts[off];
+    }
+
+    public final int getFaceCountPublic() {
+        return this.FaceCount;
     }
 
     final boolean hasExtendedBones() {

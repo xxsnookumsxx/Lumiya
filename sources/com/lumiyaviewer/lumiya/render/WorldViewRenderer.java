@@ -149,6 +149,11 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
     private long lastPrepMs = 0;
     private long lastDrawMs = 0;
     private boolean logStatsThisFrame = false;
+    private int lastErrInit = 0;
+    private int lastErrP1 = 0;
+    private int lastErrTerr = 0;
+    private int lastErrSky = 0;
+    private int lastErrP24 = 0;
     private DrawList currentDrawList = null;
     private final float[] extTextureMatrix = new float[64];
     private final float[] extTextureHitVector = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -163,7 +168,7 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
 
     private void handleHUDTouch(RenderContext renderContext, DrawableHUD drawableHUD, TouchHUDEvent touchHUDEvent, ObjectIntersectInfo objectIntersectInfo) {
         float f = renderContext.viewportRect[2];
-        float f2 = renderContext.viewportRect[2];
+        float f2 = renderContext.viewportRect[3];
         float f3 = ((f2 / 2.0f) - touchHUDEvent.y) / f2;
         float f4 = ((f / 2.0f) - touchHUDEvent.x) / f2;
         SLAttachmentPoint attachmentPoint = drawableHUD.getAttachmentPoint();
@@ -498,6 +503,9 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                         renderContext.glModelTranslatef(fArr[0], fArr[1], fArr[2]);
                     }
                     renderContext.initAllPrimPrograms(true);
+                    if (this.logStatsThisFrame && renderContext.hasGL20) {
+                        this.lastErrInit = GLES20.glGetError();
+                    }
                     renderContext.curPrimProgram = null;
                     DrawList drawList = this.currentDrawList;
                     if (renderContext.hasGL20) {
@@ -510,15 +518,13 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                     int[] iArr2 = drawList.renderPasses;
                     int size = arrayList.size();
                     renderContext.clearFaceTexture();
-                    for (int i3 = 0; i3 < size; i3++) {
-                        iArr2[i3] = arrayList.get(i3).Draw(renderContext, 1);
-                    }
-                    renderContext.curPrimProgram = null;
-                    renderContext.clearFaceTexture();
                     DrawableTerrainPatch.GLPrepare(renderContext);
                     Iterator it = drawList.terrain.iterator();
                     while (it.hasNext()) {
                         ((DrawableTerrainPatch) it.next()).GLDraw(renderContext);
+                    }
+                    if (this.logStatsThisFrame && renderContext.hasGL20) {
+                        this.lastErrTerr = GLES20.glGetError();
                     }
                     renderContext.curPrimProgram = null;
                     renderContext.clearFaceTexture();
@@ -535,9 +541,32 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                     }
                     if (renderContext.hasGL20) {
                         renderContext.windlightSky.GLDraw(renderContext, this.cameraParams.getHeading(), this.cameraParams.getTilt());
+                        if (this.logStatsThisFrame) {
+                            this.lastErrSky = GLES20.glGetError();
+                        }
                     }
                     renderContext.curPrimProgram = null;
                     renderContext.clearFaceTexture();
+                    if (renderContext.hasGL20) {
+                        GLES20.glDisable(3042);
+                    } else {
+                        GLES10.glDisable(3042);
+                        GLES10.glDisable(3008);
+                    }
+                    for (int i3 = 0; i3 < size; i3++) {
+                        iArr2[i3] = arrayList.get(i3).Draw(renderContext, 1);
+                    }
+                    if (this.logStatsThisFrame && renderContext.hasGL20) {
+                        this.lastErrP1 = GLES20.glGetError();
+                    }
+                    renderContext.curPrimProgram = null;
+                    renderContext.clearFaceTexture();
+                    if (renderContext.hasGL20) {
+                        GLES20.glEnable(3042);
+                    } else {
+                        GLES10.glEnable(3042);
+                        GLES10.glEnable(3008);
+                    }
                     boolean hasTranslucent = false;
                     for (int i4 = size - 1; i4 >= 0; i4--) {
                         int mask = iArr2[i4];
@@ -564,6 +593,9 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                         } else {
                             GLES10.glDepthMask(true);
                         }
+                    }
+                    if (this.logStatsThisFrame && renderContext.hasGL20) {
+                        this.lastErrP24 = GLES20.glGetError();
                     }
                     if (this.screenshotHandler != null) {
                         takeScreenshot(renderContext, this.screenshotHandler);
@@ -607,9 +639,16 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                     if (this.displayedHUDid != 0) {
                         TouchHUDEvent touchHUDEventRemove = this.touchHUDEvents.size() >= 1 ? this.touchHUDEvents.remove(0) : null;
                         if (renderContext.hasGL20) {
+                            GLES20.glEnable(2929);
+                            GLES20.glDepthMask(true);
+                            GLES20.glDisable(3042);
                             GLES20.glClear(256);
                             renderContext.initAllPrimPrograms(false);
                         } else {
+                            GLES10.glEnable(2929);
+                            GLES10.glDepthMask(true);
+                            GLES10.glDisable(3042);
+                            GLES10.glDisable(3008);
                             GLES10.glClear(256);
                         }
                         renderContext.setActiveProjectionMatrix(renderContext.projectionHUDMatrix);
@@ -720,12 +759,16 @@ public class WorldViewRenderer implements GLSurfaceView.Renderer, GLSurfaceView.
                 }
                 if (this.thisFrameTime != this.lastFrameTime) {
                     long frameDelta = this.thisFrameTime - this.lastFrameTime;
-                    Debug.Printf("Renderer: FPS %.2f frame time %d (prep %dms draw %dms objs %d primReady %d mesh %d/%d rigged %d pass %d/%d/%d skip %d avis %d terr %d)",
+                    Debug.Printf("Renderer: FPS %.2f frame time %d (prep %dms draw %dms objs %d primReady %d mesh %d/%d rigged %d pass %d/%d/%d skip %d avis %d terr %d cam=(%.1f,%.1f,%.1f) h=%.1f t=%.1f avi=(%.1f,%.1f,%.1f) err=%d/%d/%d/%d/%d)",
                             Float.valueOf(10000.0f / frameDelta), Long.valueOf(frameDelta),
                             Long.valueOf(this.lastPrepMs), Long.valueOf(this.lastDrawMs),
                             Integer.valueOf(objCount), Integer.valueOf(primReady), Integer.valueOf(meshReady), Integer.valueOf(meshObjs),
                             Integer.valueOf(riggedObjs), Integer.valueOf(p1), Integer.valueOf(p2), Integer.valueOf(p4), Integer.valueOf(p0),
-                            Integer.valueOf(aviCount), Integer.valueOf(terrCount));
+                            Integer.valueOf(aviCount), Integer.valueOf(terrCount),
+                            Float.valueOf(renderContext.frameCamera.x), Float.valueOf(renderContext.frameCamera.y), Float.valueOf(renderContext.frameCamera.z),
+                            Float.valueOf(this.cameraParams.getHeading()), Float.valueOf(this.cameraParams.getTilt()),
+                            Float.valueOf(renderContext.myAviPosition.x), Float.valueOf(renderContext.myAviPosition.y), Float.valueOf(renderContext.myAviPosition.z),
+                            Integer.valueOf(this.lastErrInit), Integer.valueOf(this.lastErrP1), Integer.valueOf(this.lastErrTerr), Integer.valueOf(this.lastErrSky), Integer.valueOf(this.lastErrP24));
                     this.lastFrameTime = this.thisFrameTime;
                 }
             }

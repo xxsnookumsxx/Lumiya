@@ -362,41 +362,29 @@ public class PrimProfile {
                     addCap((short) 1);
                 }
                 int iFloor = (int) Math.floor(4.0f * f2);
-                while (true) {
-                    int i5 = iFloor;
-                    int i6 = i3;
-                    if (i5 >= ((int) Math.floor((4.0f * f3) + 0.999f))) {
-                        int i7 = 0;
-                        while (true) {
-                            int i8 = i7;
-                            if (i8 >= this.Profile.size()) {
-                                if (f4 != 0.0f) {
-                                    switch (primProfileParams.CurveType & PrimProfileParams.LL_PCODE_HOLE_MASK) {
-                                        case 16:
-                                            addHole(primProfileParams, false, 6.0f * f, -0.375f, f4, 1.0f, 0);
-                                            break;
-                                        case 48:
-                                            addHole(primProfileParams, true, 3.0f, -0.375f, f4, 1.0f, i);
-                                            break;
-                                        default:
-                                            addHole(primProfileParams, true, 4.0f, -0.375f, f4, 1.0f, i);
-                                            break;
-                                    }
-                                }
-                                if (z) {
-                                    this.Faces.get(0).Count = this.Total;
-                                }
-                            } else {
-                                this.Profile.get(i8).z *= 4.0f;
-                                i7 = i8 + 1;
-                            }
-                        }
-                    } else {
-                        i3 = i6 + 1;
-                        addFace((i + 1) * i6, i + 2, 1.0f, (short) (32 << i5), true);
-                        iFloor = i5 + 1;
+                int iEnd = (int) Math.floor((4.0f * f3) + 0.999f);
+                for (int i5 = iFloor; i5 < iEnd; i5++) {
+                    addFace((i + 1) * i3, i + 2, 1.0f, (short) (32 << i5), true);
+                    i3++;
+                }
+                for (int i8 = 0; i8 < this.Profile.size(); i8++) {
+                    this.Profile.get(i8).z *= 4.0f;
+                }
+                if (f4 != 0.0f) {
+                    switch (primProfileParams.CurveType & PrimProfileParams.LL_PCODE_HOLE_MASK) {
+                        case 16:
+                            addHole(primProfileParams, false, 6.0f * f, -0.375f, f4, 1.0f, 0);
+                            break;
+                        case 48:
+                            addHole(primProfileParams, true, 3.0f, -0.375f, f4, 1.0f, i);
+                            break;
+                        default:
+                            addHole(primProfileParams, true, 4.0f, -0.375f, f4, 1.0f, i);
+                            break;
                     }
-                    break;
+                }
+                if (z) {
+                    this.Faces.get(0).Count = this.Total;
                 }
                 break;
             case 2:

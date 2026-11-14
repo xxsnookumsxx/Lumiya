@@ -205,8 +205,8 @@ public class PrimVolume {
         while (i4 < size) {
             for (int i6 = 0; i6 < size2; i6++) {
                 int i7 = i6 + i5;
-                int i8 = (int) (((z3 ? (size2 - i6) - 1 : i6) / (size2 - 1)) * i);
-                int i9 = (int) ((i4 / (size - 1)) * i2);
+                int i8 = (int) ((((float) (z3 ? (size2 - i6) - 1 : i6)) / ((float) (size2 - 1))) * i);
+                int i9 = (int) ((((float) i4) / ((float) (size - 1))) * i2);
                 if (i9 == 0 && b2 == 1) {
                     i8 = i / 2;
                 }

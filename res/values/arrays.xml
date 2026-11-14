@@ -138,18 +138,24 @@
         <item>disabled</item>
     </string-array>
     <string-array name="pref_texture_memory_limit">
+        <item>Auto (Dynamic)</item>
         <item>32 Mb</item>
         <item>64 Mb</item>
         <item>128 Mb</item>
         <item>192 Mb</item>
         <item>384 Mb</item>
+        <item>512 Mb</item>
+        <item>1 GB (1024 Mb)</item>
     </string-array>
     <string-array name="pref_texture_memory_limit_values">
+        <item>auto</item>
         <item>32</item>
         <item>64</item>
         <item>128</item>
         <item>192</item>
         <item>384</item>
+        <item>512</item>
+        <item>1024</item>
     </string-array>
     <string-array name="pref_time_of_day">
         <item>Use simulator time</item>

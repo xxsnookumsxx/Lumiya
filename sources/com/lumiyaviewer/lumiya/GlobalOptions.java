@@ -351,7 +351,7 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
             } else {
                 edit.putBoolean("high_quality_textures", true);
             }
-            edit.putString("texture_memory_limit", Integer.toString(totalMemory != 0 ? totalMemory <= 262144 ? 32 : totalMemory <= 524288 ? 64 : 128 : 64));
+            edit.putString("texture_memory_limit", totalMemory != 0 ? (totalMemory <= 262144 ? "32" : "auto") : "auto");
             int i2 = 8;
             if (availableProcessors >= 4 && totalMemory > 524288) {
                 i2 = 10;
@@ -391,16 +391,26 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
             TextureCache.getInstance().setMaxTextureDownloads(this.maxTextureDownloads);
         }
         this.terrainTextures = sharedPreferences.getBoolean("terrain_textures", true);
-        int i4 = 64;
-        try {
-            i4 = Integer.parseInt(sharedPreferences.getString("texture_memory_limit", "64"));
-        } catch (Exception e2) {
+        String limitPref = sharedPreferences.getString("texture_memory_limit", "auto");
+        if ("auto".equalsIgnoreCase(limitPref)) {
+            TextureMemoryTracker.setDynamicMemoryLimit(true);
+        } else {
+            int i4 = 64;
+            try {
+                i4 = Integer.parseInt(limitPref);
+            } catch (Exception e2) {
+            }
+            if (i4 <= 0) {
+                TextureMemoryTracker.setDynamicMemoryLimit(true);
+            } else {
+                TextureMemoryTracker.setDynamicMemoryLimit(false);
+                TextureMemoryTracker.setMemoryLimit(((long) i4) * 1024L * 1024L);
+            }
         }
         try {
             this.meshRendering = MeshRendering.valueOf(sharedPreferences.getString("mesh_rendering", "high"));
         } catch (Exception e3) {
         }
-        TextureMemoryTracker.setMemoryLimit(i4 * 1024 * 1024);
         this.RLVEnabled = sharedPreferences.getBoolean("rlv_enabled", false);
         this.autoReconnect = sharedPreferences.getBoolean("auto_reconnect", true);
         try {

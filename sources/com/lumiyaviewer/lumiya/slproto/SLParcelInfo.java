@@ -239,17 +239,15 @@ public class SLParcelInfo {
     }
 
     public int getObjectLocalID(@Nullable UUID uuid) {
-        int i;
         synchronized (this) {
             if (uuid != null) {
                 SLObjectInfo sLObjectInfo = this.allObjectsNearby.get(uuid);
                 if (sLObjectInfo != null) {
-                    i = sLObjectInfo.localID;
+                    return sLObjectInfo.localID;
                 }
             }
-            i = -1;
+            return -1;
         }
-        return i;
     }
 
     @Nullable

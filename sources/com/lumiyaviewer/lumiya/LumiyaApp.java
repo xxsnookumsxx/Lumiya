@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
+import com.lumiyaviewer.lumiya.render.TextureMemoryTracker;
 
 /* JADX INFO: loaded from: classes.dex */
 public class LumiyaApp extends Application {
@@ -81,5 +82,17 @@ public class LumiyaApp extends Application {
         super.onCreate();
         mContext = this;
         GlobalOptions.getInstance().initialize();
+    }
+
+    @Override // android.app.Application, android.content.ComponentCallbacks
+    public void onLowMemory() {
+        super.onLowMemory();
+        TextureMemoryTracker.onMemoryPressure(80);
+    }
+
+    @Override // android.app.Application, android.content.ComponentCallbacks2
+    public void onTrimMemory(int i) {
+        super.onTrimMemory(i);
+        TextureMemoryTracker.onMemoryPressure(i);
     }
 }

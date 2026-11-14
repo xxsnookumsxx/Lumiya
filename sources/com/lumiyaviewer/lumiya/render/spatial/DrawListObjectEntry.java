@@ -33,8 +33,9 @@ public abstract class DrawListObjectEntry extends DrawListEntry {
             }
             for (int i2 = 0; i2 < 3; i2++) {
                 for (int i3 = 0; i3 < 3; i3++) {
-                    float f2 = fArr[(i2 * 4) + i3] * ((-data[elementOffset + i3]) / 2.0f);
-                    float f3 = fArr[(i2 * 4) + i3] * (data[elementOffset + i3] / 2.0f);
+                    // worldMatrix is OpenGL column-major: row i2, column i3 is index (i3 * 4) + i2.
+                    float f2 = fArr[(i3 * 4) + i2] * ((-data[elementOffset + i3]) / 2.0f);
+                    float f3 = fArr[(i3 * 4) + i2] * (data[elementOffset + i3] / 2.0f);
                     if (f2 < f3) {
                         float[] fArr3 = this.boundingBox;
                         fArr3[i2] = f2 + fArr3[i2];

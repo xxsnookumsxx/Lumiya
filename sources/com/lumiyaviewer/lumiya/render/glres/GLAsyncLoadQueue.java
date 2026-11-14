@@ -110,12 +110,12 @@ public class GLAsyncLoadQueue extends GLLoadQueue implements GLLoadQueue.GLLoadH
                             if (TextureMemoryTracker.canAllocateMemory(current.GLGetLoadSize())) {
                                 current.GLLoad(andSet, batchHandler);
                                 loadedInBatch++;
-                                if (loadedInBatch >= 8) {
+                                if (loadedInBatch >= 16) {
                                     break;
                                 }
                             } else {
                                 deferred.add(current);
-                                if (deferred.size() >= 8) {
+                                if (deferred.size() >= 16) {
                                     break;
                                 }
                             }
@@ -131,7 +131,7 @@ public class GLAsyncLoadQueue extends GLLoadQueue implements GLLoadQueue.GLLoadH
                             }
                             i = 0;
                         } else {
-                            Thread.sleep(1000L);
+                            Thread.sleep(200L);
                             i = i2 + 1;
                             if (i >= 10) {
                                 long jUptimeMillis = SystemClock.uptimeMillis();
