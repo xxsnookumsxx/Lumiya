@@ -40,7 +40,8 @@ android {
         }
     }
 
-    useLibrary 'org.apache.http.legacy'
+// Note: useLibrary is deprecated and can conflict with newer Gradle versions
+// The Apache HTTP legacy library usage should be handled via runtime dependencies instead
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -81,5 +82,6 @@ android {
 }
 
 dependencies {
-    implementation files('libs/bundled-3p-libs.jar')
+    // bundled-3p-libs is a flat-classpath artifact; exclude it from module metadata resolution
+    implementation name: 'bundled-3p-libs', classifier: null, ext: '.jar'
 }
