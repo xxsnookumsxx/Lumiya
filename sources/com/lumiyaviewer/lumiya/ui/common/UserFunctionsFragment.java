@@ -1,13 +1,16 @@
 package com.lumiyaviewer.lumiya.ui.common;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,8 +49,7 @@ import com.lumiyaviewer.lumiya.ui.chat.profiles.ParcelPropertiesFragment;
 import com.lumiyaviewer.lumiya.ui.chat.profiles.UserProfileFragment;
 import com.lumiyaviewer.lumiya.ui.common.TextFieldDialogBuilder;
 import com.lumiyaviewer.lumiya.ui.inventory.InventoryActivity;
-import com.lumiyaviewer.lumiya.voice.common.model.VoiceChannelInfo;
-import com.lumiyaviewer.lumiya.voiceintf.VoicePluginServiceConnection;
+import com.lumiyaviewer.lumiya.voice.model.VoiceChannelInfo;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /* JADX INFO: loaded from: classes.dex */
@@ -99,47 +101,27 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
     }
 
     private void handleEnableVoice() {
-        if (VoicePluginServiceConnection.checkPluginInstalled(getContext())) {
-            new AlertDialog.Builder(getContext()).setMessage(getContext().getString(R.string.enable_voice_question)).setPositiveButton("Yes", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks.1
-                private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                    UserFunctionsFragment.m571x54333d46(dialogInterface, i);
-                }
-
-                @Override // android.content.DialogInterface.OnClickListener
-                public final void onClick(DialogInterface dialogInterface, int i) {
-                    $m$0(dialogInterface, i);
-                }
-            }).setNegativeButton("No", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks.2
-                private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-
-                @Override // android.content.DialogInterface.OnClickListener
-                public final void onClick(DialogInterface dialogInterface, int i) {
-                    $m$0(dialogInterface, i);
-                }
-            }).setCancelable(true).create().show();
-        } else {
-            new AlertDialog.Builder(getContext()).setTitle(R.string.enable_voice).setMessage(getContext().getString(R.string.enable_voice_plugin_message, LicenseChecker.APP_STORE_NAME)).setPositiveButton("Yes", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks.7
-                private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                    UserFunctionsFragment.this.m585x54293cc7(dialogInterface, i);
-                }
-
-                @Override // android.content.DialogInterface.OnClickListener
-                public final void onClick(DialogInterface dialogInterface, int i) {
-                    $m$0(dialogInterface, i);
-                }
-            }).setNegativeButton("No", new DialogInterface.OnClickListener() { // from class: com.lumiyaviewer.lumiya.ui.common.-$Lambda$EGu4GUNsisO_OSWWZeAugrk47Ks
-                private final /* synthetic */ void $m$0(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-
-                @Override // android.content.DialogInterface.OnClickListener
-                public final void onClick(DialogInterface dialogInterface, int i) {
-                    $m$0(dialogInterface, i);
-                }
-            }).setCancelable(true).create().show();
-        }
+        new AlertDialog.Builder(getContext())
+                .setMessage(getContext().getString(R.string.enable_voice_question))
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        GlobalOptions.getInstance().enableVoice();
+                        if (getContext() != null && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 103);
+                        }
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                })
+                .setCancelable(true)
+                .create()
+                .show();
     }
 
     private void handlePlayParcelMedia() {
@@ -420,6 +402,9 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
         if (chatterID == null || userManager == null || activeAgentCircuit == null) {
             return;
         }
+        if (getContext() != null && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 103);
+        }
         if (chatterID.getChatterType() == ChatterID.ChatterType.User) {
             activeAgentCircuit.getModules().voice.userVoiceChatRequest(chatterID.getOptionalChatterUUID());
             return;
@@ -454,16 +439,6 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
             return data.booleanValue();
         }
         return false;
-    }
-
-    /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_common_UserFunctionsFragment_19348, reason: not valid java name */
-    /* synthetic */ void m585x54293cc7(DialogInterface dialogInterface, int i) {
-        dialogInterface.dismiss();
-        VoicePluginServiceConnection.setInstallOfferDisplayed(true);
-        GlobalOptions.getInstance().enableVoice();
-        Intent intent = new Intent("android.intent.action.VIEW");
-        intent.setData(Uri.parse(LicenseChecker.VOICE_PLUGIN_URL));
-        getContext().startActivity(intent);
     }
 
     /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_ui_common_UserFunctionsFragment_25742, reason: not valid java name */
@@ -640,7 +615,7 @@ public abstract class UserFunctionsFragment extends ChatterReloadableFragment im
         boolean voiceEnabled = GlobalOptions.getInstance().getVoiceEnabled();
         boolean zIsVoiceLoggedIn = isVoiceLoggedIn();
         boolean z10 = false;
-        boolean zIsPluginSupported = !voiceEnabled ? VoicePluginServiceConnection.isPluginSupported() : false;
+        boolean zIsPluginSupported = !voiceEnabled;
         if (!z5 || data == null) {
             z = zIsPluginSupported;
             z2 = false;

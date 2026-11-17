@@ -2,7 +2,7 @@ package com.lumiyaviewer.lumiya.slproto.users.manager;
 
 import com.lumiyaviewer.lumiya.react.Subscription;
 import com.lumiyaviewer.lumiya.slproto.users.ChatterID;
-import com.lumiyaviewer.lumiya.voice.common.model.VoiceChatInfo;
+import com.lumiyaviewer.lumiya.voice.model.VoiceChatInfo;
 import javax.annotation.Nonnull;
 
 /* JADX INFO: loaded from: classes.dex */

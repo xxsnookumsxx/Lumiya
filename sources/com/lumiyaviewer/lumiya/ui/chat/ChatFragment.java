@@ -41,7 +41,7 @@ import com.lumiyaviewer.lumiya.ui.common.UserFunctionsFragment;
 import com.lumiyaviewer.lumiya.ui.objects.ObjectDetailsFragment;
 import com.lumiyaviewer.lumiya.ui.render.CardboardActivity;
 import com.lumiyaviewer.lumiya.ui.voice.VoiceStatusView;
-import com.lumiyaviewer.lumiya.voice.common.model.VoiceChatInfo;
+import com.lumiyaviewer.lumiya.voice.model.VoiceChatInfo;
 import java.util.UUID;
 import javax.annotation.Nullable;
 

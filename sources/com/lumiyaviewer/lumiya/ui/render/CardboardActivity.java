@@ -86,7 +86,7 @@ import com.lumiyaviewer.lumiya.ui.common.DetailsActivity;
 import com.lumiyaviewer.lumiya.ui.render.CardboardActivity;
 import com.lumiyaviewer.lumiya.ui.render.CardboardControlsPlaceholder;
 import com.lumiyaviewer.lumiya.ui.voice.VoiceStatusView;
-import com.lumiyaviewer.lumiya.voice.common.model.VoiceChatInfo;
+import com.lumiyaviewer.lumiya.voice.model.VoiceChatInfo;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;

@@ -23,7 +23,7 @@ import com.lumiyaviewer.lumiya.slproto.users.manager.UserManager;
 import com.lumiyaviewer.lumiya.ui.chat.ChatterDisplayInfo;
 import com.lumiyaviewer.lumiya.ui.common.DismissableAdapter;
 import com.lumiyaviewer.lumiya.ui.common.SwipeDismissListViewTouchListener;
-import com.lumiyaviewer.lumiya.voice.common.model.VoiceChatInfo;
+import com.lumiyaviewer.lumiya.voice.model.VoiceChatInfo;
 import java.io.Closeable;
 import java.io.IOException;
 import javax.annotation.Nonnull;

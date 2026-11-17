@@ -13,7 +13,7 @@ import com.lumiyaviewer.lumiya.slproto.modules.search.SLSearch;
 import com.lumiyaviewer.lumiya.slproto.modules.texfetcher.SLTextureFetcher;
 import com.lumiyaviewer.lumiya.slproto.modules.texuploader.SLTextureUploader;
 import com.lumiyaviewer.lumiya.slproto.modules.transfer.SLTransferManager;
-import com.lumiyaviewer.lumiya.slproto.modules.voice.SLVoice;
+import com.lumiyaviewer.lumiya.voice.core.VoiceModule;
 import com.lumiyaviewer.lumiya.slproto.modules.xfer.SLXferManager;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,7 +76,7 @@ public class SLModules {
     public final SLUserProfiles userProfiles;
 
     @Nonnull
-    public final SLVoice voice;
+    public final VoiceModule voice;
 
     @Nonnull
     public final SLWorldMap worldMap;
@@ -162,9 +162,9 @@ public class SLModules {
         this.displayNameFetcher = sLDisplayNameFetcher;
         list19.add(sLDisplayNameFetcher);
         List<SLModule> list20 = this.modules;
-        SLVoice sLVoice = new SLVoice(sLAgentCircuit, sLCaps);
-        this.voice = sLVoice;
-        list20.add(sLVoice);
+        VoiceModule voiceModule = new VoiceModule(sLAgentCircuit, sLCaps);
+        this.voice = voiceModule;
+        list20.add(voiceModule);
     }
 
     public void HandleCircuitReady() {

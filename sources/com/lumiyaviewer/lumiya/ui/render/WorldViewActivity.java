@@ -88,7 +88,7 @@ import com.lumiyaviewer.lumiya.ui.objects.TouchableObjectsFragment;
 import com.lumiyaviewer.lumiya.ui.outfits.OutfitsFragment;
 import com.lumiyaviewer.lumiya.ui.render.WorldViewActivity;
 import com.lumiyaviewer.lumiya.ui.voice.VoiceStatusView;
-import com.lumiyaviewer.lumiya.voice.common.model.VoiceChatInfo;
+import com.lumiyaviewer.lumiya.voice.model.VoiceChatInfo;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;

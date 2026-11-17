@@ -13,7 +13,6 @@ import com.lumiyaviewer.lumiya.res.textures.TextureCache;
 import com.lumiyaviewer.lumiya.ui.media.NotificationSounds;
 import com.lumiyaviewer.lumiya.ui.settings.NotificationType;
 import com.lumiyaviewer.lumiya.ui.settings.ThemeChangedEvent;
-import com.lumiyaviewer.lumiya.voiceintf.VoicePluginServiceConnection;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -213,8 +212,12 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
     }
 
     public void enableVoice() {
+        setVoiceEnabled(true);
+    }
+
+    public void setVoiceEnabled(boolean enabled) {
         SharedPreferences.Editor edit = LumiyaApp.getDefaultSharedPreferences().edit();
-        edit.putBoolean("enableVoice", true);
+        edit.putBoolean("enableVoice", enabled);
         edit.apply();
     }
 
@@ -377,7 +380,7 @@ public class GlobalOptions implements SharedPreferences.OnSharedPreferenceChange
         this.compressedTextures = sharedPreferences.getBoolean("compressed_textures", true);
         this.keepWifiOn = sharedPreferences.getBoolean("keep_wifi_on", true);
         this.cloudSyncEnabled = sharedPreferences.getBoolean("sync_to_gdrive", false);
-        this.voiceEnabled = sharedPreferences.getBoolean("enableVoice", false) ? VoicePluginServiceConnection.isPluginSupported() : false;
+        this.voiceEnabled = sharedPreferences.getBoolean("enableVoice", false);
         try {
             i = Integer.parseInt(sharedPreferences.getString("max_texture_downloads", "10"));
             if (i < 1) {

@@ -25,8 +25,8 @@ android {
         applicationId "com.lumiyaviewer.lumiya"
         minSdkVersion 26
         targetSdkVersion 26
-        versionCode 500
-        versionName "5.0.0"
+        versionCode 100
+        versionName "1.0.0"
 
         ndk {
             abiFilters 'arm64-v8a'
@@ -40,8 +40,7 @@ android {
         }
     }
 
-// Note: useLibrary is deprecated and can conflict with newer Gradle versions
-// The Apache HTTP legacy library usage should be handled via runtime dependencies instead
+    useLibrary 'org.apache.http.legacy'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -82,6 +81,6 @@ android {
 }
 
 dependencies {
-    // bundled-3p-libs is a flat-classpath artifact; exclude it from module metadata resolution
-    implementation name: 'bundled-3p-libs', classifier: null, ext: '.jar'
+    implementation files('libs/bundled-3p-libs.jar')
+    implementation 'io.github.webrtc-sdk:android:125.6422.06'
 }

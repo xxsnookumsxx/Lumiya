@@ -45,7 +45,8 @@ public class SLCaps {
         HomeLocation,
         ProvisionVoiceAccountRequest,
         ParcelVoiceInfoRequest,
-        ChatSessionRequest;
+        ChatSessionRequest,
+        VoiceSignalingRequest;
 
         /* JADX INFO: renamed from: values, reason: to resolve conflict with enum method */
         public static SLCapability[] valuesCustom() {

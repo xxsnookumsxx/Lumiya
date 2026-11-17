@@ -16,7 +16,7 @@ import com.lumiyaviewer.lumiya.slproto.llsd.LLSDException;
 import com.lumiyaviewer.lumiya.slproto.llsd.LLSDNode;
 import com.lumiyaviewer.lumiya.slproto.messages.CoarseLocationUpdate;
 import com.lumiyaviewer.lumiya.slproto.messages.ParcelOverlay;
-import com.lumiyaviewer.lumiya.slproto.modules.voice.SLVoice;
+import com.lumiyaviewer.lumiya.voice.core.VoiceModule;
 import com.lumiyaviewer.lumiya.slproto.objects.SLObjectInfo;
 import com.lumiyaviewer.lumiya.slproto.types.ImmutableVector;
 import com.lumiyaviewer.lumiya.slproto.types.LLVector3;
@@ -178,11 +178,11 @@ public class SLMinimap extends SLModule {
             this.afterTeleport = false;
             this.userManager.getChatterList().getActiveChattersManager().notifyTeleportComplete(parcelData.getName());
         }
-        SLVoice sLVoice = this.agentCircuit.getModules().voice;
+        VoiceModule voice = this.agentCircuit.getModules().voice;
         if (parcelData != null) {
-            sLVoice.setCurrentParcel(parcelData.getParcelID());
+            voice.setCurrentParcel(parcelData.getParcelID());
         }
-        this.userManager.setCurrentLocationInfo(CurrentLocationInfo.create(parcelData, this.nearbyUsersCount, this.chatRangeUsersCount, sLVoice.getCurrentParcelVoiceChannel()));
+        this.userManager.setCurrentLocationInfo(CurrentLocationInfo.create(parcelData, this.nearbyUsersCount, this.chatRangeUsersCount, voice.getCurrentParcelVoiceChannel()));
     }
 
     @Override // com.lumiyaviewer.lumiya.slproto.modules.SLModule

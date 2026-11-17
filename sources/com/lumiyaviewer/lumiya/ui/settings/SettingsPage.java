@@ -10,7 +10,8 @@ public enum SettingsPage {
     PageNotifications(R.xml.preferences_notifications, R.string.prefs_category_notifications),
     Page3D(R.xml.preferences_3d, R.string.prefs_category_3d),
     PageRLV(R.xml.preferences_rlv, R.string.prefs_category_rlv),
-    PageCache(R.xml.preferences_cache, R.string.prefs_category_cache);
+    PageCache(R.xml.preferences_cache, R.string.prefs_category_cache),
+    PageVoice(R.xml.preferences_voice, R.string.prefs_category_voice);
 
     private final int pageResourceId;
     private final int pageTitle;

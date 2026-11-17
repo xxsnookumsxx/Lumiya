@@ -1,7 +1,7 @@
 package com.lumiyaviewer.lumiya.slproto.users.manager;
 
 import com.lumiyaviewer.lumiya.slproto.users.ParcelData;
-import com.lumiyaviewer.lumiya.voice.common.model.VoiceChannelInfo;
+import com.lumiyaviewer.lumiya.voice.model.VoiceChannelInfo;
 import javax.annotation.Nullable;
 
 /* JADX INFO: loaded from: classes.dex */

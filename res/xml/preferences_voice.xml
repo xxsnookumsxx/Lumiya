@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen android:title="@string/prefs_category_voice"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/prefs_category_voice">
+        <com.lumiyaviewer.lumiya.ui.settings.VoicePreference
+            android:key="enableVoice"
+            android:title="@string/voice_system_title"
+            android:summaryOff="@string/voice_summary_off"
+            android:summaryOn="@string/voice_enabled_summary"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

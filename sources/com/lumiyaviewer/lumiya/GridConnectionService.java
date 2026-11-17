@@ -35,8 +35,9 @@ import com.lumiyaviewer.lumiya.slproto.SLAgentCircuit;
 import com.lumiyaviewer.lumiya.slproto.SLGridConnection;
 import com.lumiyaviewer.lumiya.slproto.auth.SLAuthParams;
 import com.lumiyaviewer.lumiya.slproto.avatar.SLMoveEvents;
-import com.lumiyaviewer.lumiya.slproto.chat.SLVoiceUpgradeEvent;
 import com.lumiyaviewer.lumiya.slproto.chat.generic.SLChatEvent;
+import com.lumiyaviewer.lumiya.voice.core.VoiceModule;
+import com.lumiyaviewer.lumiya.voice.model.VoiceAudioDevice;
 import com.lumiyaviewer.lumiya.slproto.events.SLConnectionStateChangedEvent;
 import com.lumiyaviewer.lumiya.slproto.events.SLDisconnectEvent;
 import com.lumiyaviewer.lumiya.slproto.events.SLLoginResultEvent;
@@ -60,9 +61,7 @@ import com.lumiyaviewer.lumiya.ui.notify.OnlineNotificationInfo;
 import com.lumiyaviewer.lumiya.ui.settings.NotificationSettings;
 import com.lumiyaviewer.lumiya.ui.settings.NotificationType;
 import com.lumiyaviewer.lumiya.utils.LEDAction;
-import com.lumiyaviewer.lumiya.voice.common.messages.VoiceRinging;
-import com.lumiyaviewer.lumiya.voice.common.model.VoiceLoginInfo;
-import com.lumiyaviewer.lumiya.voiceintf.VoicePluginServiceConnection;
+
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashMap;
@@ -100,7 +99,6 @@ public class GridConnectionService extends Service implements SharedPreferences.
     @Nullable
     private UserManager cloudSyncUserManager = null;
     private boolean cloudPluginReceiverRegistered = false;
-    private boolean voicePluginReceiverRegistered = false;
     private final SubscriptionData<SubscriptionSingleKey, CurrentLocationInfo> currentLocationInfo = new SubscriptionData<>(UIThreadExecutor.getInstance(), new Subscription.OnData() { // from class: com.lumiyaviewer.lumiya.-$Lambda$3DowF6pLKgVjVrTY9aZKQ2J3cf0
         private final /* synthetic */ void $m$0(Object obj) {
             GridConnectionService.this.m17com_lumiyaviewer_lumiya_GridConnectionServicemthref0((CurrentLocationInfo) obj);
@@ -149,21 +147,8 @@ public class GridConnectionService extends Service implements SharedPreferences.
             GridConnectionService.this.startCloudSync(userManager);
         }
     };
-    private final BroadcastReceiver voicePluginInstalledReceiver = new BroadcastReceiver() { // from class: com.lumiyaviewer.lumiya.GridConnectionService.3
-        @Override // android.content.BroadcastReceiver
-        public void onReceive(Context context, Intent intent) {
-            UUID activeAgentUUID;
-            UserManager userManager;
-            SLAgentCircuit activeAgentCircuit;
-            SLModules modules;
-            if (!Strings.nullToEmpty(intent.getData().getSchemeSpecificPart()).equals("com.lumiyaviewer.lumiya.voice") || GridConnectionService.gridConnection == null || GridConnectionService.gridConnection.getConnectionState() != SLGridConnection.ConnectionState.Connected || (activeAgentUUID = GridConnectionService.gridConnection.getActiveAgentUUID()) == null || (userManager = UserManager.getUserManager(activeAgentUUID)) == null || (activeAgentCircuit = userManager.getActiveAgentCircuit()) == null || (modules = activeAgentCircuit.getModules()) == null) {
-                return;
-            }
-            modules.voice.updateVoiceEnabledStatus();
-        }
-    };
+
     private CloudSyncServiceConnection cloudSyncServiceConnection = null;
-    private VoicePluginServiceConnection voicePluginServiceConnection = null;
     private final ChatterNameRetriever.OnChatterNameUpdated onActiveAgentNameUpdated = new ChatterNameRetriever.OnChatterNameUpdated() { // from class: com.lumiyaviewer.lumiya.-$Lambda$3DowF6pLKgVjVrTY9aZKQ2J3cf0.2
         private final /* synthetic */ void $m$0(ChatterNameRetriever chatterNameRetriever) {
             GridConnectionService.this.m19lambda$com_lumiyaviewer_lumiya_GridConnectionService_20777(chatterNameRetriever);
@@ -241,38 +226,6 @@ public class GridConnectionService extends Service implements SharedPreferences.
         this.eventBus.subscribe(this, null, this.mHandler);
     }
 
-    private void connectToVoicePlugin(VoiceLoginInfo voiceLoginInfo, UserManager userManager) {
-        boolean zBindService;
-        if (this.voicePluginServiceConnection == null) {
-            this.voicePluginServiceConnection = new VoicePluginServiceConnection(this);
-            Intent intent = new Intent();
-            intent.setComponent(new ComponentName("com.lumiyaviewer.lumiya.voice", "com.lumiyaviewer.lumiya.voice.VoiceService"));
-            try {
-                zBindService = bindService(intent, this.voicePluginServiceConnection, 1);
-            } catch (SecurityException e) {
-                Debug.Warning(e);
-                zBindService = false;
-            }
-            Debug.Printf("LumiyaVoice: bindService = %b", Boolean.valueOf(zBindService));
-            if (!zBindService) {
-                this.voicePluginServiceConnection = null;
-                IntentFilter intentFilter = new IntentFilter();
-                intentFilter.addAction("android.intent.action.PACKAGE_ADDED");
-                intentFilter.addDataScheme("package");
-                if (Build.VERSION.SDK_INT >= 19) {
-                    intentFilter.addDataSchemeSpecificPart("com.lumiyaviewer.lumiya.voice", 0);
-                }
-                registerReceiver(this.voicePluginInstalledReceiver, intentFilter);
-                this.voicePluginReceiverRegistered = true;
-                if (userManager != null && VoicePluginServiceConnection.shouldDisplayInstallOffer()) {
-                    userManager.getChatterList().getActiveChattersManager().HandleChatEvent(ChatterID.getLocalChatterID(userManager.getUserID()), new SLVoiceUpgradeEvent(userManager.getUserID(), LumiyaApp.getContext().getString(R.string.plugin_install_for_voice_needed), true, LicenseChecker.VOICE_PLUGIN_URL), false);
-                }
-            }
-        }
-        if (this.voicePluginServiceConnection != null) {
-            this.voicePluginServiceConnection.setVoiceLoginInfo(voiceLoginInfo, userManager);
-        }
-    }
 
     public static SLGridConnection getGridConnection() {
         if (gridConnection == null) {
@@ -299,16 +252,6 @@ public class GridConnectionService extends Service implements SharedPreferences.
             if (strNullToEmpty.equals(LOGIN_ACTION)) {
                 new LicenseChecker(getApplicationContext(), this.licenseCheckHandler, new SLAuthParams(intent));
                 return;
-            }
-            if (strNullToEmpty.equals(VoicePluginServiceConnection.ACTION_VOICE_REJECT)) {
-                if (this.voicePluginServiceConnection != null) {
-                    this.voicePluginServiceConnection.rejectCall(intent);
-                }
-            } else {
-                if (!strNullToEmpty.equals(VoicePluginServiceConnection.ACTION_VOICE_ACCEPT) || this.voicePluginServiceConnection == null) {
-                    return;
-                }
-                this.voicePluginServiceConnection.acceptCall(intent);
             }
         }
     }
@@ -749,28 +692,6 @@ public class GridConnectionService extends Service implements SharedPreferences.
         }
     }
 
-    public void acceptVoiceCall(ChatterID chatterID) {
-        if (this.voicePluginServiceConnection != null) {
-            this.voicePluginServiceConnection.acceptVoiceCall(chatterID);
-        }
-    }
-
-    public void acceptVoiceCall(VoiceRinging voiceRinging) {
-        if (this.voicePluginServiceConnection != null) {
-            this.voicePluginServiceConnection.acceptVoiceCall(voiceRinging);
-        }
-    }
-
-    public void enableVoiceMic(boolean z) {
-        if (this.voicePluginServiceConnection != null) {
-            this.voicePluginServiceConnection.enableVoiceMic(z);
-        }
-    }
-
-    @javax.annotation.Nullable
-    public VoicePluginServiceConnection getVoicePluginServiceConnection() {
-        return this.voicePluginServiceConnection;
-    }
 
     @EventHandler
     public void handleConnectEvent(SLLoginResultEvent sLLoginResultEvent) {
@@ -789,9 +710,10 @@ public class GridConnectionService extends Service implements SharedPreferences.
             this.currentLocationInfo.subscribe(userManager.getCurrentLocationInfo(), SubscriptionSingleKey.Value);
         }
         updateOnlineNotification();
-        VoicePluginServiceConnection.setInstallOfferDisplayed(false);
         if (sLLoginResultEvent.success) {
             startCloudSync(userManager);
+            // Initialize voice system after successful login
+            startVoice(userManager);
             return;
         }
         Debug.Log("GridConnectionService: stopping self because of connect failed.");
@@ -808,11 +730,76 @@ public class GridConnectionService extends Service implements SharedPreferences.
     public void handleDisconnectEvent(SLDisconnectEvent sLDisconnectEvent) {
         updateOnlineNotification();
         Debug.Log("GridConnectionService: stopping self because of disconnect.");
+        try {
+            VoiceModule voiceModule = getActiveVoiceModule();
+            if (voiceModule != null) {
+                voiceModule.shutdownVoice();
+            }
+        } catch (Exception e) {
+            Debug.Warning(e);
+        }
         stopCloudSync();
-        stopVoice();
         stopSelf();
         this.currentLocationInfo.unsubscribe();
-        VoicePluginServiceConnection.setInstallOfferDisplayed(false);
+    }
+
+    @javax.annotation.Nullable
+    private VoiceModule getActiveVoiceModule() {
+        if (gridConnection == null || gridConnection.getConnectionState() != SLGridConnection.ConnectionState.Connected) {
+            return null;
+        }
+        try {
+            SLAgentCircuit circuit = gridConnection.getAgentCircuit();
+            SLModules modules = circuit != null ? circuit.getModules() : null;
+            return modules != null ? modules.voice : null;
+        } catch (SLGridConnection.NotConnectedException e) {
+            return null;
+        }
+    }
+
+    public void startVoice(UserManager userManager) {
+        VoiceModule voiceModule = getActiveVoiceModule();
+        if (voiceModule == null) {
+            Debug.Printf("GridConnectionService: cannot start voice - not connected or voice module missing");
+            return;
+        }
+        voiceModule.requestProvisioning();
+        Debug.Printf("GridConnectionService: voice started via direct WebRTC VoiceModule");
+    }
+
+    public void acceptVoiceCall(ChatterID chatterID) {
+        VoiceModule voiceModule = getActiveVoiceModule();
+        if (voiceModule != null) {
+            voiceModule.acceptVoiceCall(chatterID);
+        }
+    }
+
+    public void terminateVoiceCall(ChatterID chatterID) {
+        VoiceModule voiceModule = getActiveVoiceModule();
+        if (voiceModule != null) {
+            voiceModule.terminateVoiceCall(chatterID);
+        }
+    }
+
+    public void enableVoiceMic(boolean enabled) {
+        VoiceModule voiceModule = getActiveVoiceModule();
+        if (voiceModule != null) {
+            voiceModule.setMicEnabled(enabled);
+        }
+    }
+
+    public void setVoiceAudioDevice(VoiceAudioDevice device) {
+        VoiceModule voiceModule = getActiveVoiceModule();
+        if (voiceModule != null) {
+            voiceModule.setAudioDevice(device);
+        }
+    }
+
+    public void setVoiceSpeakerVolume(float volume) {
+        VoiceModule voiceModule = getActiveVoiceModule();
+        if (voiceModule != null) {
+            voiceModule.setSpeakerVolume(volume);
+        }
     }
 
     /* JADX INFO: renamed from: lambda$-com_lumiyaviewer_lumiya_GridConnectionService_20777, reason: not valid java name */
@@ -886,20 +873,5 @@ public class GridConnectionService extends Service implements SharedPreferences.
         return super.onUnbind(intent);
     }
 
-    public void startVoice(VoiceLoginInfo voiceLoginInfo, UserManager userManager) {
-        connectToVoicePlugin(voiceLoginInfo, userManager);
-    }
 
-    public void stopVoice() {
-        if (this.voicePluginServiceConnection != null) {
-            this.voicePluginServiceConnection.disconnect();
-            this.voicePluginServiceConnection = null;
-        }
-    }
-
-    public void terminateVoiceCall(ChatterID chatterID) {
-        if (this.voicePluginServiceConnection != null) {
-            this.voicePluginServiceConnection.terminateVoiceCall(chatterID);
-        }
-    }
 }
